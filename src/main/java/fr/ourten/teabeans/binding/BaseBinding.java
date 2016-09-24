@@ -1,12 +1,13 @@
 package fr.ourten.teabeans.binding;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.collect.Lists;
+
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.value.Observable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class BaseBinding<T> implements Binding<T>
 {
@@ -32,13 +33,13 @@ public abstract class BaseBinding<T> implements Binding<T>
     @Override
     public void addListener(final ValueInvalidationListener listener)
     {
-
+        this.valueInvalidationListeners.add(listener);
     }
 
     @Override
     public void removeListener(final ValueInvalidationListener listener)
     {
-
+        this.valueInvalidationListeners.remove(listener);
     }
 
     @Override
@@ -49,7 +50,7 @@ public abstract class BaseBinding<T> implements Binding<T>
             final T computed = this.computeValue();
             if (!computed.equals(this.value))
                 this.fireChangeListeners(this.value, computed);
-            this.fireInvalidationListeners();
+
             this.value = computed;
             this.isValid = true;
         }
@@ -60,7 +61,7 @@ public abstract class BaseBinding<T> implements Binding<T>
     public void bind(final Observable... observables)
     {
         if (this.listener == null)
-            this.listener = observable -> BaseBinding.this.isValid = false;
+            this.listener = observable -> BaseBinding.this.invalidate();
         for (final Observable observable : observables)
         {
             observable.addListener(this.listener);
@@ -73,7 +74,8 @@ public abstract class BaseBinding<T> implements Binding<T>
     {
         for (final Observable observable : observables)
         {
-            observable.removeListener(this.listener);
+            if (this.listener != null)
+                observable.removeListener(this.listener);
             this.dependencies.remove(observable);
         }
     }
@@ -82,6 +84,18 @@ public abstract class BaseBinding<T> implements Binding<T>
     public List<Observable> getDependencies()
     {
         return this.dependencies;
+    }
+
+    @Override
+    public final boolean isValid()
+    {
+        return this.isValid;
+    }
+
+    public void invalidate()
+    {
+        this.isValid = false;
+        this.fireInvalidationListeners();
     }
 
     private void fireChangeListeners(final T oldValue, final T newValue)

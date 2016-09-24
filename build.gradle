@@ -9,12 +9,16 @@ buildscript {
                 password = "${artifactory_password}"
             }
         }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.0.0"
     }
 }
 
+apply plugin: "jacoco"
 apply plugin: 'java'
 
 //IDE
@@ -37,6 +41,7 @@ version = "0.0.1"
 dependencies {
 	compile "com.google.guava:guava:19.0"
 	testCompile "junit:junit:4.12"
+    testRuntime "org.slf4j:slf4j-api:1.7.10"
 }
 
 // Publications
@@ -59,10 +64,23 @@ artifactory {
     }
 }
 
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            artifact (sourcesJar) { 
+                classifier = 'sources'
+            }
+            artifact source: sourcesJar, classifier: 'sources', extension: 'jar'
         }
     }
 }

@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import fr.ourten.teabeans.binding.BaseBinding;
 import fr.ourten.teabeans.value.BaseProperty;
+import fr.ourten.teabeans.value.Observable;
 
 public class BindingTest
 {
@@ -53,12 +54,38 @@ public class BindingTest
     }
 
     @Test
-    public void testComplexBinding()
+    public void testChainedBinding()
     {
         final BaseProperty<String> p1 = new BaseProperty<>("none", "testStringProperty");
         final BaseProperty<String> p2 = new BaseProperty<>("nothing", "testStringProperty2");
 
-        final BaseProperty<String> p3 = new BaseProperty<>("toy", "testStringProperty3");
+        final BaseProperty<String> p3 = new BaseProperty<>("", "testStringProperty3");
+
+        p3.bind(new BaseBinding<String>()
+        {
+            {
+                super.bind(p1);
+                super.bind(p2);
+            }
+
+            @Override
+            public String computeValue()
+            {
+                BindingTest.this.count++;
+                return p1.getValue() + p2.getValue();
+            }
+        });
+
+        Assert.assertEquals("should be equals", "nonenothing", p3.getValue());
+
+        Assert.assertEquals("should be equals", 1, this.count);
+    }
+
+    @Test
+    public void testBindingUnbinding()
+    {
+        final BaseProperty<String> p1 = new BaseProperty<>("none", "testStringProperty");
+        final BaseProperty<String> p2 = new BaseProperty<>("nothing", "testStringProperty2");
 
         final BaseBinding<String> binding = new BaseBinding<String>()
         {
@@ -75,15 +102,11 @@ public class BindingTest
             }
         };
 
-        p2.bindBidirectional(p3);
+        Assert.assertArrayEquals(binding.getDependencies().toArray(), new Observable[] { p1, p2 });
 
-        Assert.assertEquals("should be equals", "nonetoy", binding.getValue());
+        binding.unbind(p1, p2);
 
-        p1.bind(p3);
-
-        Assert.assertEquals("should be equals", "toytoy", binding.getValue());
-
-        Assert.assertEquals("should be equals", 2, this.count);
+        Assert.assertArrayEquals(binding.getDependencies().toArray(), new Observable[] {});
     }
 
     @Test
@@ -108,23 +131,34 @@ public class BindingTest
     }
 
     @Test
-    public void testBidirectionnalUnbinding()
+    public void testInvalidationBinding()
     {
         final BaseProperty<String> p1 = new BaseProperty<>("none", "testStringProperty");
         final BaseProperty<String> p2 = new BaseProperty<>("nothing", "testStringProperty2");
 
-        p1.bindBidirectional(p2);
+        final BaseBinding<String> binding = new BaseBinding<String>()
+        {
+            {
+                super.bind(p1);
+                super.bind(p2);
+            }
 
-        Assert.assertEquals("should be equals", p1.getValue(), p2.getValue());
+            @Override
+            public String computeValue()
+            {
+                BindingTest.this.count++;
+                return p1.getValue() + p2.getValue();
+            }
+        };
 
-        p2.setValue("lalala");
+        Assert.assertFalse("should be false", binding.isValid());
 
-        Assert.assertEquals("should be equals", p1.getValue(), p2.getValue());
+        Assert.assertEquals("should be equals", binding.getValue(), "nonenothing");
 
-        p1.unbindBidirectional(p2);
+        Assert.assertTrue("should be true", binding.isValid());
 
-        p2.setValue("another value");
+        p1.setValue("another");
 
-        Assert.assertNotEquals("should not be equals", p1.getValue(), p2.getValue());
+        Assert.assertFalse("should be false", binding.isValid());
     }
 }

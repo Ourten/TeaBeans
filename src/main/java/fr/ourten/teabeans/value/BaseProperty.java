@@ -138,8 +138,7 @@ public class BaseProperty<T> implements Property<T>
     public void unbindBidirectional(final Property<T> other)
     {
         final BidirectionalBinding<T> binding = new BidirectionalBinding<>(this, other);
-        this.removeListener(binding);
-        other.removeListener(binding);
+        binding.unbind();
     }
 
     protected void fireChangeListeners(final T oldValue, final T newValue)

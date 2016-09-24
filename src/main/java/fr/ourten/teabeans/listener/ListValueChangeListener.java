@@ -1,4 +1,6 @@
-package fr.ourten.teabeans.value;
+package fr.ourten.teabeans.listener;
+
+import fr.ourten.teabeans.value.ObservableValue;
 
 public interface ListValueChangeListener<T>
 {
