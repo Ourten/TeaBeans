@@ -92,6 +92,7 @@ public abstract class BaseBinding<T> implements Binding<T>
         return this.isValid;
     }
 
+    @Override
     public void invalidate()
     {
         this.isValid = false;

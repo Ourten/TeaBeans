@@ -81,16 +81,23 @@ public class BaseProperty<T> implements Property<T>
 
     private void setPropertyValue(final T value)
     {
-        if (this.value == null || !this.value.equals(value))
-            this.fireChangeListeners(this.value, value);
-        this.fireInvalidationListeners();
+        final T oldValue = this.value;
         this.value = value;
+        this.invalidate(oldValue);
     }
 
     @Override
     public String getName()
     {
         return this.NAME;
+    }
+
+    @Override
+    public void invalidate(final T oldValue)
+    {
+        if (this.value == null || !this.value.equals(oldValue))
+            this.fireChangeListeners(oldValue, this.value);
+        this.fireInvalidationListeners();
     }
 
     @Override
