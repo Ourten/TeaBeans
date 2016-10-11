@@ -1,6 +1,7 @@
 package fr.ourten.teabeans.value;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import com.google.common.collect.Lists;
 
@@ -8,7 +9,7 @@ import fr.ourten.teabeans.binding.BidirectionalBinding;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 
-public class BaseProperty<T> implements Property<T>
+public class BaseProperty<T> implements IProperty<T>
 {
     /**
      * The list of attached listeners that need to be notified when the value
@@ -103,8 +104,7 @@ public class BaseProperty<T> implements Property<T>
     @Override
     public void bind(final ObservableValue<? extends T> observable)
     {
-        if (observable == null)
-            throw new NullPointerException("Cannot bind to null");
+        Objects.requireNonNull(observable, "Cannot bind to null");
         if (!observable.equals(this.observable))
         {
             this.unbind();
@@ -136,13 +136,13 @@ public class BaseProperty<T> implements Property<T>
     }
 
     @Override
-    public void bindBidirectional(final Property<T> other)
+    public void bindBidirectional(final IProperty<T> other)
     {
         new BidirectionalBinding<>(this, other);
     }
 
     @Override
-    public void unbindBidirectional(final Property<T> other)
+    public void unbindBidirectional(final IProperty<T> other)
     {
         final BidirectionalBinding<T> binding = new BidirectionalBinding<>(this, other);
         binding.unbind();

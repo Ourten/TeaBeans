@@ -9,4 +9,9 @@ public interface ObservableValue<T> extends Observable
     void removeListener(ValueChangeListener<? super T> listener);
 
     T getValue();
+
+    default boolean isPresent()
+    {
+        return this.getValue() != null;
+    }
 }

@@ -135,6 +135,12 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     }
 
     @Override
+    public boolean isEmpty()
+    {
+        return this.getValue().isEmpty();
+    }
+
+    @Override
     public void sort(final Comparator<? super T> comparator)
     {
         final ArrayList<T> temp = Lists.newArrayList(this.value);

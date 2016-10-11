@@ -7,7 +7,7 @@ import java.util.List;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
 
-public interface ListProperty<T> extends Property<List<T>>
+public interface ListProperty<T> extends IProperty<List<T>>
 {
     void addListener(ListValueChangeListener<? super T> listener);
 
@@ -35,6 +35,8 @@ public interface ListProperty<T> extends Property<List<T>>
     int indexOf(T element);
 
     void clear();
+
+    boolean isEmpty();
 
     void sort(Comparator<? super T> comparator);
 

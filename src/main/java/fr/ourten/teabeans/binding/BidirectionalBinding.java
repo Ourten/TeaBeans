@@ -2,15 +2,15 @@ package fr.ourten.teabeans.binding;
 
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.value.ObservableValue;
-import fr.ourten.teabeans.value.Property;
+import fr.ourten.teabeans.value.IProperty;
 
 public class BidirectionalBinding<T> implements ValueChangeListener<T>
 {
     private boolean           updating;
-    private final Property<T> property1;
-    private final Property<T> property2;
+    private final IProperty<T> property1;
+    private final IProperty<T> property2;
 
-    public BidirectionalBinding(final Property<T> p1, final Property<T> p2)
+    public BidirectionalBinding(final IProperty<T> p1, final IProperty<T> p2)
     {
         this.property1 = p1;
         this.property2 = p2;
@@ -73,12 +73,12 @@ public class BidirectionalBinding<T> implements ValueChangeListener<T>
         return false;
     }
 
-    public Property<T> getProperty1()
+    public IProperty<T> getProperty1()
     {
         return this.property1;
     }
 
-    public Property<T> getProperty2()
+    public IProperty<T> getProperty2()
     {
         return this.property2;
     }
