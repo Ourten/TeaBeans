@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fr.ourten.teabeans.binding.BaseBinding;
+import fr.ourten.teabeans.binding.BidirectionalBinding;
 import fr.ourten.teabeans.value.BaseProperty;
 
 public class BidirectionnalBindingTest
@@ -70,5 +71,16 @@ public class BidirectionnalBindingTest
         p2.setValue("another value");
 
         Assert.assertNotEquals("should not be equals", p1.getValue(), p2.getValue());
+    }
+
+    @Test
+    public void testBidirectionnalBindingEquals()
+    {
+        final BaseProperty<String> p1 = new BaseProperty<>("none", "testStringProperty");
+        final BaseProperty<String> p2 = new BaseProperty<>("nothing", "testStringProperty2");
+
+        final BidirectionalBinding<String> binding1 = new BidirectionalBinding<>(p1, p2);
+
+        Assert.assertTrue("should be true", binding1.equals(binding1));
     }
 }

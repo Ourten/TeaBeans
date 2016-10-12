@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fr.ourten.teabeans.binding.BaseBinding;
+import fr.ourten.teabeans.listener.ValueChangeListener;
+import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.value.BaseProperty;
 import fr.ourten.teabeans.value.Observable;
 
@@ -160,5 +162,48 @@ public class BindingTest
         p1.setValue("another");
 
         Assert.assertFalse("should be false", binding.isValid());
+    }
+
+    @Test
+    public void testBindingListener()
+    {
+        final BaseProperty<String> p1 = new BaseProperty<>("none", "testStringProperty");
+        final BaseProperty<String> p2 = new BaseProperty<>("nothing", "testStringProperty2");
+
+        final BaseBinding<String> binding = new BaseBinding<String>()
+        {
+            {
+                super.bind(p1);
+                super.bind(p2);
+            }
+
+            @Override
+            public String computeValue()
+            {
+                return p1.getValue() + p2.getValue();
+            }
+        };
+
+        final ValueChangeListener<String> listener = (observable, oldValue, newValue) -> BindingTest.this.count++;
+        final ValueInvalidationListener listener2 = observable -> BindingTest.this.count++;
+
+        binding.addListener(listener);
+        binding.addListener(listener2);
+        binding.getValue();
+
+        Assert.assertEquals("should be equals", 1, this.count);
+
+        p1.setValue("none");
+
+        Assert.assertEquals("should be equals", 2, this.count);
+        binding.removeListener(listener);
+        p1.setValue("test");
+
+        Assert.assertEquals("should be equals", 3, this.count);
+
+        binding.removeListener(listener2);
+        p1.setValue("testagain");
+
+        Assert.assertEquals("should be equals", 3, this.count);
     }
 }

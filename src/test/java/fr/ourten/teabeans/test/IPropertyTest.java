@@ -16,8 +16,11 @@ public class IPropertyTest
     @Test(expected = NoSuchElementException.class)
     public void testThrow()
     {
-        final IProperty<String> property = new BaseProperty<>(null, "throwTestProperty");
+        final IProperty<String> property = new BaseProperty<>("test", "throwTestProperty");
 
+        Assert.assertEquals("should be equals", "test", property.getOrThrow());
+
+        property.setValue(null);
         property.getOrThrow();
     }
 

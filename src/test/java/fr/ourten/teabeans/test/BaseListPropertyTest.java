@@ -16,39 +16,68 @@ public class BaseListPropertyTest
 {
     List<Integer>             list;
     BaseListProperty<Integer> property;
+    int                       count;
 
     @Before
     public void setup()
     {
-        list = Arrays.asList(0, 2, 3, 5);
-        property = new BaseListProperty<>(list, "testIntegerListProperty");
+        this.list = Arrays.asList(0, 2, 3, 5);
+        this.property = new BaseListProperty<>(this.list, "testIntegerListProperty");
+        this.count = 0;
     }
 
     @Test
     public void testListPropertyValue()
     {
-        Assert.assertArrayEquals("list content should be identical", list.toArray(), property.getValue().toArray());
+        Assert.assertArrayEquals("list content should be identical", this.list.toArray(),
+                this.property.getValue().toArray());
+
+        Assert.assertEquals("should be equals", (Integer) 2, this.property.get(1));
+
+        Assert.assertTrue("should be true", this.property.contains(5));
+        Assert.assertFalse("should be false", this.property.contains(7));
+
+        Assert.assertEquals("should be equals", 1, this.property.indexOf(2));
+
+        Assert.assertFalse("should be false", this.property.isEmpty());
+
+        this.property.clear();
+
+        Assert.assertTrue("should be true", this.property.isEmpty());
     }
 
-    int count;
+    @Test
+    public void testListRemoval()
+    {
+        final List<String> stringList = Arrays.asList("test1", "test2", "test3");
+        final BaseListProperty<String> stringProperty = new BaseListProperty<>(stringList, "testStringListProperty");
+
+        Assert.assertFalse("should be false", stringProperty.remove("something"));
+        Assert.assertTrue("should be true", stringProperty.remove("test2"));
+        Assert.assertFalse("should be false", stringProperty.contains("test2"));
+    }
+
+    @Test
+    public void testListAdd()
+    {
+
+    }
 
     @Test
     public void testListPropertyInvalidationListener()
     {
-        this.count = 0;
+        this.property.addListener((ValueInvalidationListener) observable -> BaseListPropertyTest.this.count++);
 
-        property.addListener((ValueInvalidationListener) observable -> BaseListPropertyTest.this.count++);
-
-        property.add(6);
+        this.property.add(6);
         Assert.assertEquals("should be equals", 1, this.count);
 
-        property.remove(2);
+        this.property.remove(2);
         Assert.assertEquals("should be equals", 2, this.count);
 
-        property.set(0, 4);
+        this.property.set(0, 4);
         Assert.assertEquals("should be equals", 3, this.count);
 
-        property.sort();
+        this.property.sort();
         Assert.assertEquals("should be equals", 4, this.count);
     }
 
@@ -63,9 +92,9 @@ public class BaseListPropertyTest
             Assert.assertEquals("should be equals", (Integer) 0, oldValue);
         };
 
-        property.addListener(removeListener);
-        property.remove(0);
-        property.removeListener(removeListener);
+        this.property.addListener(removeListener);
+        this.property.remove(0);
+        this.property.removeListener(removeListener);
 
         final ListValueChangeListener<Integer> changeListener = (observable, oldValue, newValue) ->
         {
@@ -75,9 +104,9 @@ public class BaseListPropertyTest
             Assert.assertEquals("should be equals", (Integer) 2, oldValue);
             Assert.assertEquals("should be equals", (Integer) 5, newValue);
         };
-        property.addListener(changeListener);
-        property.set(0, 5);
-        property.removeListener(changeListener);
+        this.property.addListener(changeListener);
+        this.property.set(0, 5);
+        this.property.removeListener(changeListener);
 
         final ListValueChangeListener<Integer> addListener = (observable, oldValue, newValue) ->
         {
@@ -85,9 +114,11 @@ public class BaseListPropertyTest
             Assert.assertNotNull("should not be null", newValue);
             Assert.assertEquals("should be equals", (Integer) 18, newValue);
         };
-        property.addListener(addListener);
-        property.add(18);
-        property.removeListener(addListener);
+        this.property.addListener(addListener);
+        this.property.add(18);
+        this.property.add(2, 18);
+        this.property.addAll(Arrays.asList(18, 18, 18));
+        this.property.removeListener(addListener);
     }
 
     @Test

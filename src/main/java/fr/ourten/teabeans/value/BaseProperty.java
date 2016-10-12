@@ -23,6 +23,7 @@ public class BaseProperty<T> implements IProperty<T>
      */
     private ValueInvalidationListener                         listener;
     private ObservableValue<? extends T>                      observable;
+    private boolean                                           isObserving;
     private final String                                      NAME;
     protected T                                               value;
 
@@ -31,6 +32,7 @@ public class BaseProperty<T> implements IProperty<T>
         this.valueChangeListeners = Lists.newArrayList();
         this.valueInvalidationListeners = Lists.newArrayList();
 
+        this.isObserving = false;
         this.value = value;
         this.NAME = name;
     }
@@ -43,6 +45,8 @@ public class BaseProperty<T> implements IProperty<T>
     @Override
     public void addListener(final ValueChangeListener<? super T> listener)
     {
+        if (!this.isObserving && this.observable != null)
+            this.startObserving();
         if (!this.valueChangeListeners.contains(listener))
             this.valueChangeListeners.add(listener);
     }
@@ -51,11 +55,15 @@ public class BaseProperty<T> implements IProperty<T>
     public void removeListener(final ValueChangeListener<? super T> listener)
     {
         this.valueChangeListeners.remove(listener);
+        if (this.valueChangeListeners.isEmpty() && this.observable != null)
+            this.stopObserving();
     }
 
     @Override
     public void addListener(final ValueInvalidationListener listener)
     {
+        if (!this.isObserving && this.observable != null)
+            this.startObserving();
         if (!this.valueInvalidationListeners.contains(listener))
             this.valueInvalidationListeners.add(listener);
     }
@@ -64,6 +72,8 @@ public class BaseProperty<T> implements IProperty<T>
     public void removeListener(final ValueInvalidationListener listener)
     {
         this.valueInvalidationListeners.remove(listener);
+        if (this.valueInvalidationListeners.isEmpty() && this.observable != null)
+            this.stopObserving();
     }
 
     @Override
@@ -111,7 +121,8 @@ public class BaseProperty<T> implements IProperty<T>
             this.observable = observable;
             if (this.listener == null)
                 this.listener = obs -> BaseProperty.this.setPropertyValue(BaseProperty.this.observable.getValue());
-            observable.addListener(this.listener);
+            if (!this.valueChangeListeners.isEmpty() || !this.valueInvalidationListeners.isEmpty())
+                this.startObserving();
             if (this.value == null || !this.value.equals(observable.getValue()))
                 this.fireChangeListeners(this.value, observable.getValue());
             this.fireInvalidationListeners();
@@ -124,7 +135,7 @@ public class BaseProperty<T> implements IProperty<T>
         if (this.observable != null)
         {
             this.value = this.observable.getValue();
-            this.observable.removeListener(this.listener);
+            this.stopObserving();
             this.observable = null;
         }
     }
@@ -158,5 +169,17 @@ public class BaseProperty<T> implements IProperty<T>
     {
         for (final ValueInvalidationListener listener : this.valueInvalidationListeners)
             listener.invalidated(this);
+    }
+
+    private void startObserving()
+    {
+        this.isObserving = true;
+        this.observable.addListener(this.listener);
+    }
+
+    private void stopObserving()
+    {
+        this.isObserving = false;
+        this.observable.removeListener(this.listener);
     }
 }

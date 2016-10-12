@@ -23,7 +23,12 @@ public interface ListProperty<T> extends IProperty<List<T>>
 
     public default boolean remove(final T element)
     {
-        return this.remove(this.indexOf(element)) != null;
+        if (this.indexOf(element) != -1)
+        {
+            this.remove(this.indexOf(element));
+            return true;
+        }
+        return false;
     }
 
     T remove(int index);
