@@ -14,7 +14,7 @@ public abstract class BaseBinding<T> implements Binding<T>
     private final ArrayList<Observable>                     dependencies               = Lists.newArrayList();
     private final ArrayList<ValueChangeListener<? super T>> valueChangeListeners       = Lists.newArrayList();
     private final ArrayList<ValueInvalidationListener>      valueInvalidationListeners = Lists.newArrayList();
-    private T                                               value;
+    protected T                                             value;
     private boolean                                         isValid;
     private ValueInvalidationListener                       listener;
 
@@ -92,6 +92,11 @@ public abstract class BaseBinding<T> implements Binding<T>
         return this.isValid;
     }
 
+    protected void setValid(final boolean isValid)
+    {
+        this.isValid = isValid;
+    }
+
     @Override
     public void invalidate()
     {
@@ -99,13 +104,13 @@ public abstract class BaseBinding<T> implements Binding<T>
         this.fireInvalidationListeners();
     }
 
-    private void fireChangeListeners(final T oldValue, final T newValue)
+    protected void fireChangeListeners(final T oldValue, final T newValue)
     {
         for (final ValueChangeListener<? super T> listener : this.valueChangeListeners)
             listener.valueChanged(this, oldValue, newValue);
     }
 
-    private void fireInvalidationListeners()
+    protected void fireInvalidationListeners()
     {
         for (final ValueInvalidationListener listener : this.valueInvalidationListeners)
             listener.invalidated(this);
