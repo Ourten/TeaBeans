@@ -16,7 +16,7 @@ public class BaseExpressionTest
     {
         final BaseProperty<Integer> p1 = new BaseProperty<>(2, "integerPropertyTest1");
 
-        final BaseExpression<Integer> multiplyConstant = BaseExpression.constantCombine(p1, 2, (n1, n2) -> n1 * n2);
+        final BaseExpression<Integer> multiplyConstant = BaseExpression.combine(p1, (n1) -> n1 * 2);
 
         Assert.assertEquals("should be equals", (Integer) 4, multiplyConstant.getValue());
 
