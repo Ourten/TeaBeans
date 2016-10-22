@@ -2,6 +2,7 @@ package fr.ourten.teabeans.value;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.function.BiFunction;
 
 import com.google.common.collect.Lists;
 
@@ -24,6 +25,7 @@ public class BaseProperty<T> implements IProperty<T>
     private ValueInvalidationListener                         listener;
     private ObservableValue<? extends T>                      observable;
     private boolean                                           isObserving;
+    private BiFunction<T, T, T>                               checker;
     private final String                                      NAME;
     protected T                                               value;
 
@@ -83,11 +85,23 @@ public class BaseProperty<T> implements IProperty<T>
     }
 
     @Override
-    public void setValue(final T value)
+    public void setValue(T value)
     {
         if (this.isBound())
             throw new RuntimeException("Cannot set the value of a bound property");
+        if (this.checker != null)
+            value = this.checker.apply(this.value, value);
         this.setPropertyValue(value);
+    }
+
+    public BiFunction<T, T, T> getChecker()
+    {
+        return this.checker;
+    }
+
+    public void setChecker(final BiFunction<T, T, T> checker)
+    {
+        this.checker = checker;
     }
 
     private void setPropertyValue(final T value)
