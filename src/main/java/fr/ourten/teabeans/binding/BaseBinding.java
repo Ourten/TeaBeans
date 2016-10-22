@@ -2,6 +2,7 @@ package fr.ourten.teabeans.binding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.google.common.collect.Lists;
 
@@ -60,6 +61,8 @@ public abstract class BaseBinding<T> implements Binding<T>
     @Override
     public void bind(final Observable... observables)
     {
+        for (final Observable obs : observables)
+            Objects.requireNonNull(obs, "Cannot bind to null!");
         if (this.listener == null)
             this.listener = observable -> BaseBinding.this.invalidate();
         for (final Observable observable : observables)

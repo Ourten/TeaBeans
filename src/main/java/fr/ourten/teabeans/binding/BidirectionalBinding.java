@@ -1,17 +1,21 @@
 package fr.ourten.teabeans.binding;
 
+import java.util.Objects;
+
 import fr.ourten.teabeans.listener.ValueChangeListener;
-import fr.ourten.teabeans.value.ObservableValue;
 import fr.ourten.teabeans.value.IProperty;
+import fr.ourten.teabeans.value.ObservableValue;
 
 public class BidirectionalBinding<T> implements ValueChangeListener<T>
 {
-    private boolean           updating;
+    private boolean            updating;
     private final IProperty<T> property1;
     private final IProperty<T> property2;
 
     public BidirectionalBinding(final IProperty<T> p1, final IProperty<T> p2)
     {
+        Objects.requireNonNull(p1, "Cannot bind to null!");
+        Objects.requireNonNull(p2, "Cannot bind to null!");
         this.property1 = p1;
         this.property2 = p2;
 
