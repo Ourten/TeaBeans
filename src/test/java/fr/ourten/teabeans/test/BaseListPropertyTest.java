@@ -27,6 +27,18 @@ public class BaseListPropertyTest
     }
 
     @Test
+    public void testConstructorListOnly()
+    {
+        String expected = "";
+
+        BaseListProperty<Integer> property = new BaseListProperty<>(this.list);
+
+        String actual = property.getName();
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
     public void testListPropertyValue()
     {
         Assert.assertArrayEquals("list content should be identical", this.list.toArray(),
