@@ -10,5 +10,5 @@ cache:
     - ~/.gradle
 test:
     post:
-        - if [ -e ./gradlew ]; then ./gradlew jacocoTestReport;else gradle jacocoTestReport;fi
+        - gradle check jacocoTestReport
         - bash <(curl -s https://codecov.io/bash)
