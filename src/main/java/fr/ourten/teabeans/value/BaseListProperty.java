@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -12,6 +14,8 @@ import fr.ourten.teabeans.listener.ListValueChangeListener;
 
 public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListProperty<T>
 {
+    private BiFunction<T, T, T>                                 checker;
+
     /**
      * The list of attached listeners that need to be notified when the value
      * change.
@@ -50,14 +54,25 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
         this.listValueChangeListeners.remove(listener);
     }
 
+    public BiFunction<T, T, T> getElementChecker()
+    {
+        return this.checker;
+    }
+
+    public void setElementChecker(final BiFunction<T, T, T> checker)
+    {
+        if (checker == null)
+            throw new IllegalArgumentException("Checker null !");
+        this.checker = checker;
+    }
+
     @Override
     public T get(final int index)
     {
         return this.value.get(index);
     }
 
-    @Override
-    public void add(final T element)
+    private void add(T element, Function<T, T> action)
     {
         this.fireInvalidationListeners();
         this.fireListChangeListeners(null, element);
@@ -65,21 +80,33 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
         List<T> old = null;
         if (!this.valueChangeListeners.isEmpty())
             old = Lists.newArrayList(this.value);
-        this.value.add(element);
+
+        if (this.checker != null)
+            element = this.checker.apply(null, element);
+
+        action.apply(element);
+
         this.fireChangeListeners(old, this.value);
+    }
+
+    @Override
+    public void add(final T element)
+    {
+        add(element, (T e) ->
+        {
+            this.value.add(e);
+            return e;
+        });
     }
 
     @Override
     public void add(final int index, final T element)
     {
-        this.fireInvalidationListeners();
-        this.fireListChangeListeners(null, element);
-
-        List<T> old = null;
-        if (!this.valueChangeListeners.isEmpty())
-            old = Lists.newArrayList(this.value);
-        this.value.add(index, element);
-        this.fireChangeListeners(old, this.value);
+        add(element, (T e) ->
+        {
+            this.value.add(index, e);
+            return e;
+        });
     }
 
     @Override
@@ -110,7 +137,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     }
 
     @Override
-    public void set(final int index, final T element)
+    public void set(final int index, T element)
     {
         this.fireInvalidationListeners();
         this.fireListChangeListeners(this.value.get(index), element);
@@ -118,6 +145,10 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
         List<T> old = null;
         if (!this.valueChangeListeners.isEmpty())
             old = Lists.newArrayList(this.value);
+
+        if (this.checker != null)
+            element = this.checker.apply(this.value.get(index), element);
+
         this.value.set(index, element);
         this.fireChangeListeners(old, this.value);
     }
