@@ -42,27 +42,10 @@ public class CheckerPropertyTest
         Assert.assertEquals(actual, expected);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCheckerAddNull1()
     {
         this.property.setChecker(null);
-    }
-
-    @Test
-    public void testCheckerAddNull2()
-    {
-        String expected = "Checker null !";
-        String actual = "";
-
-        try
-        {
-            this.property.setChecker(null);
-        } catch (Exception e)
-        {
-            actual = e.getMessage();
-        }
-
-        Assert.assertEquals(actual, expected);
     }
 
     @Test

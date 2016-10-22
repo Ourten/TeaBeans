@@ -101,8 +101,6 @@ public class BaseProperty<T> implements IProperty<T>
 
     public void setChecker(final BiFunction<T, T, T> checker)
     {
-        if (checker == null)
-            throw new IllegalArgumentException("Checker null !");
         this.checker = checker;
     }
 

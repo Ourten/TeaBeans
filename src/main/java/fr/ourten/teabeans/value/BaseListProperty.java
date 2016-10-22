@@ -61,8 +61,6 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
 
     public void setElementChecker(final BiFunction<T, T, T> checker)
     {
-        if (checker == null)
-            throw new IllegalArgumentException("Checker null !");
         this.checker = checker;
     }
 
