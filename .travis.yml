@@ -8,6 +8,7 @@ before_install:
   - pip install --user codecov
 script:
   - gradle build
+  - gradle jacocoTestReport
 cache:
   directories:
     - ~/.gradle
