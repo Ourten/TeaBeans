@@ -10,4 +10,4 @@ cache:
   directories:
     - ~/.gradle
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash) -t 66423eed-f384-4c2c-91b1-079eed2e4ae0
