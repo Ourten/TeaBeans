@@ -1,13 +1,15 @@
 language: java
+sudo: false
 notifications:
   email: false
 install: true
 jdk: oraclejdk8
+before_install:
+  - pip install --user codecov
 script:
   - gradle build
-  - gradle check
 cache:
   directories:
     - ~/.gradle
 after_success:
-  - bash <(curl -s https://codecov.io/bash) -t 66423eed-f384-4c2c-91b1-079eed2e4ae0
+  - codecov
