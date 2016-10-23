@@ -130,13 +130,40 @@ public class BaseMapPropertyTest
     }
 
     @Test
-    public void testMapGetNull()
+    public void testMapGetNullWrong()
     {
         Integer expected1 = null;
         Integer expected2 = 7;
 
         Integer actual1 = this.property.get("7");
         Integer actual2 = this.property.getOrDefault("7", 7);
+
+        Assert.assertEquals(expected1, actual1);
+        Assert.assertEquals(expected2, actual2);
+    }
+
+    @Test
+    public void testMapGetNullRight()
+    {
+        this.property.put("null", null);
+        Integer expected1 = null;
+        Integer expected2 = null;
+
+        Integer actual1 = this.property.get("null");
+        Integer actual2 = this.property.getOrDefault("null", 7);
+
+        Assert.assertEquals(expected1, actual1);
+        Assert.assertEquals(expected2, actual2);
+    }
+
+    @Test
+    public void testMapGetNotNull()
+    {
+        Integer expected1 = 3;
+        Integer expected2 = 3;
+
+        Integer actual1 = this.property.get("3");
+        Integer actual2 = this.property.getOrDefault("3", 4);
 
         Assert.assertEquals(expected1, actual1);
         Assert.assertEquals(expected2, actual2);

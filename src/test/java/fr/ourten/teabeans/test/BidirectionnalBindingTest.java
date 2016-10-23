@@ -83,4 +83,17 @@ public class BidirectionnalBindingTest
 
         Assert.assertTrue("should be true", binding1.equals(binding1));
     }
+
+    @Test
+    public void testBidirectionnalBindingNotEquals()
+    {
+        final BaseProperty<String> p1 = new BaseProperty<>("none", "testStringProperty");
+        final BaseProperty<String> p2 = new BaseProperty<>("nothing", "testStringProperty2");
+        final BaseProperty<String> p3 = new BaseProperty<>("nowhere", "testStringProperty3");
+
+        final BidirectionalBinding<String> binding1 = new BidirectionalBinding<>(p1, p2);
+        final BidirectionalBinding<String> binding3 = new BidirectionalBinding<>(p2, p3);
+
+        Assert.assertFalse("should be false", binding1.equals(binding3));
+    }
 }
