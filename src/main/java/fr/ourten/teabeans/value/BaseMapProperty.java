@@ -11,22 +11,22 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.listener.MapValueChangeListener;
 
 public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements MapProperty<K, T>
 {
-    private BiFunction<T, T, T>                                 checker;
+    private BiFunction<T, T, T>                                   checker;
 
     /**
      * The list of attached listeners that need to be notified when the value
      * change.
      */
-    private final ArrayList<ListValueChangeListener<? super T>> listValueChangeListeners;
+    private final ArrayList<MapValueChangeListener<K, ? super T>> mapValueChangeListeners;
 
     public BaseMapProperty(final Map<K, T> value, final String name)
     {
         super(value, name);
-        this.listValueChangeListeners = Lists.newArrayList();
+        this.mapValueChangeListeners = Lists.newArrayList();
 
         this.value = value != null ? Maps.newHashMap(value) : Maps.newHashMap();
     }
@@ -43,22 +43,22 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     }
 
     @Override
-    public void addListener(final ListValueChangeListener<? super T> listener)
+    public void addListener(final MapValueChangeListener<K, ? super T> listener)
     {
-        if (!this.listValueChangeListeners.contains(listener))
-            this.listValueChangeListeners.add(listener);
+        if (!this.mapValueChangeListeners.contains(listener))
+            this.mapValueChangeListeners.add(listener);
     }
 
     @Override
-    public void removeListener(final ListValueChangeListener<? super T> listener)
+    public void removeListener(final MapValueChangeListener<K, ? super T> listener)
     {
-        this.listValueChangeListeners.remove(listener);
+        this.mapValueChangeListeners.remove(listener);
     }
 
-    private void fireListChangeListeners(final T oldValue, final T newValue)
+    private void fireListChangeListeners(final K key, final T oldValue, final T newValue)
     {
-        for (final ListValueChangeListener<? super T> listener : this.listValueChangeListeners)
-            listener.valueChanged(this, oldValue, newValue);
+        for (final MapValueChangeListener<K, ? super T> listener : this.mapValueChangeListeners)
+            listener.valueChanged(this, key, oldValue, newValue);
     }
 
     public BiFunction<T, T, T> getElementChecker()
@@ -81,7 +81,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     public T put(final K key, T value)
     {
         this.fireInvalidationListeners();
-        this.fireListChangeListeners(null, value);
+        this.fireListChangeListeners(key, null, value);
 
         Map<K, T> old = null;
         if (!this.valueChangeListeners.isEmpty())
@@ -136,7 +136,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     public T remove(K key)
     {
         this.fireInvalidationListeners();
-        this.fireListChangeListeners(this.value.get(key), null);
+        this.fireListChangeListeners(key, this.value.get(key), null);
 
         Map<K, T> old = null;
         if (!this.valueChangeListeners.isEmpty())
@@ -151,7 +151,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     public T replace(K key, T element)
     {
         this.fireInvalidationListeners();
-        this.fireListChangeListeners(this.value.get(key), element);
+        this.fireListChangeListeners(key, this.value.get(key), element);
 
         Map<K, T> old = null;
         if (!this.valueChangeListeners.isEmpty())

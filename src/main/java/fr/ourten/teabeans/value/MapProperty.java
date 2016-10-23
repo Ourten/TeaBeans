@@ -4,13 +4,13 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.listener.MapValueChangeListener;
 
 public interface MapProperty<K, T> extends IProperty<Map<K, T>>
 {
-    void addListener(ListValueChangeListener<? super T> listener);
+    void addListener(MapValueChangeListener<K, ? super T> listener);
 
-    void removeListener(ListValueChangeListener<? super T> listener);
+    void removeListener(MapValueChangeListener<K, ? super T> listener);
 
     T put(K key, T value);
 
@@ -35,6 +35,22 @@ public interface MapProperty<K, T> extends IProperty<Map<K, T>>
     boolean containsValue(T value);
 
     T remove(K key);
+
+    default boolean removeValue(final T value)
+    {
+        @SuppressWarnings("unchecked")
+        K[] keys = (K[]) this.keySet().toArray();
+        boolean find = false;
+        for (int i = 0; i < keys.length; i++)
+        {
+            if (this.get(keys[i]).equals(value))
+            {
+                this.remove(keys[i]);
+                find = true;
+            }
+        }
+        return find;
+    }
 
     T replace(K key, T element);
 
