@@ -48,6 +48,7 @@ public class BaseListPropertyTest
         int actual = property.size();
 
         Assert.assertEquals(expected, actual);
+        Assert.assertTrue(property.isEmpty());
     }
 
     @Test

@@ -32,7 +32,7 @@ public class BaseMapPropertyTest
     }
 
     @Test
-    public void testConstructorListOnly()
+    public void testConstructorMapOnly()
     {
         String expected = "";
 
@@ -44,7 +44,7 @@ public class BaseMapPropertyTest
     }
 
     @Test
-    public void testConstructorListNull()
+    public void testConstructorMapNull()
     {
         int expected = 0;
 
@@ -53,6 +53,7 @@ public class BaseMapPropertyTest
         int actual = property.size();
 
         Assert.assertEquals(expected, actual);
+        Assert.assertTrue(property.isEmpty());
     }
 
     @Test
@@ -111,6 +112,14 @@ public class BaseMapPropertyTest
     }
 
     @Test
+    public void testMapGetNull()
+    {
+        Integer expected = 7;
+        Integer actual = this.property.getOrDefault("7", 7);
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
     public void testMapPropertyInvalidationListener()
     {
         this.property.addListener((ValueInvalidationListener) observable -> BaseMapPropertyTest.this.count++);
@@ -126,7 +135,7 @@ public class BaseMapPropertyTest
     }
 
     @Test
-    public void testListPropertyListChangeListener()
+    public void testMapPropertyListChangeListener()
     {
 
         final MapValueChangeListener<String, Integer> removeListener = (observable, key, oldValue, newValue) ->
