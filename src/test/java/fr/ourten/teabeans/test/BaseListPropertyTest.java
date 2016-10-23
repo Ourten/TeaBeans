@@ -92,7 +92,9 @@ public class BaseListPropertyTest
     @Test
     public void testListAdd()
     {
-
+        Integer expected = 7;
+        this.property.add(7);
+        Assert.assertEquals(expected, this.property.get(4));
     }
 
     @Test
