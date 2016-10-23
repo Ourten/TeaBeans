@@ -41,14 +41,19 @@ public interface ListProperty<T> extends IProperty<List<T>>
 
     void clear();
 
-    boolean isEmpty();
+    int size();
+
+    default boolean isEmpty()
+    {
+        return this.size() == 0;
+    }
 
     void sort(Comparator<? super T> comparator);
 
     /**
      * Will sort the contained list according to natural order
      */
-    public default void sort()
+    default void sort()
     {
         @SuppressWarnings("unchecked")
         final Comparator<T> naturalOrder = (o1, o2) ->

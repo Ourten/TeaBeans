@@ -39,6 +39,27 @@ public class BaseListPropertyTest
     }
 
     @Test
+    public void testConstructorListNull()
+    {
+        int expected = 0;
+
+        BaseListProperty<Integer> property = new BaseListProperty<>(null);
+
+        int actual = property.size();
+
+        Assert.assertEquals(expected, actual);
+        Assert.assertTrue(property.isEmpty());
+    }
+
+    @Test
+    public void testListPropertySize()
+    {
+        int expected = 4;
+        int actual = this.property.size();
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
     public void testListPropertyValue()
     {
         Assert.assertArrayEquals("list content should be identical", this.list.toArray(),
@@ -72,7 +93,9 @@ public class BaseListPropertyTest
     @Test
     public void testListAdd()
     {
-
+        Integer expected = 7;
+        this.property.add(7);
+        Assert.assertEquals(expected, this.property.get(4));
     }
 
     @Test
