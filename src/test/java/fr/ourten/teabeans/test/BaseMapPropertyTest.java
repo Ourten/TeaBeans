@@ -65,6 +65,24 @@ public class BaseMapPropertyTest
     }
 
     @Test
+    public void testMapPropertyValues()
+    {
+        Object[] excepted = this.map.values().toArray();
+        Object[] actual = this.property.values().toArray();
+
+        Assert.assertArrayEquals(excepted, actual);
+    }
+
+    @Test
+    public void testMapPropertyEntrySet()
+    {
+        Object[] excepted = this.map.entrySet().toArray();
+        Object[] actual = this.property.entrySet().toArray();
+
+        Assert.assertArrayEquals(excepted, actual);
+    }
+
+    @Test
     public void testMapPropertyValue()
     {
         Assert.assertArrayEquals("map key should be identical", this.map.keySet().toArray(),
@@ -114,9 +132,14 @@ public class BaseMapPropertyTest
     @Test
     public void testMapGetNull()
     {
-        Integer expected = 7;
-        Integer actual = this.property.getOrDefault("7", 7);
-        Assert.assertEquals(expected, actual);
+        Integer expected1 = null;
+        Integer expected2 = 7;
+
+        Integer actual1 = this.property.get("7");
+        Integer actual2 = this.property.getOrDefault("7", 7);
+
+        Assert.assertEquals(expected1, actual1);
+        Assert.assertEquals(expected2, actual2);
     }
 
     @Test
