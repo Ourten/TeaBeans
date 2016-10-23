@@ -13,7 +13,7 @@ import com.google.common.collect.Maps;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
 
-public class BaseMapProperty<T> extends BaseProperty<Map<String, T>> implements MapProperty<T>
+public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements MapProperty<K, T>
 {
     private BiFunction<T, T, T>                                 checker;
 
@@ -23,7 +23,7 @@ public class BaseMapProperty<T> extends BaseProperty<Map<String, T>> implements 
      */
     private final ArrayList<ListValueChangeListener<? super T>> listValueChangeListeners;
 
-    public BaseMapProperty(final Map<String, T> value, final String name)
+    public BaseMapProperty(final Map<K, T> value, final String name)
     {
         super(value, name);
         this.listValueChangeListeners = Lists.newArrayList();
@@ -31,13 +31,13 @@ public class BaseMapProperty<T> extends BaseProperty<Map<String, T>> implements 
         this.value = value != null ? Maps.newHashMap(value) : Maps.newHashMap();
     }
 
-    public BaseMapProperty(final Map<String, T> value)
+    public BaseMapProperty(final Map<K, T> value)
     {
         this(value, "");
     }
 
     @Override
-    public ImmutableMap<String, T> getValue()
+    public ImmutableMap<K, T> getValue()
     {
         return ImmutableMap.copyOf(this.value);
     }
@@ -72,18 +72,18 @@ public class BaseMapProperty<T> extends BaseProperty<Map<String, T>> implements 
     }
 
     @Override
-    public T get(String key)
+    public T get(final K key)
     {
         return this.value.get(key);
     }
 
     @Override
-    public T put(final String key, T value)
+    public T put(final K key, T value)
     {
         this.fireInvalidationListeners();
         this.fireListChangeListeners(null, value);
 
-        Map<String, T> old = null;
+        Map<K, T> old = null;
         if (!this.valueChangeListeners.isEmpty())
             old = Maps.newHashMap(this.value);
 
@@ -97,19 +97,19 @@ public class BaseMapProperty<T> extends BaseProperty<Map<String, T>> implements 
     }
 
     @Override
-    public void putAll(Map<String, ? extends T> elements)
+    public void putAll(Map<K, ? extends T> elements)
     {
         elements.forEach(this::put);
     }
 
     @Override
-    public Set<Entry<String, T>> entrySet()
+    public Set<Entry<K, T>> entrySet()
     {
         return this.value.entrySet();
     }
 
     @Override
-    public Set<String> keySet()
+    public Set<K> keySet()
     {
         return this.value.keySet();
     }
@@ -121,7 +121,7 @@ public class BaseMapProperty<T> extends BaseProperty<Map<String, T>> implements 
     }
 
     @Override
-    public boolean containsKey(String key)
+    public boolean containsKey(K key)
     {
         return this.value.containsKey(key);
     }
@@ -133,12 +133,12 @@ public class BaseMapProperty<T> extends BaseProperty<Map<String, T>> implements 
     }
 
     @Override
-    public T remove(String key)
+    public T remove(K key)
     {
         this.fireInvalidationListeners();
         this.fireListChangeListeners(this.value.get(key), null);
 
-        Map<String, T> old = null;
+        Map<K, T> old = null;
         if (!this.valueChangeListeners.isEmpty())
             old = Maps.newHashMap(this.value);
         final T rtn = this.value.remove(key);
@@ -148,12 +148,12 @@ public class BaseMapProperty<T> extends BaseProperty<Map<String, T>> implements 
     }
 
     @Override
-    public T replace(String key, T element)
+    public T replace(K key, T element)
     {
         this.fireInvalidationListeners();
         this.fireListChangeListeners(this.value.get(key), element);
 
-        Map<String, T> old = null;
+        Map<K, T> old = null;
         if (!this.valueChangeListeners.isEmpty())
             old = Maps.newHashMap(this.value);
 

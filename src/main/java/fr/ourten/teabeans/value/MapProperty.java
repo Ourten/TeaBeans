@@ -6,37 +6,37 @@ import java.util.Set;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
 
-public interface MapProperty<T> extends IProperty<Map<String, T>>
+public interface MapProperty<K, T> extends IProperty<Map<K, T>>
 {
     void addListener(ListValueChangeListener<? super T> listener);
 
     void removeListener(ListValueChangeListener<? super T> listener);
 
-    T put(String key, T value);
+    T put(K key, T value);
 
-    void putAll(Map<String, ? extends T> elements);
+    void putAll(Map<K, ? extends T> elements);
 
-    T get(String key);
+    T get(K key);
 
-    default T getOrDefault(String key, T defaultValue)
+    default T getOrDefault(K key, T defaultValue)
     {
         T t;
         return (((t = get(key)) != null) || containsKey(key)) ? t : defaultValue;
     }
 
-    Set<Map.Entry<String, T>> entrySet();
+    Set<Map.Entry<K, T>> entrySet();
 
-    Set<String> keySet();
+    Set<K> keySet();
 
     Collection<T> values();
 
-    boolean containsKey(String key);
+    boolean containsKey(K key);
 
     boolean containsValue(T value);
 
-    T remove(String key);
+    T remove(K key);
 
-    T replace(String key, T element);
+    T replace(K key, T element);
 
     void clear();
 
