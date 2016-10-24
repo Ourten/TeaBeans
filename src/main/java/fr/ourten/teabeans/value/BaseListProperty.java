@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -70,7 +70,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
         return this.value.get(index);
     }
 
-    private void add(T element, Function<T, T> action)
+    private void add(T element, final Consumer<T> action)
     {
         this.fireInvalidationListeners();
         this.fireListChangeListeners(null, element);
@@ -82,7 +82,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
         if (this.checker != null)
             element = this.checker.apply(null, element);
 
-        action.apply(element);
+        action.accept(element);
 
         this.fireChangeListeners(old, this.value);
     }
@@ -90,21 +90,13 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     @Override
     public void add(final T element)
     {
-        add(element, (T e) ->
-        {
-            this.value.add(e);
-            return e;
-        });
+        this.add(element, this.value::add);
     }
 
     @Override
     public void add(final int index, final T element)
     {
-        add(element, (T e) ->
-        {
-            this.value.add(index, e);
-            return e;
-        });
+        this.add(element, e -> this.value.add(index, e));
     }
 
     @Override
