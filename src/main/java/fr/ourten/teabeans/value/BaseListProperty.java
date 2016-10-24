@@ -152,7 +152,13 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     @Override
     public void clear()
     {
-        this.setValue(Lists.newArrayList());
+        this.fireInvalidationListeners();
+        List<T> old = null;
+
+        if (!this.valueChangeListeners.isEmpty())
+            old = Lists.newArrayList(this.value);
+        this.value.clear();
+        this.fireChangeListeners(old, this.value);
     }
 
     @Override

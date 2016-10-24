@@ -29,11 +29,11 @@ public class BaseListPropertyTest
     @Test
     public void testConstructorListOnly()
     {
-        String expected = "";
+        final String expected = "";
 
-        BaseListProperty<Integer> property = new BaseListProperty<>(this.list);
+        final BaseListProperty<Integer> property = new BaseListProperty<>(this.list);
 
-        String actual = property.getName();
+        final String actual = property.getName();
 
         Assert.assertEquals(expected, actual);
     }
@@ -41,11 +41,11 @@ public class BaseListPropertyTest
     @Test
     public void testConstructorListNull()
     {
-        int expected = 0;
+        final int expected = 0;
 
-        BaseListProperty<Integer> property = new BaseListProperty<>(null);
+        final BaseListProperty<Integer> property = new BaseListProperty<>(null);
 
-        int actual = property.size();
+        final int actual = property.size();
 
         Assert.assertEquals(expected, actual);
         Assert.assertTrue(property.isEmpty());
@@ -54,8 +54,8 @@ public class BaseListPropertyTest
     @Test
     public void testListPropertySize()
     {
-        int expected = 4;
-        int actual = this.property.size();
+        final int expected = 4;
+        final int actual = this.property.size();
         Assert.assertEquals(expected, actual);
     }
 
@@ -93,7 +93,7 @@ public class BaseListPropertyTest
     @Test
     public void testListAdd()
     {
-        Integer expected = 7;
+        final Integer expected = 7;
         this.property.add(7);
         Assert.assertEquals(expected, this.property.get(4));
     }
@@ -148,11 +148,13 @@ public class BaseListPropertyTest
             Assert.assertNull("should be null", oldValue);
             Assert.assertNotNull("should not be null", newValue);
             Assert.assertEquals("should be equals", (Integer) 18, newValue);
+            this.count++;
         };
         this.property.addListener(addListener);
         this.property.add(18);
         this.property.add(2, 18);
         this.property.addAll(Arrays.asList(18, 18, 18));
+        Assert.assertEquals("should be equals", 5, this.count);
         this.property.removeListener(addListener);
     }
 
