@@ -80,9 +80,6 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     @Override
     public T put(final K key, T value)
     {
-        this.fireInvalidationListeners();
-        this.fireListChangeListeners(key, null, value);
-
         Map<K, T> old = null;
         if (!this.valueChangeListeners.isEmpty())
             old = Maps.newHashMap(this.value);
@@ -91,13 +88,15 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
             value = this.checker.apply(null, value);
 
         this.value.put(key, value);
-        this.fireChangeListeners(old, this.value);
 
+        this.fireInvalidationListeners();
+        this.fireListChangeListeners(key, null, value);
+        this.fireChangeListeners(old, this.value);
         return null;
     }
 
     @Override
-    public void putAll(Map<K, ? extends T> elements)
+    public void putAll(final Map<K, ? extends T> elements)
     {
         elements.forEach(this::put);
     }
@@ -121,38 +120,37 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     }
 
     @Override
-    public boolean containsKey(K key)
+    public boolean containsKey(final K key)
     {
         return this.value.containsKey(key);
     }
 
     @Override
-    public boolean containsValue(T value)
+    public boolean containsValue(final T value)
     {
         return this.value.containsValue(value);
     }
 
     @Override
-    public T remove(K key)
+    public T remove(final K key)
     {
-        this.fireInvalidationListeners();
-        this.fireListChangeListeners(key, this.value.get(key), null);
-
+        final T oldValue = this.value.get(key);
         Map<K, T> old = null;
+
         if (!this.valueChangeListeners.isEmpty())
             old = Maps.newHashMap(this.value);
         final T rtn = this.value.remove(key);
-        this.fireChangeListeners(old, this.value);
 
+        this.fireInvalidationListeners();
+        this.fireListChangeListeners(key, oldValue, null);
+        this.fireChangeListeners(old, this.value);
         return rtn;
     }
 
     @Override
-    public T replace(K key, T element)
+    public T replace(final K key, T element)
     {
-        this.fireInvalidationListeners();
-        this.fireListChangeListeners(key, this.value.get(key), element);
-
+        final T oldValue = this.value.get(key);
         Map<K, T> old = null;
         if (!this.valueChangeListeners.isEmpty())
             old = Maps.newHashMap(this.value);
@@ -161,8 +159,10 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
             element = this.checker.apply(this.value.get(key), element);
 
         final T rtn = this.value.replace(key, element);
-        this.fireChangeListeners(old, this.value);
 
+        this.fireInvalidationListeners();
+        this.fireListChangeListeners(key, oldValue, element);
+        this.fireChangeListeners(old, this.value);
         return rtn;
     }
 
@@ -177,5 +177,4 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     {
         return this.value.size();
     }
-
 }
