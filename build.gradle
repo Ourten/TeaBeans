@@ -35,7 +35,7 @@ targetCompatibility = 1.8
 // Maven Artefacts Info
 group = "fr.ourten"
 archivesBaseName = "teabeans"
-version = "0.3.1"
+version = "0.3.2"
 
 dependencies {
 	compile "com.google.guava:guava:19.0"
