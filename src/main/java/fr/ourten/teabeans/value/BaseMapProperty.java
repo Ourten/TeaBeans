@@ -13,8 +13,17 @@ import com.google.common.collect.Maps;
 
 import fr.ourten.teabeans.listener.MapValueChangeListener;
 
+/**
+ * @author Phenix246
+ * 
+ *         BaseMapProperty is an object that allow to put different element
+ *         together with a specific key value. (@see {@link Map}).
+ */
 public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements MapProperty<K, T>
 {
+    /**
+     * The checker use to verify the value of a element of the property
+     */
     private BiFunction<T, T, T>                                   checker;
 
     /**
@@ -36,6 +45,9 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
         this(value, "");
     }
 
+    /**
+     * @return a copy of the values of the property
+     */
     @Override
     public ImmutableMap<K, T> getValue()
     {
@@ -55,17 +67,26 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
         this.mapValueChangeListeners.remove(listener);
     }
 
-    private void fireListChangeListeners(final K key, final T oldValue, final T newValue)
+    private void fireMapChangeListeners(final K key, final T oldValue, final T newValue)
     {
         for (final MapValueChangeListener<K, ? super T> listener : this.mapValueChangeListeners)
             listener.valueChanged(this, key, oldValue, newValue);
     }
 
+    /**
+     * @return the value checker set for the elements of this property
+     */
     public BiFunction<T, T, T> getElementChecker()
     {
         return this.checker;
     }
 
+    /**
+     * Set the value element checker for this property. Set it to null to remove
+     * the checker.
+     * 
+     * @param checker
+     */
     public void setElementChecker(final BiFunction<T, T, T> checker)
     {
         this.checker = checker;
@@ -90,7 +111,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
         this.value.put(key, value);
 
         this.fireInvalidationListeners();
-        this.fireListChangeListeners(key, null, value);
+        this.fireMapChangeListeners(key, null, value);
         this.fireChangeListeners(old, this.value);
         return null;
     }
@@ -101,18 +122,27 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
         elements.forEach(this::put);
     }
 
+    /**
+     * @return a Set of the property entry element.
+     */
     @Override
     public Set<Entry<K, T>> entrySet()
     {
         return this.value.entrySet();
     }
 
+    /**
+     * @return a set which contain all the key.
+     */
     @Override
     public Set<K> keySet()
     {
         return this.value.keySet();
     }
 
+    /**
+     * @return a Collection which contain all the values.
+     */
     @Override
     public Collection<T> values()
     {
@@ -142,7 +172,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
         final T rtn = this.value.remove(key);
 
         this.fireInvalidationListeners();
-        this.fireListChangeListeners(key, oldValue, null);
+        this.fireMapChangeListeners(key, oldValue, null);
         this.fireChangeListeners(old, this.value);
         return rtn;
     }
@@ -161,17 +191,23 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
         final T rtn = this.value.replace(key, element);
 
         this.fireInvalidationListeners();
-        this.fireListChangeListeners(key, oldValue, element);
+        this.fireMapChangeListeners(key, oldValue, element);
         this.fireChangeListeners(old, this.value);
         return rtn;
     }
 
+    /**
+     * Remove all the elements for this property
+     */
     @Override
     public void clear()
     {
         this.setValue(Maps.newHashMap());
     }
 
+    /**
+     * @return the number of element for this property
+     */
     @Override
     public int size()
     {

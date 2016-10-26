@@ -20,14 +20,25 @@ public class BaseProperty<T> implements IProperty<T>
     protected final ArrayList<ValueInvalidationListener>      valueInvalidationListeners;
 
     /**
+     * Name of the property
+     */
+    private final String                                      name;
+
+    /**
+     * Value of the property
+     */
+    protected T                                               value;
+    /**
      * The listener used to bind this property to another.
      */
     private ValueInvalidationListener                         listener;
     private ObservableValue<? extends T>                      observable;
     private boolean                                           isObserving;
+
+    /**
+     * The checker use to verify the value of the property
+     */
     private BiFunction<T, T, T>                               checker;
-    private final String                                      NAME;
-    protected T                                               value;
 
     public BaseProperty(final T value, final String name)
     {
@@ -36,7 +47,7 @@ public class BaseProperty<T> implements IProperty<T>
 
         this.isObserving = false;
         this.value = value;
-        this.NAME = name;
+        this.name = name;
     }
 
     public BaseProperty(final T value)
@@ -78,12 +89,21 @@ public class BaseProperty<T> implements IProperty<T>
             this.stopObserving();
     }
 
+    /**
+     * @return the value of the property
+     */
     @Override
     public T getValue()
     {
         return this.observable == null ? this.value : this.observable.getValue();
     }
 
+    /**
+     * Set a new value for the property and notify the listeners.
+     * 
+     * @param value
+     *            The value to set
+     */
     @Override
     public void setValue(T value)
     {
@@ -94,11 +114,20 @@ public class BaseProperty<T> implements IProperty<T>
         this.setPropertyValue(value);
     }
 
+    /**
+     * @return the value checker set for the property
+     */
     public BiFunction<T, T, T> getChecker()
     {
         return this.checker;
     }
 
+    /**
+     * Set the value checker for this property. Set it to null to remove the
+     * checker.
+     * 
+     * @param checker
+     */
     public void setChecker(final BiFunction<T, T, T> checker)
     {
         this.checker = checker;
@@ -111,10 +140,13 @@ public class BaseProperty<T> implements IProperty<T>
         this.invalidate(oldValue);
     }
 
+    /**
+     * @return The property name.
+     */
     @Override
     public String getName()
     {
-        return this.NAME;
+        return this.name;
     }
 
     @Override
