@@ -49,7 +49,10 @@ public abstract class BaseBinding<T> implements Binding<T>
         if (!this.isValid)
         {
             final T computed = this.computeValue();
-            if (computed == null && this.value != null || !computed.equals(this.value))
+
+            if (computed == null && this.value != null)
+                this.fireChangeListeners(this.value, computed);
+            else if (computed != null && !computed.equals(this.value))
                 this.fireChangeListeners(this.value, computed);
 
             this.value = computed;

@@ -206,4 +206,52 @@ public class BindingTest
 
         Assert.assertEquals("should be equals", 3, this.count);
     }
+
+    @Test
+    public void testNullBinding()
+    {
+        final BaseProperty<String> p1 = new BaseProperty<>("nonnull", "nullProperty");
+
+        final BaseBinding<String> binding = new BaseBinding<String>()
+        {
+            {
+                super.bind(p1);
+            }
+
+            @Override
+            public String computeValue()
+            {
+                return p1.getValue();
+            }
+        };
+
+        binding.addListener((observable, oldValue, newValue) -> BindingTest.this.count++);
+
+        Assert.assertNotNull("should not be null", binding.getValue());
+        Assert.assertEquals("should be equals", 1, this.count);
+
+        p1.setValue(null);
+
+        Assert.assertNull("should be null", binding.getValue());
+        Assert.assertEquals("should be equals", 2, this.count);
+
+        binding.invalidate();
+
+        Assert.assertNull("should be null", binding.getValue());
+        Assert.assertEquals("should be equals", 2, this.count);
+
+        p1.setValue(null);
+
+        Assert.assertEquals("should be equals", 2, this.count);
+
+        p1.setValue("nonnull");
+
+        Assert.assertNotNull("should not be null", binding.getValue());
+        Assert.assertEquals("should be equals", 3, this.count);
+
+        binding.invalidate();
+
+        Assert.assertNotNull("should not be null", binding.getValue());
+        Assert.assertEquals("should be equals", 3, this.count);
+    }
 }
