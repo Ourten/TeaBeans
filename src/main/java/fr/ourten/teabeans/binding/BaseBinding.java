@@ -46,10 +46,10 @@ public abstract class BaseBinding<T> implements Binding<T>
     @Override
     public T getValue()
     {
-        if (this.value == null || !this.isValid)
+        if (!this.isValid)
         {
             final T computed = this.computeValue();
-            if (!computed.equals(this.value))
+            if (computed == null && this.value != null || !computed.equals(this.value))
                 this.fireChangeListeners(this.value, computed);
 
             this.value = computed;
