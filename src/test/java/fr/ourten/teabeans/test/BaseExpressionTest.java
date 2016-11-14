@@ -12,6 +12,20 @@ import fr.ourten.teabeans.value.BaseProperty;
 public class BaseExpressionTest
 {
     @Test
+    public void testTransformExpression()
+    {
+        final BaseProperty<Integer> p1 = new BaseProperty<>(2, "integerPropertyTest1");
+
+        final BaseExpression<Integer> transform = BaseExpression.transform(p1, (n1) -> n1 * 4);
+
+        Assert.assertEquals("should be equals", (Integer) 8, transform.getValue());
+
+        p1.setValue(null);
+
+        Assert.assertNull("should be null", transform.getValue());
+    }
+
+    @Test
     public void testConstantExpression()
     {
         final BaseProperty<Integer> p1 = new BaseProperty<>(2, "integerPropertyTest1");

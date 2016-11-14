@@ -2,6 +2,7 @@ package fr.ourten.teabeans.binding;
 
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import fr.ourten.teabeans.function.HexaFunction;
@@ -30,19 +31,17 @@ public class BaseExpression<T> extends BaseBinding<T>
         return this.closure.get();
     }
 
-    @Override
-    public T getValue()
+    public static <A, R> BaseExpression<R> transform(final ObservableValue<A> obs,
+            final Function<? super A, ? extends R> closure)
     {
-        if (!this.isValid())
+        Objects.requireNonNull(obs, "Observables cannot be null!");
+        return BaseExpression.getExpression(() ->
         {
-            final T computed = this.computeValue();
-            if ((computed == null && this.value != null) || (computed != null && !computed.equals(this.value)))
-                this.fireChangeListeners(this.value, computed);
-
-            this.value = computed;
-            this.setValid(true);
-        }
-        return this.value;
+            if (obs.getValue() != null)
+                return closure.apply(obs.getValue());
+            else
+                return null;
+        }, obs);
     }
 
     public static <A, B, R> BaseExpression<R> constantCombine(final ObservableValue<A> obs1, final B constant,
