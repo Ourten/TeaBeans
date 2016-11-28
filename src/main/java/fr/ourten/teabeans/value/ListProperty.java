@@ -69,7 +69,7 @@ public class ListProperty<T> extends BaseProperty<List<T>> implements IListPrope
     {
         List<T> old = null;
         if (!this.valueChangeListeners.isEmpty())
-            old = Lists.newArrayList(this.value);
+            old = this.getValue();
 
         if (this.checker != null)
             element = this.checker.apply(null, element);
@@ -104,7 +104,7 @@ public class ListProperty<T> extends BaseProperty<List<T>> implements IListPrope
     {
         List<T> old = null;
         if (!this.valueChangeListeners.isEmpty())
-            old = Lists.newArrayList(this.value);
+            old = this.getValue();
         final T rtn = this.value.remove(index);
 
         this.fireInvalidationListeners();
@@ -125,7 +125,7 @@ public class ListProperty<T> extends BaseProperty<List<T>> implements IListPrope
         final T oldValue = this.value.get(index);
         List<T> old = null;
         if (!this.valueChangeListeners.isEmpty())
-            old = Lists.newArrayList(this.value);
+            old = this.getValue();
 
         if (this.checker != null)
             element = this.checker.apply(this.value.get(index), element);
@@ -149,7 +149,7 @@ public class ListProperty<T> extends BaseProperty<List<T>> implements IListPrope
         List<T> old = null;
 
         if (!this.valueChangeListeners.isEmpty())
-            old = Lists.newArrayList(this.value);
+            old = this.getValue();
         this.value.clear();
 
         this.fireInvalidationListeners();
