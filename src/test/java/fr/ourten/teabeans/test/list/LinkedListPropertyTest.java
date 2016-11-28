@@ -14,14 +14,12 @@ public class LinkedListPropertyTest
 {
     List<Integer>         list;
     ListProperty<Integer> property;
-    int                   count;
 
     @Before
     public void setup()
     {
         this.list = Arrays.asList(0, 2, 3, 5);
         this.property = new LinkedListProperty<>(this.list, "testIntegerListProperty");
-        this.count = 0;
     }
 
     @Test
