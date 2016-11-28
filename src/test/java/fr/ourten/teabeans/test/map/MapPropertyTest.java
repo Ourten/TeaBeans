@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.test.map;
 
 import java.util.Map;
 
@@ -10,13 +10,14 @@ import com.google.common.collect.Maps;
 
 import fr.ourten.teabeans.listener.MapValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
-import fr.ourten.teabeans.value.BaseMapProperty;
+import fr.ourten.teabeans.value.map.HashMapProperty;
+import fr.ourten.teabeans.value.map.MapProperty;
 
-public class BaseMapPropertyTest
+public class MapPropertyTest
 {
-    Map<String, Integer>             map;
-    BaseMapProperty<String, Integer> property;
-    int                              count;
+    Map<String, Integer>         map;
+    MapProperty<String, Integer> property;
+    int                          count;
 
     @Before
     public void setup()
@@ -27,33 +28,8 @@ public class BaseMapPropertyTest
         map.put("3", 3);
         map.put("5", 5);
 
-        this.property = new BaseMapProperty<>(this.map, "testIntegerMapProperty");
+        this.property = new HashMapProperty<>(this.map, "testIntegerMapProperty");
         this.count = 0;
-    }
-
-    @Test
-    public void testConstructorMapOnly()
-    {
-        String expected = "";
-
-        BaseMapProperty<String, Integer> property = new BaseMapProperty<>(this.map);
-
-        String actual = property.getName();
-
-        Assert.assertEquals(expected, actual);
-    }
-
-    @Test
-    public void testConstructorMapNull()
-    {
-        int expected = 0;
-
-        BaseMapProperty<String, Integer> property = new BaseMapProperty<>(null);
-
-        int actual = property.size();
-
-        Assert.assertEquals(expected, actual);
-        Assert.assertTrue(property.isEmpty());
     }
 
     @Test
@@ -113,8 +89,7 @@ public class BaseMapPropertyTest
         stringMap.put(1, "test2");
         stringMap.put(2, "test3");
 
-        final BaseMapProperty<Integer, String> stringProperty = new BaseMapProperty<>(stringMap,
-                "testStringMapProperty");
+        final MapProperty<Integer, String> stringProperty = new HashMapProperty<>(stringMap, "testStringMapProperty");
 
         Assert.assertFalse("should be false", stringProperty.removeValue("something"));
         Assert.assertTrue("should be true", stringProperty.removeValue("test2"));
@@ -172,7 +147,7 @@ public class BaseMapPropertyTest
     @Test
     public void testMapPropertyInvalidationListener()
     {
-        this.property.addListener((ValueInvalidationListener) observable -> BaseMapPropertyTest.this.count++);
+        this.property.addListener((ValueInvalidationListener) observable -> MapPropertyTest.this.count++);
 
         this.property.put("6", 6);
         Assert.assertEquals("should be equals", 1, this.count);

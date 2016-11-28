@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.test.list;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,45 +10,21 @@ import org.junit.Test;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
-import fr.ourten.teabeans.value.BaseListProperty;
+import fr.ourten.teabeans.value.list.ArrayListProperty;
+import fr.ourten.teabeans.value.list.ListProperty;
 
-public class BaseListPropertyTest
+public class ListPropertyTest
 {
-    List<Integer>             list;
-    BaseListProperty<Integer> property;
-    int                       count;
+    List<Integer>         list;
+    ListProperty<Integer> property;
+    int                   count;
 
     @Before
     public void setup()
     {
         this.list = Arrays.asList(0, 2, 3, 5);
-        this.property = new BaseListProperty<>(this.list, "testIntegerListProperty");
+        this.property = new ArrayListProperty<>(this.list, "testIntegerListProperty");
         this.count = 0;
-    }
-
-    @Test
-    public void testConstructorListOnly()
-    {
-        final String expected = "";
-
-        final BaseListProperty<Integer> property = new BaseListProperty<>(this.list);
-
-        final String actual = property.getName();
-
-        Assert.assertEquals(expected, actual);
-    }
-
-    @Test
-    public void testConstructorListNull()
-    {
-        final int expected = 0;
-
-        final BaseListProperty<Integer> property = new BaseListProperty<>(null);
-
-        final int actual = property.size();
-
-        Assert.assertEquals(expected, actual);
-        Assert.assertTrue(property.isEmpty());
     }
 
     @Test
@@ -83,7 +59,7 @@ public class BaseListPropertyTest
     public void testListRemoval()
     {
         final List<String> stringList = Arrays.asList("test1", "test2", "test3");
-        final BaseListProperty<String> stringProperty = new BaseListProperty<>(stringList, "testStringListProperty");
+        final ListProperty<String> stringProperty = new ArrayListProperty<>(stringList, "testStringListProperty");
 
         Assert.assertFalse("should be false", stringProperty.remove("something"));
         Assert.assertTrue("should be true", stringProperty.remove("test2"));
@@ -101,7 +77,7 @@ public class BaseListPropertyTest
     @Test
     public void testListPropertyInvalidationListener()
     {
-        this.property.addListener((ValueInvalidationListener) observable -> BaseListPropertyTest.this.count++);
+        this.property.addListener((ValueInvalidationListener) observable -> ListPropertyTest.this.count++);
 
         this.property.add(6);
         Assert.assertEquals("should be equals", 1, this.count);
@@ -162,7 +138,7 @@ public class BaseListPropertyTest
     public void testListPropertySort()
     {
         final List<Integer> unsorted = Arrays.asList(1, 5, 6, 4, 10);
-        final BaseListProperty<Integer> property = new BaseListProperty<>(unsorted, "testIntegerListProperty");
+        final ListProperty<Integer> property = new ArrayListProperty<>(unsorted, "testIntegerListProperty");
 
         property.sort();
 

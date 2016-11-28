@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.value;
+package fr.ourten.teabeans.value.list;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,8 +11,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.value.BaseProperty;
 
-public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListProperty<T>
+public class ListProperty<T> extends BaseProperty<List<T>> implements IListProperty<T>
 {
     private BiFunction<T, T, T>                                 checker;
 
@@ -22,17 +23,12 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
      */
     private final ArrayList<ListValueChangeListener<? super T>> listValueChangeListeners;
 
-    public BaseListProperty(final List<T> value, final String name)
+    protected ListProperty(final List<T> value, final String name)
     {
         super(value, name);
         this.listValueChangeListeners = Lists.newArrayList();
 
-        this.value = value != null ? Lists.newArrayList(value) : Lists.newArrayList();
-    }
-
-    public BaseListProperty(final List<T> value)
-    {
-        this(value, "");
+        this.value = value;
     }
 
     @Override
@@ -74,7 +70,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     {
         List<T> old = null;
         if (!this.valueChangeListeners.isEmpty())
-            old = Lists.newArrayList(this.value);
+            old = this.getValue();
 
         if (this.checker != null)
             element = this.checker.apply(null, element);
@@ -109,7 +105,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     {
         List<T> old = null;
         if (!this.valueChangeListeners.isEmpty())
-            old = Lists.newArrayList(this.value);
+            old = this.getValue();
         final T rtn = this.value.remove(index);
 
         this.fireInvalidationListeners();
@@ -130,7 +126,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
         final T oldValue = this.value.get(index);
         List<T> old = null;
         if (!this.valueChangeListeners.isEmpty())
-            old = Lists.newArrayList(this.value);
+            old = this.getValue();
 
         if (this.checker != null)
             element = this.checker.apply(this.value.get(index), element);
@@ -154,7 +150,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
         List<T> old = null;
 
         if (!this.valueChangeListeners.isEmpty())
-            old = Lists.newArrayList(this.value);
+            old = this.getValue();
         this.value.clear();
 
         this.fireInvalidationListeners();

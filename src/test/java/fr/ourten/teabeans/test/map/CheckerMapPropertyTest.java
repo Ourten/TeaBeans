@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.test.map;
 
 import java.util.function.BiFunction;
 
@@ -8,16 +8,17 @@ import org.junit.Test;
 
 import com.google.common.collect.Maps;
 
-import fr.ourten.teabeans.value.BaseMapProperty;
+import fr.ourten.teabeans.value.map.HashMapProperty;
+import fr.ourten.teabeans.value.map.MapProperty;
 
 public class CheckerMapPropertyTest
 {
-    BaseMapProperty<Integer, String> property;
+    MapProperty<Integer, String> property;
 
     @Before
     public void setup()
     {
-        this.property = new BaseMapProperty<Integer, String>(Maps.newHashMap(), "test");
+        this.property = new HashMapProperty<Integer, String>(Maps.newHashMap(), "test");
     }
 
     @Test
