@@ -38,9 +38,6 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements IM
         super(value, name);
         this.mapValueChangeListeners = Lists.newArrayList();
 
-        // Maps.newHashMap(map);
-        // Maps.newLinkedHashMap(map);
-        // Maps.newTreeMap(map);
         this.value = value != null ? Maps.newHashMap(value) : Maps.newHashMap();
     }
 
@@ -107,7 +104,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements IM
     {
         Map<K, T> old = null;
         if (!this.valueChangeListeners.isEmpty())
-            old = Maps.newHashMap(this.value);
+            old = getValue();
 
         if (this.checker != null)
             value = this.checker.apply(null, value);
@@ -172,7 +169,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements IM
         Map<K, T> old = null;
 
         if (!this.valueChangeListeners.isEmpty())
-            old = Maps.newHashMap(this.value);
+            old = getValue();
         final T rtn = this.value.remove(key);
 
         this.fireInvalidationListeners();
@@ -187,7 +184,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements IM
         final T oldValue = this.value.get(key);
         Map<K, T> old = null;
         if (!this.valueChangeListeners.isEmpty())
-            old = Maps.newHashMap(this.value);
+            old = getValue();
 
         if (this.checker != null)
             element = this.checker.apply(this.value.get(key), element);
