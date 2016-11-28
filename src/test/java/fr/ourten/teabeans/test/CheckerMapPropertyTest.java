@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Maps;
 
-import fr.ourten.teabeans.value.BaseMapProperty;
+import fr.ourten.teabeans.value.map.BaseMapProperty;
 
 public class CheckerMapPropertyTest
 {

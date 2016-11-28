@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.value;
+package fr.ourten.teabeans.value.map;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import fr.ourten.teabeans.listener.MapValueChangeListener;
+import fr.ourten.teabeans.value.BaseProperty;
 
 /**
  * @author Phenix246
@@ -19,7 +20,7 @@ import fr.ourten.teabeans.listener.MapValueChangeListener;
  *         BaseMapProperty is an object that allow to put different element
  *         together with a specific key value. (@see {@link Map}).
  */
-public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements MapProperty<K, T>
+public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements IMapProperty<K, T>
 {
     /**
      * The checker use to verify the value of a element of the property
@@ -37,6 +38,9 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
         super(value, name);
         this.mapValueChangeListeners = Lists.newArrayList();
 
+        // Maps.newHashMap(map);
+        // Maps.newLinkedHashMap(map);
+        // Maps.newTreeMap(map);
         this.value = value != null ? Maps.newHashMap(value) : Maps.newHashMap();
     }
 

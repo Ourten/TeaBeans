@@ -1,12 +1,13 @@
-package fr.ourten.teabeans.value;
+package fr.ourten.teabeans.value.map;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 import fr.ourten.teabeans.listener.MapValueChangeListener;
+import fr.ourten.teabeans.value.IProperty;
 
-public interface MapProperty<K, T> extends IProperty<Map<K, T>>
+public interface IMapProperty<K, T> extends IProperty<Map<K, T>>
 {
     void addListener(MapValueChangeListener<K, ? super T> listener);
 

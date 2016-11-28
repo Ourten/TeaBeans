@@ -10,7 +10,7 @@ import com.google.common.collect.Maps;
 
 import fr.ourten.teabeans.listener.MapValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
-import fr.ourten.teabeans.value.BaseMapProperty;
+import fr.ourten.teabeans.value.map.BaseMapProperty;
 
 public class BaseMapPropertyTest
 {
