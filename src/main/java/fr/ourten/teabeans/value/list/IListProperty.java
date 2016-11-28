@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.value;
+package fr.ourten.teabeans.value.list;
 
 import java.text.Collator;
 import java.util.Collection;
@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.value.IProperty;
 
 public interface IListProperty<T> extends IProperty<List<T>>
 {

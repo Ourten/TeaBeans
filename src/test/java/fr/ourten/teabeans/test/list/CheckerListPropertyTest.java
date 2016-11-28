@@ -8,8 +8,8 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import fr.ourten.teabeans.value.ArrayListProperty;
-import fr.ourten.teabeans.value.ListProperty;
+import fr.ourten.teabeans.value.list.ArrayListProperty;
+import fr.ourten.teabeans.value.list.ListProperty;
 
 public class CheckerListPropertyTest
 {

@@ -7,8 +7,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.ourten.teabeans.value.ArrayListProperty;
-import fr.ourten.teabeans.value.ListProperty;
+import fr.ourten.teabeans.value.list.ArrayListProperty;
+import fr.ourten.teabeans.value.list.ListProperty;
 
 public class ArrayListPropertyTest
 {

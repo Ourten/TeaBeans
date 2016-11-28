@@ -7,8 +7,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.ourten.teabeans.value.LinkedListProperty;
-import fr.ourten.teabeans.value.ListProperty;
+import fr.ourten.teabeans.value.list.LinkedListProperty;
+import fr.ourten.teabeans.value.list.ListProperty;
 
 public class LinkedListPropertyTest
 {

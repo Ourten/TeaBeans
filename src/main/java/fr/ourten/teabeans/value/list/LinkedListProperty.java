@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.value;
+package fr.ourten.teabeans.value.list;
 
 import java.util.List;
 

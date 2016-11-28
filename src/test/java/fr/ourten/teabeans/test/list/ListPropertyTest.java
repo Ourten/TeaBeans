@@ -10,8 +10,8 @@ import org.junit.Test;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
-import fr.ourten.teabeans.value.ArrayListProperty;
-import fr.ourten.teabeans.value.ListProperty;
+import fr.ourten.teabeans.value.list.ArrayListProperty;
+import fr.ourten.teabeans.value.list.ListProperty;
 
 public class ListPropertyTest
 {

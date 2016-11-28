@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.value;
+package fr.ourten.teabeans.value.list;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.value.BaseProperty;
 
 public class ListProperty<T> extends BaseProperty<List<T>> implements IListProperty<T>
 {
