@@ -20,7 +20,7 @@ import fr.ourten.teabeans.value.BaseProperty;
  *         BaseMapProperty is an object that allow to put different element
  *         together with a specific key value. (@see {@link Map}).
  */
-public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements IMapProperty<K, T>
+public class MapProperty<K, T> extends BaseProperty<Map<K, T>> implements IMapProperty<K, T>
 {
     /**
      * The checker use to verify the value of a element of the property
@@ -33,17 +33,12 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements IM
      */
     private final ArrayList<MapValueChangeListener<K, ? super T>> mapValueChangeListeners;
 
-    public BaseMapProperty(final Map<K, T> value, final String name)
+    protected MapProperty(final Map<K, T> value, final String name)
     {
         super(value, name);
         this.mapValueChangeListeners = Lists.newArrayList();
 
-        this.value = value != null ? Maps.newHashMap(value) : Maps.newHashMap();
-    }
-
-    public BaseMapProperty(final Map<K, T> value)
-    {
-        this(value, "");
+        this.value = value;
     }
 
     /**
