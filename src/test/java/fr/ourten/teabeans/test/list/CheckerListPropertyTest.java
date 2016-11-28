@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.test.list;
 
 import java.util.function.BiFunction;
 
@@ -8,16 +8,17 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import fr.ourten.teabeans.value.BaseListProperty;
+import fr.ourten.teabeans.value.ArrayListProperty;
+import fr.ourten.teabeans.value.ListProperty;
 
 public class CheckerListPropertyTest
 {
-    BaseListProperty<String> property;
+    ListProperty<String> property;
 
     @Before
     public void setup()
     {
-        this.property = new BaseListProperty<String>(Lists.newArrayList(), "test");
+        this.property = new ArrayListProperty<String>(Lists.newArrayList(), "test");
     }
 
     @Test
