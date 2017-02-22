@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -14,6 +15,7 @@ import fr.ourten.teabeans.listener.ListValueChangeListener;
 
 public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListProperty<T>
 {
+    private Supplier<List<T>>                                   listSupplier;
     private BiFunction<T, T, T>                                 checker;
 
     /**
@@ -22,12 +24,25 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
      */
     private final ArrayList<ListValueChangeListener<? super T>> listValueChangeListeners;
 
-    public BaseListProperty(final List<T> value, final String name)
+    public BaseListProperty(final Supplier<List<T>> listSupplier, final List<T> value, final String name)
     {
         super(value, name);
         this.listValueChangeListeners = Lists.newArrayList();
 
-        this.value = value != null ? Lists.newArrayList(value) : Lists.newArrayList();
+        this.value = listSupplier.get();
+        if (value != null)
+            this.value.addAll(value);
+        this.listSupplier = listSupplier;
+    }
+
+    public BaseListProperty(final List<T> value, final String name)
+    {
+        this(() -> Lists.newArrayList(), value, name);
+    }
+
+    public BaseListProperty(final Supplier<List<T>> listSupplier, final List<T> value)
+    {
+        this(listSupplier, value, "");
     }
 
     public BaseListProperty(final List<T> value)
@@ -74,7 +89,10 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     {
         List<T> old = null;
         if (!this.valueChangeListeners.isEmpty())
-            old = Lists.newArrayList(this.value);
+        {
+            old = this.listSupplier.get();
+            old.addAll(this.value);
+        }
 
         if (this.checker != null)
             element = this.checker.apply(null, element);
@@ -109,7 +127,10 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     {
         List<T> old = null;
         if (!this.valueChangeListeners.isEmpty())
-            old = Lists.newArrayList(this.value);
+        {
+            old = this.listSupplier.get();
+            old.addAll(this.value);
+        }
         final T rtn = this.value.remove(index);
 
         this.fireInvalidationListeners();
@@ -130,7 +151,10 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
         final T oldValue = this.value.get(index);
         List<T> old = null;
         if (!this.valueChangeListeners.isEmpty())
-            old = Lists.newArrayList(this.value);
+        {
+            old = this.listSupplier.get();
+            old.addAll(this.value);
+        }
 
         if (this.checker != null)
             element = this.checker.apply(this.value.get(index), element);
@@ -154,7 +178,10 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
         List<T> old = null;
 
         if (!this.valueChangeListeners.isEmpty())
-            old = Lists.newArrayList(this.value);
+        {
+            old = this.listSupplier.get();
+            old.addAll(this.value);
+        }
         this.value.clear();
 
         this.fireInvalidationListeners();
@@ -164,7 +191,8 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     @Override
     public void sort(final Comparator<? super T> comparator)
     {
-        final ArrayList<T> temp = Lists.newArrayList(this.value);
+        final List<T> temp = this.listSupplier.get();
+        temp.addAll(this.value);
         temp.sort(comparator);
 
         this.setValue(temp);

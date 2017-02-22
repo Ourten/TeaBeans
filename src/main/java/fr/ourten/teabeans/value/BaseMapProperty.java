@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -15,6 +16,7 @@ import fr.ourten.teabeans.listener.MapValueChangeListener;
 
 public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements MapProperty<K, T>
 {
+    private Supplier<Map<K, T>>                                   mapSupplier;
     private BiFunction<T, T, T>                                   checker;
 
     /**
@@ -23,12 +25,25 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
      */
     private final ArrayList<MapValueChangeListener<K, ? super T>> mapValueChangeListeners;
 
-    public BaseMapProperty(final Map<K, T> value, final String name)
+    public BaseMapProperty(final Supplier<Map<K, T>> mapSupplier, final Map<K, T> value, final String name)
     {
         super(value, name);
         this.mapValueChangeListeners = Lists.newArrayList();
 
-        this.value = value != null ? Maps.newHashMap(value) : Maps.newHashMap();
+        this.value = mapSupplier.get();
+        if (value != null)
+            this.value.putAll(value);
+        this.mapSupplier = mapSupplier;
+    }
+
+    public BaseMapProperty(final Map<K, T> value, final String name)
+    {
+        this(() -> Maps.newHashMap(), value, name);
+    }
+
+    public BaseMapProperty(final Supplier<Map<K, T>> mapSupplier, final Map<K, T> value)
+    {
+        this(mapSupplier, value, "");
     }
 
     public BaseMapProperty(final Map<K, T> value)
@@ -82,7 +97,10 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     {
         Map<K, T> old = null;
         if (!this.valueChangeListeners.isEmpty())
-            old = Maps.newHashMap(this.value);
+        {
+            old = this.mapSupplier.get();
+            old.putAll(this.value);
+        }
 
         if (this.checker != null)
             value = this.checker.apply(null, value);
@@ -138,7 +156,10 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
         Map<K, T> old = null;
 
         if (!this.valueChangeListeners.isEmpty())
-            old = Maps.newHashMap(this.value);
+        {
+            old = this.mapSupplier.get();
+            old.putAll(this.value);
+        }
         final T rtn = this.value.remove(key);
 
         this.fireInvalidationListeners();
@@ -153,7 +174,10 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
         final T oldValue = this.value.get(key);
         Map<K, T> old = null;
         if (!this.valueChangeListeners.isEmpty())
-            old = Maps.newHashMap(this.value);
+        {
+            old = this.mapSupplier.get();
+            old.putAll(this.value);
+        }
 
         if (this.checker != null)
             element = this.checker.apply(this.value.get(key), element);
@@ -169,7 +193,17 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     @Override
     public void clear()
     {
-        this.setValue(Maps.newHashMap());
+        Map<K, T> old = null;
+
+        if (!this.valueChangeListeners.isEmpty())
+        {
+            old = this.mapSupplier.get();
+            old.putAll(this.value);
+        }
+        this.value.clear();
+
+        this.fireInvalidationListeners();
+        this.fireChangeListeners(old, this.value);
     }
 
     @Override
