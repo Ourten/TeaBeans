@@ -1,6 +1,7 @@
 package fr.ourten.teabeans.test;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import fr.ourten.teabeans.value.BaseProperty;
@@ -12,6 +13,14 @@ import fr.ourten.teabeans.value.WritableValue;
  */
 public class ObservableValueTest
 {
+    private int count;
+
+    @Before
+    public void setup()
+    {
+        this.count = 0;
+    }
+
     @Test
     public void testPresentCheck()
     {
@@ -22,5 +31,15 @@ public class ObservableValueTest
         ((WritableValue<Integer>) obs).setValue(null);
 
         Assert.assertFalse("should be false", obs.isPresent());
+
+        obs.ifPresent(i -> this.count++);
+
+        Assert.assertEquals("should be equals", 0, this.count);
+
+        ((WritableValue<Integer>) obs).setValue(5);
+
+        obs.ifPresent(i -> this.count++);
+
+        Assert.assertEquals("should be equals", 1, this.count);
     }
 }

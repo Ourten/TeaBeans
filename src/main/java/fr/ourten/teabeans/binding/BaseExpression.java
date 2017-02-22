@@ -39,8 +39,7 @@ public class BaseExpression<T> extends BaseBinding<T>
         {
             if (obs.getValue() != null)
                 return closure.apply(obs.getValue());
-            else
-                return null;
+            return null;
         }, obs);
     }
 
@@ -53,8 +52,7 @@ public class BaseExpression<T> extends BaseBinding<T>
         {
             if (obs1.getValue() != null && constant != null)
                 return closure.apply(obs1.getValue(), constant);
-            else
-                return null;
+            return null;
         }, obs1);
     }
 
@@ -68,8 +66,7 @@ public class BaseExpression<T> extends BaseBinding<T>
         {
             if (obs1.getValue() != null && obs2.getValue() != null)
                 return closure.apply(obs1.getValue(), obs2.getValue());
-            else
-                return null;
+            return null;
         }, obs1, obs2);
     }
 
@@ -85,8 +82,7 @@ public class BaseExpression<T> extends BaseBinding<T>
         {
             if (obs1.getValue() != null && obs2.getValue() != null && obs3.getValue() != null)
                 return closure.apply(obs1.getValue(), obs2.getValue(), obs3.getValue());
-            else
-                return null;
+            return null;
         }, obs1, obs2, obs3);
     }
 
@@ -104,8 +100,7 @@ public class BaseExpression<T> extends BaseBinding<T>
             if (obs1.getValue() != null && obs2.getValue() != null && obs3.getValue() != null
                     && obs4.getValue() != null)
                 return closure.apply(obs1.getValue(), obs2.getValue(), obs3.getValue(), obs4.getValue());
-            else
-                return null;
+            return null;
         }, obs1, obs2, obs3, obs4);
     }
 
@@ -126,8 +121,7 @@ public class BaseExpression<T> extends BaseBinding<T>
                     && obs5.getValue() != null)
                 return closure.apply(obs1.getValue(), obs2.getValue(), obs3.getValue(), obs4.getValue(),
                         obs5.getValue());
-            else
-                return null;
+            return null;
         }, obs1, obs2, obs3, obs4, obs5);
     }
 
@@ -149,8 +143,7 @@ public class BaseExpression<T> extends BaseBinding<T>
                     && obs5.getValue() != null && obs6.getValue() != null)
                 return closure.apply(obs1.getValue(), obs2.getValue(), obs3.getValue(), obs4.getValue(),
                         obs5.getValue(), obs6.getValue());
-            else
-                return null;
+            return null;
         }, obs1, obs2, obs3, obs4, obs5, obs6);
     }
 

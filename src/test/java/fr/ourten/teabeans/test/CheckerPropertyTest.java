@@ -15,14 +15,14 @@ public class CheckerPropertyTest
     @Before
     public void setup()
     {
-        this.property = new BaseProperty<String>("test");
+        this.property = new BaseProperty<>("test");
     }
 
     @Test
     public void testCheckerNull()
     {
-        BiFunction<String, String, String> expected = null;
-        BiFunction<String, String, String> actual = this.property.getChecker();
+        final BiFunction<String, String, String> expected = null;
+        final BiFunction<String, String, String> actual = this.property.getChecker();
 
         Assert.assertEquals(actual, expected);
     }
@@ -30,14 +30,14 @@ public class CheckerPropertyTest
     @Test
     public void testCheckerNotNull()
     {
-        BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
+        final BiFunction<String, String, String> checker = (final String oldValue, final String newValue) ->
         {
             return newValue != null && !newValue.isEmpty() ? newValue : oldValue;
         };
 
         this.property.setChecker(checker);
-        BiFunction<String, String, String> expected = checker;
-        BiFunction<String, String, String> actual = this.property.getChecker();
+        final BiFunction<String, String, String> expected = checker;
+        final BiFunction<String, String, String> actual = this.property.getChecker();
 
         Assert.assertEquals(actual, expected);
     }
@@ -51,19 +51,19 @@ public class CheckerPropertyTest
     @Test
     public void testCheckerValid()
     {
-        BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
+        final BiFunction<String, String, String> checker = (final String oldValue, final String newValue) ->
         {
             return newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
         };
 
-        String expected = "42";
+        final String expected = "42";
 
         this.property.setValue("0");
 
         this.property.setChecker(checker);
         this.property.setValue("42");
 
-        String actual = this.property.getValue();
+        final String actual = this.property.getValue();
 
         Assert.assertEquals(actual, expected);
     }
@@ -71,19 +71,19 @@ public class CheckerPropertyTest
     @Test
     public void testCheckerNotValid1()
     {
-        BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
+        final BiFunction<String, String, String> checker = (final String oldValue, final String newValue) ->
         {
             return newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
         };
 
-        String expected = "0";
+        final String expected = "0";
 
         this.property.setValue("0");
 
         this.property.setChecker(checker);
         this.property.setValue("");
 
-        String actual = this.property.getValue();
+        final String actual = this.property.getValue();
 
         Assert.assertEquals(actual, expected);
     }
@@ -91,19 +91,19 @@ public class CheckerPropertyTest
     @Test
     public void testCheckerNotValid2()
     {
-        BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
+        final BiFunction<String, String, String> checker = (final String oldValue, final String newValue) ->
         {
             return newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
         };
 
-        String expected = "0";
+        final String expected = "0";
 
         this.property.setValue("0");
 
         this.property.setChecker(checker);
         this.property.setValue(null);
 
-        String actual = this.property.getValue();
+        final String actual = this.property.getValue();
 
         Assert.assertEquals(actual, expected);
     }
@@ -111,19 +111,19 @@ public class CheckerPropertyTest
     @Test
     public void testCheckerNotValid3()
     {
-        BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
+        final BiFunction<String, String, String> checker = (final String oldValue, final String newValue) ->
         {
             return newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
         };
 
-        String expected = "0";
+        final String expected = "0";
 
         this.property.setValue("0");
 
         this.property.setChecker(checker);
         this.property.setValue("2");
 
-        String actual = this.property.getValue();
+        final String actual = this.property.getValue();
 
         Assert.assertEquals(actual, expected);
     }

@@ -2,7 +2,7 @@ package fr.ourten.teabeans.value;
 
 import java.util.NoSuchElementException;
 
-public interface IProperty<T> extends ObservableValue<T>, WritableValue<T>
+public interface IProperty<T> extends WritableValue<T>
 {
     String getName();
 
