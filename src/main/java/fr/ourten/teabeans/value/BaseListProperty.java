@@ -56,6 +56,11 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
         return ImmutableList.copyOf(this.value);
     }
 
+    public List<T> getModifiableValue()
+    {
+        return this.value;
+    }
+
     @Override
     public void addListener(final ListValueChangeListener<? super T> listener)
     {
@@ -88,7 +93,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     private void add(T element, final Consumer<T> action)
     {
         List<T> old = null;
-        if (!this.valueChangeListeners.isEmpty())
+        if (!this.valueChangeListeners.isEmpty() || !this.listValueChangeListeners.isEmpty())
         {
             old = this.listSupplier.get();
             old.addAll(this.value);
@@ -126,7 +131,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     public T remove(final int index)
     {
         List<T> old = null;
-        if (!this.valueChangeListeners.isEmpty())
+        if (!this.valueChangeListeners.isEmpty() || !this.listValueChangeListeners.isEmpty())
         {
             old = this.listSupplier.get();
             old.addAll(this.value);
@@ -150,7 +155,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     {
         final T oldValue = this.value.get(index);
         List<T> old = null;
-        if (!this.valueChangeListeners.isEmpty())
+        if (!this.valueChangeListeners.isEmpty() || !this.listValueChangeListeners.isEmpty())
         {
             old = this.listSupplier.get();
             old.addAll(this.value);
@@ -177,7 +182,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     {
         List<T> old = null;
 
-        if (!this.valueChangeListeners.isEmpty())
+        if (!this.valueChangeListeners.isEmpty() || !this.listValueChangeListeners.isEmpty())
         {
             old = this.listSupplier.get();
             old.addAll(this.value);
@@ -186,6 +191,9 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
 
         this.fireInvalidationListeners();
         this.fireChangeListeners(old, this.value);
+
+        if (old != null)
+            old.forEach(oldValue -> this.fireListChangeListeners(oldValue, null));
     }
 
     @Override

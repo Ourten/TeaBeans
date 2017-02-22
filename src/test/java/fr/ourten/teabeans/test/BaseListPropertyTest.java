@@ -2,6 +2,7 @@ package fr.ourten.teabeans.test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Assert;
@@ -49,6 +50,14 @@ public class BaseListPropertyTest
 
         Assert.assertEquals(expected, actual);
         Assert.assertTrue(property.isEmpty());
+    }
+
+    @Test
+    public void testConstructorSupplier()
+    {
+        final BaseListProperty<Integer> property = new BaseListProperty<>(() -> new LinkedList<>(), null);
+
+        Assert.assertTrue("should be true", property.getModifiableValue() instanceof LinkedList);
     }
 
     @Test
@@ -156,6 +165,21 @@ public class BaseListPropertyTest
         this.property.addAll(Arrays.asList(18, 18, 18));
         Assert.assertEquals("should be equals", 5, this.count);
         this.property.removeListener(addListener);
+
+        this.count = 0;
+        this.property.clear();
+        this.property.addAll(Arrays.asList(18, 18, 18, 18, 18));
+        final ListValueChangeListener<Integer> clearListener = (observable, oldValue, newValue) ->
+        {
+            Assert.assertNotNull("should not be null", oldValue);
+            Assert.assertNull("should be null", newValue);
+            Assert.assertEquals("should be equals", (Integer) 18, oldValue);
+            this.count++;
+        };
+        this.property.addListener(clearListener);
+
+        this.property.clear();
+        Assert.assertEquals("should be equals", 5, this.count);
     }
 
     @Test

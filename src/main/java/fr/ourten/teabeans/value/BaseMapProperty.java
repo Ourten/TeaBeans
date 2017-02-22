@@ -57,6 +57,11 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
         return ImmutableMap.copyOf(this.value);
     }
 
+    public Map<K, T> getModifiableValue()
+    {
+        return this.value;
+    }
+
     @Override
     public void addListener(final MapValueChangeListener<K, ? super T> listener)
     {
@@ -96,7 +101,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     public T put(final K key, T value)
     {
         Map<K, T> old = null;
-        if (!this.valueChangeListeners.isEmpty())
+        if (!this.valueChangeListeners.isEmpty() || !this.mapValueChangeListeners.isEmpty())
         {
             old = this.mapSupplier.get();
             old.putAll(this.value);
@@ -155,7 +160,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
         final T oldValue = this.value.get(key);
         Map<K, T> old = null;
 
-        if (!this.valueChangeListeners.isEmpty())
+        if (!this.valueChangeListeners.isEmpty() || !this.mapValueChangeListeners.isEmpty())
         {
             old = this.mapSupplier.get();
             old.putAll(this.value);
@@ -173,7 +178,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     {
         final T oldValue = this.value.get(key);
         Map<K, T> old = null;
-        if (!this.valueChangeListeners.isEmpty())
+        if (!this.valueChangeListeners.isEmpty() || !this.mapValueChangeListeners.isEmpty())
         {
             old = this.mapSupplier.get();
             old.putAll(this.value);
@@ -195,7 +200,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     {
         Map<K, T> old = null;
 
-        if (!this.valueChangeListeners.isEmpty())
+        if (!this.valueChangeListeners.isEmpty() || !this.mapValueChangeListeners.isEmpty())
         {
             old = this.mapSupplier.get();
             old.putAll(this.value);
@@ -204,6 +209,8 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
 
         this.fireInvalidationListeners();
         this.fireChangeListeners(old, this.value);
+        if (old != null)
+            old.forEach((key, oldValue) -> this.fireListChangeListeners(key, oldValue, null));
     }
 
     @Override
