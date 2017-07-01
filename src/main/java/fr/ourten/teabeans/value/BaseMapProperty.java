@@ -1,18 +1,11 @@
 package fr.ourten.teabeans.value;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
+import fr.ourten.teabeans.listener.MapValueChangeListener;
+
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import fr.ourten.teabeans.listener.MapValueChangeListener;
 
 public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements MapProperty<K, T>
 {
@@ -28,7 +21,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     public BaseMapProperty(final Supplier<Map<K, T>> mapSupplier, final Map<K, T> value, final String name)
     {
         super(value, name);
-        this.mapValueChangeListeners = Lists.newArrayList();
+        this.mapValueChangeListeners = new ArrayList<>();
 
         this.value = mapSupplier.get();
         if (value != null)
@@ -38,7 +31,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
 
     public BaseMapProperty(final Map<K, T> value, final String name)
     {
-        this(() -> Maps.newHashMap(), value, name);
+        this(HashMap::new, value, name);
     }
 
     public BaseMapProperty(final Supplier<Map<K, T>> mapSupplier, final Map<K, T> value)
@@ -52,9 +45,9 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     }
 
     @Override
-    public ImmutableMap<K, T> getValue()
+    public Map<K, T> getValue()
     {
-        return ImmutableMap.copyOf(this.value);
+        return Collections.unmodifiableMap(this.value);
     }
 
     public Map<K, T> getModifiableValue()

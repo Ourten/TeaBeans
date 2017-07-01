@@ -1,14 +1,12 @@
 package fr.ourten.teabeans.test;
 
-import java.util.function.BiFunction;
-
+import fr.ourten.teabeans.value.BaseListProperty;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-
-import fr.ourten.teabeans.value.BaseListProperty;
+import java.util.ArrayList;
+import java.util.function.BiFunction;
 
 public class CheckerListPropertyTest
 {
@@ -17,7 +15,7 @@ public class CheckerListPropertyTest
     @Before
     public void setup()
     {
-        this.property = new BaseListProperty<String>(Lists.newArrayList(), "test");
+        this.property = new BaseListProperty<>(new ArrayList<>(), "test");
     }
 
     @Test
@@ -33,9 +31,7 @@ public class CheckerListPropertyTest
     public void testCheckerNotNull()
     {
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
-        {
-            return newValue != null && !newValue.isEmpty() ? newValue : oldValue;
-        };
+                newValue != null && !newValue.isEmpty() ? newValue : oldValue;
 
         this.property.setElementChecker(checker);
         BiFunction<String, String, String> expected = checker;
@@ -54,9 +50,7 @@ public class CheckerListPropertyTest
     public void testCheckerAddValid()
     {
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
-        {
-            return newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
-        };
+                newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
         String expected = "42";
 
@@ -72,9 +66,7 @@ public class CheckerListPropertyTest
     public void testCheckerAddNotValid1()
     {
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
-        {
-            return newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
-        };
+                newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
         String expected = null;
 
@@ -90,9 +82,7 @@ public class CheckerListPropertyTest
     public void testCheckerAddNotValid2()
     {
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
-        {
-            return newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
-        };
+                newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
         String expected = null;
 
@@ -108,9 +98,7 @@ public class CheckerListPropertyTest
     public void testCheckerAddNotValid3()
     {
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
-        {
-            return newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
-        };
+                newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
         String expected = null;
 
@@ -126,9 +114,7 @@ public class CheckerListPropertyTest
     public void testCheckerSetValid()
     {
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
-        {
-            return newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
-        };
+                newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
         String expected = "42";
         this.property.add("0");
@@ -145,9 +131,7 @@ public class CheckerListPropertyTest
     public void testCheckerSetNotValid1()
     {
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
-        {
-            return newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
-        };
+                newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
         String expected = "0";
         this.property.add("0");
@@ -164,9 +148,7 @@ public class CheckerListPropertyTest
     public void testCheckerSetNotValid2()
     {
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
-        {
-            return newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
-        };
+                newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
         String expected = "0";
         this.property.add("0");
@@ -183,9 +165,7 @@ public class CheckerListPropertyTest
     public void testCheckerSetNotValid3()
     {
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
-        {
-            return newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
-        };
+                newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
         String expected = "0";
         this.property.add("0");

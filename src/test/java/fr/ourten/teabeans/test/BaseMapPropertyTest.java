@@ -1,17 +1,15 @@
 package fr.ourten.teabeans.test;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
+import fr.ourten.teabeans.listener.MapValueChangeListener;
+import fr.ourten.teabeans.listener.ValueInvalidationListener;
+import fr.ourten.teabeans.value.BaseMapProperty;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.Maps;
-
-import fr.ourten.teabeans.listener.MapValueChangeListener;
-import fr.ourten.teabeans.listener.ValueInvalidationListener;
-import fr.ourten.teabeans.value.BaseMapProperty;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class BaseMapPropertyTest
 {
@@ -22,7 +20,7 @@ public class BaseMapPropertyTest
     @Before
     public void setup()
     {
-        this.map = Maps.newHashMap();
+        this.map = new HashMap<>();
         this.map.put("0", 0);
         this.map.put("2", 2);
         this.map.put("3", 3);
@@ -60,7 +58,7 @@ public class BaseMapPropertyTest
     @Test
     public void testConstructorSupplier()
     {
-        final BaseMapProperty<String, Integer> property = new BaseMapProperty<>(() -> Maps.newLinkedHashMap(), null);
+        final BaseMapProperty<String, Integer> property = new BaseMapProperty<>(LinkedHashMap::new, null);
 
         Assert.assertTrue("should be true", property.getModifiableValue() instanceof LinkedHashMap);
     }
@@ -117,7 +115,7 @@ public class BaseMapPropertyTest
     @Test
     public void testMapRemoval()
     {
-        final Map<Integer, String> stringMap = Maps.newHashMap();
+        final Map<Integer, String> stringMap = new HashMap<>();
         stringMap.put(0, "test1");
         stringMap.put(1, "test2");
         stringMap.put(2, "test3");
@@ -227,7 +225,7 @@ public class BaseMapPropertyTest
             Assert.assertEquals("should be equals", (Integer) 18, newValue);
         };
 
-        final Map<String, Integer> tempMap = Maps.newHashMap();
+        final Map<String, Integer> tempMap = new HashMap<>();
         tempMap.put("42", 18);
         tempMap.put("43", 18);
         tempMap.put("44", 18);

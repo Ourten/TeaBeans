@@ -1,17 +1,11 @@
 package fr.ourten.teabeans.value;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import fr.ourten.teabeans.listener.ListValueChangeListener;
+
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
-import fr.ourten.teabeans.listener.ListValueChangeListener;
 
 public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListProperty<T>
 {
@@ -27,7 +21,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     public BaseListProperty(final Supplier<List<T>> listSupplier, final List<T> value, final String name)
     {
         super(value, name);
-        this.listValueChangeListeners = Lists.newArrayList();
+        this.listValueChangeListeners = new ArrayList<>();
 
         this.value = listSupplier.get();
         if (value != null)
@@ -37,7 +31,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
 
     public BaseListProperty(final List<T> value, final String name)
     {
-        this(() -> Lists.newArrayList(), value, name);
+        this(ArrayList::new, value, name);
     }
 
     public BaseListProperty(final Supplier<List<T>> listSupplier, final List<T> value)
@@ -51,9 +45,9 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     }
 
     @Override
-    public ImmutableList<T> getValue()
+    public List<T> getValue()
     {
-        return ImmutableList.copyOf(this.value);
+        return Collections.unmodifiableList(this.value);
     }
 
     public List<T> getModifiableValue()

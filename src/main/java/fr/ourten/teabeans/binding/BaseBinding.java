@@ -1,20 +1,18 @@
 package fr.ourten.teabeans.binding;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import com.google.common.collect.Lists;
-
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.value.Observable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 public abstract class BaseBinding<T> implements Binding<T>
 {
-    private final ArrayList<Observable>                     dependencies               = Lists.newArrayList();
-    private final ArrayList<ValueChangeListener<? super T>> valueChangeListeners       = Lists.newArrayList();
-    private final ArrayList<ValueInvalidationListener>      valueInvalidationListeners = Lists.newArrayList();
+    private final ArrayList<Observable>                     dependencies               = new ArrayList<>();
+    private final ArrayList<ValueChangeListener<? super T>> valueChangeListeners       = new ArrayList<>();
+    private final ArrayList<ValueInvalidationListener>      valueInvalidationListeners = new ArrayList<>();
     protected T                                             value;
     private boolean                                         isValid;
     private ValueInvalidationListener                       listener;

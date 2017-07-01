@@ -1,14 +1,12 @@
 package fr.ourten.teabeans.value;
 
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.function.BiFunction;
-
-import com.google.common.collect.Lists;
-
 import fr.ourten.teabeans.binding.BidirectionalBinding;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
+
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.function.BiFunction;
 
 public class BaseProperty<T> implements IProperty<T>
 {
@@ -31,8 +29,8 @@ public class BaseProperty<T> implements IProperty<T>
 
     public BaseProperty(final T value, final String name)
     {
-        this.valueChangeListeners = Lists.newArrayList();
-        this.valueInvalidationListeners = Lists.newArrayList();
+        this.valueChangeListeners = new ArrayList<>();
+        this.valueInvalidationListeners = new ArrayList<>();
 
         this.isObserving = false;
         this.value = value;
