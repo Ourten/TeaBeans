@@ -94,7 +94,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     public T put(final K key, T value)
     {
         Map<K, T> old = null;
-        if (!this.valueChangeListeners.isEmpty() || !this.mapValueChangeListeners.isEmpty())
+        if (!this.valueChangeListeners.isEmpty())
         {
             old = this.mapSupplier.get();
             old.putAll(this.value);
@@ -153,7 +153,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
         final T oldValue = this.value.get(key);
         Map<K, T> old = null;
 
-        if (!this.valueChangeListeners.isEmpty() || !this.mapValueChangeListeners.isEmpty())
+        if (!this.valueChangeListeners.isEmpty())
         {
             old = this.mapSupplier.get();
             old.putAll(this.value);
@@ -171,7 +171,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     {
         final T oldValue = this.value.get(key);
         Map<K, T> old = null;
-        if (!this.valueChangeListeners.isEmpty() || !this.mapValueChangeListeners.isEmpty())
+        if (!this.valueChangeListeners.isEmpty())
         {
             old = this.mapSupplier.get();
             old.putAll(this.value);

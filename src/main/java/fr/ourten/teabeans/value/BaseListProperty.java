@@ -87,7 +87,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     private void add(T element, final Consumer<T> action)
     {
         List<T> old = null;
-        if (!this.valueChangeListeners.isEmpty() || !this.listValueChangeListeners.isEmpty())
+        if (!this.valueChangeListeners.isEmpty())
         {
             old = this.listSupplier.get();
             old.addAll(this.value);
@@ -125,7 +125,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     public T remove(final int index)
     {
         List<T> old = null;
-        if (!this.valueChangeListeners.isEmpty() || !this.listValueChangeListeners.isEmpty())
+        if (!this.valueChangeListeners.isEmpty())
         {
             old = this.listSupplier.get();
             old.addAll(this.value);
@@ -149,7 +149,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     {
         final T oldValue = this.value.get(index);
         List<T> old = null;
-        if (!this.valueChangeListeners.isEmpty() || !this.listValueChangeListeners.isEmpty())
+        if (!this.valueChangeListeners.isEmpty())
         {
             old = this.listSupplier.get();
             old.addAll(this.value);
