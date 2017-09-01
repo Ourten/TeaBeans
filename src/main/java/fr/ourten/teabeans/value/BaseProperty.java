@@ -102,7 +102,7 @@ public class BaseProperty<T> implements IProperty<T>
         this.checker = checker;
     }
 
-    private void setPropertyValue(final T value)
+    protected void setPropertyValue(final T value)
     {
         final T oldValue = this.value;
         this.value = value;
