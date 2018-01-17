@@ -1,12 +1,12 @@
 package fr.ourten.teabeans.test;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import fr.ourten.teabeans.value.BaseProperty;
 import fr.ourten.teabeans.value.ObservableValue;
 import fr.ourten.teabeans.value.WritableValue;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Ourten 12 oct. 2016
@@ -26,20 +26,20 @@ public class ObservableValueTest
     {
         final ObservableValue<Integer> obs = new BaseProperty<>(2, "testObservableValue");
 
-        Assert.assertTrue("should be true", obs.isPresent());
+        assertThat(obs.isPresent()).isTrue();
 
         ((WritableValue<Integer>) obs).setValue(null);
 
-        Assert.assertFalse("should be false", obs.isPresent());
+        assertThat(obs.isPresent()).isFalse();
 
         obs.ifPresent(i -> this.count++);
 
-        Assert.assertEquals("should be equals", 0, this.count);
+        assertThat(this.count).isEqualTo(0);
 
         ((WritableValue<Integer>) obs).setValue(5);
 
         obs.ifPresent(i -> this.count++);
 
-        Assert.assertEquals("should be equals", 1, this.count);
+        assertThat(this.count).isEqualTo(1);
     }
 }

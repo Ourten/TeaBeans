@@ -1,17 +1,16 @@
 package fr.ourten.teabeans.test;
 
+import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.value.BaseListProperty;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import fr.ourten.teabeans.listener.ListValueChangeListener;
-import fr.ourten.teabeans.listener.ValueInvalidationListener;
-import fr.ourten.teabeans.value.BaseListProperty;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BaseListPropertyTest
 {
@@ -30,62 +29,56 @@ public class BaseListPropertyTest
     @Test
     public void testConstructorListOnly()
     {
-        final String expected = "";
-
         final BaseListProperty<Integer> property = new BaseListProperty<>(this.list);
 
         final String actual = property.getName();
 
-        Assert.assertEquals(expected, actual);
+        assertThat(actual).isEmpty();
     }
 
     @Test
     public void testConstructorListNull()
     {
-        final int expected = 0;
-
         final BaseListProperty<Integer> property = new BaseListProperty<>(null);
 
         final int actual = property.size();
 
-        Assert.assertEquals(expected, actual);
-        Assert.assertTrue(property.isEmpty());
+        assertThat(actual).isEqualTo(0);
+        assertThat(property.isEmpty()).isTrue();
     }
 
     @Test
     public void testConstructorSupplier()
     {
-        final BaseListProperty<Integer> property = new BaseListProperty<>(() -> new LinkedList<>(), null);
+        final BaseListProperty<Integer> property = new BaseListProperty<>(LinkedList::new, null);
 
-        Assert.assertTrue("should be true", property.getModifiableValue() instanceof LinkedList);
+        assertThat(property.getModifiableValue()).isInstanceOf(LinkedList.class);
     }
 
     @Test
     public void testListPropertySize()
     {
-        final int expected = 4;
         final int actual = this.property.size();
-        Assert.assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(4);
     }
 
     @Test
     public void testListPropertyValue()
     {
-        Assert.assertArrayEquals("list content should be identical", this.list.toArray(),
-                this.property.getValue().toArray());
+        assertThat(this.property.getValue().toArray()).containsExactly(this.list.toArray());
 
-        Assert.assertEquals("should be equals", (Integer) 2, this.property.get(1));
+        assertThat(this.property.get(1)).isEqualTo(2);
 
-        Assert.assertTrue("should be true", this.property.contains(5));
-        Assert.assertFalse("should be false", this.property.contains(7));
+        assertThat(this.property.contains(5)).isTrue();
+        assertThat(this.property.contains(7)).isFalse();
 
-        Assert.assertEquals("should be equals", 1, this.property.indexOf(2));
+        assertThat(this.property.indexOf(2)).isEqualTo(1);
 
-        Assert.assertFalse("should be false", this.property.isEmpty());
+        assertThat(this.property.isEmpty()).isFalse();
 
         this.property.clear();
 
-        Assert.assertTrue("should be true", this.property.isEmpty());
+        assertThat(this.property.isEmpty()).isTrue();
     }
 
     @Test
@@ -94,35 +87,34 @@ public class BaseListPropertyTest
         final List<String> stringList = Arrays.asList("test1", "test2", "test3");
         final BaseListProperty<String> stringProperty = new BaseListProperty<>(stringList, "testStringListProperty");
 
-        Assert.assertFalse("should be false", stringProperty.remove("something"));
-        Assert.assertTrue("should be true", stringProperty.remove("test2"));
-        Assert.assertFalse("should be false", stringProperty.contains("test2"));
+        assertThat(stringProperty.remove("something")).isFalse();
+        assertThat(stringProperty.remove("test2")).isTrue();
+        assertThat(stringProperty.contains("test2")).isFalse();
     }
 
     @Test
     public void testListAdd()
     {
-        final Integer expected = 7;
         this.property.add(7);
-        Assert.assertEquals(expected, this.property.get(4));
+        assertThat(this.property.get(4)).isEqualTo(7);
     }
 
     @Test
     public void testListPropertyInvalidationListener()
     {
-        this.property.addListener((ValueInvalidationListener) observable -> BaseListPropertyTest.this.count++);
+        this.property.addListener(observable -> BaseListPropertyTest.this.count++);
 
         this.property.add(6);
-        Assert.assertEquals("should be equals", 1, this.count);
+        assertThat(this.count).isEqualTo(1);
 
         this.property.remove(2);
-        Assert.assertEquals("should be equals", 2, this.count);
+        assertThat(this.count).isEqualTo(2);
 
         this.property.set(0, 4);
-        Assert.assertEquals("should be equals", 3, this.count);
+        assertThat(this.count).isEqualTo(3);
 
         this.property.sort();
-        Assert.assertEquals("should be equals", 4, this.count);
+        assertThat(this.count).isEqualTo(4);
     }
 
     @Test
@@ -131,9 +123,9 @@ public class BaseListPropertyTest
 
         final ListValueChangeListener<Integer> removeListener = (observable, oldValue, newValue) ->
         {
-            Assert.assertNotNull("should not be null", oldValue);
-            Assert.assertNull("should be null", newValue);
-            Assert.assertEquals("should be equals", (Integer) 0, oldValue);
+            assertThat(oldValue).isNotNull();
+            assertThat(newValue).isNull();
+            assertThat(oldValue).isEqualTo(0);
         };
 
         this.property.addListener(removeListener);
@@ -142,11 +134,11 @@ public class BaseListPropertyTest
 
         final ListValueChangeListener<Integer> changeListener = (observable, oldValue, newValue) ->
         {
-            Assert.assertNotNull("should not be null", oldValue);
-            Assert.assertNotNull("should not be null", newValue);
-            Assert.assertNotEquals("should not be equals", oldValue, newValue);
-            Assert.assertEquals("should be equals", (Integer) 2, oldValue);
-            Assert.assertEquals("should be equals", (Integer) 5, newValue);
+            assertThat(oldValue).isNotNull();
+            assertThat(newValue).isNotNull();
+            assertThat(oldValue).isNotEqualTo(newValue);
+            assertThat(oldValue).isEqualTo(2);
+            assertThat(newValue).isEqualTo(5);
         };
         this.property.addListener(changeListener);
         this.property.set(0, 5);
@@ -154,16 +146,16 @@ public class BaseListPropertyTest
 
         final ListValueChangeListener<Integer> addListener = (observable, oldValue, newValue) ->
         {
-            Assert.assertNull("should be null", oldValue);
-            Assert.assertNotNull("should not be null", newValue);
-            Assert.assertEquals("should be equals", (Integer) 18, newValue);
+            assertThat(oldValue).isNull();
+            assertThat(newValue).isNotNull();
+            assertThat(newValue).isEqualTo(18);
             this.count++;
         };
         this.property.addListener(addListener);
         this.property.add(18);
         this.property.add(2, 18);
         this.property.addAll(Arrays.asList(18, 18, 18));
-        Assert.assertEquals("should be equals", 5, this.count);
+        assertThat(this.count).isEqualTo(5);
         this.property.removeListener(addListener);
 
         this.count = 0;
@@ -171,15 +163,15 @@ public class BaseListPropertyTest
         this.property.addAll(Arrays.asList(18, 18, 18, 18, 18));
         final ListValueChangeListener<Integer> clearListener = (observable, oldValue, newValue) ->
         {
-            Assert.assertNotNull("should not be null", oldValue);
-            Assert.assertNull("should be null", newValue);
-            Assert.assertEquals("should be equals", (Integer) 18, oldValue);
+            assertThat(oldValue).isNotNull();
+            assertThat(newValue).isNull();
+            assertThat(oldValue).isEqualTo(18);
             this.count++;
         };
         this.property.addListener(clearListener);
 
         this.property.clear();
-        Assert.assertEquals("should be equals", 5, this.count);
+        assertThat(this.count).isEqualTo(5);
     }
 
     @Test
@@ -189,10 +181,18 @@ public class BaseListPropertyTest
         final BaseListProperty<Integer> property = new BaseListProperty<>(unsorted, "testIntegerListProperty");
 
         property.sort();
-
-        Assert.assertArrayEquals("should be equals", new Integer[] { 1, 4, 5, 6, 10 }, property.getValue().toArray());
+        assertThat(property.getValue().toArray()).containsExactly(new Integer[] { 1, 4, 5, 6, 10 });
 
         property.sort(Collections.reverseOrder());
-        Assert.assertArrayEquals("should be equals", new Integer[] { 10, 6, 5, 4, 1 }, property.getValue().toArray());
+        assertThat(property.getValue().toArray()).containsExactly(new Integer[] { 10, 6, 5, 4, 1 });
+    }
+
+    @Test
+    public void testListPropertyReplace()
+    {
+        this.property.replace(3, 9);
+
+        assertThat(this.property.contains(9)).isTrue();
+        assertThat(this.property.contains(3)).isFalse();
     }
 }

@@ -166,6 +166,28 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     }
 
     @Override
+    public void replace(T oldElement, T newElement)
+    {
+        final T oldValue = this.value.contains(oldElement) ? oldElement : null;
+        List<T> old = null;
+        if (!this.valueChangeListeners.isEmpty())
+        {
+            old = this.listSupplier.get();
+            old.addAll(this.value);
+        }
+
+        if (this.checker != null)
+            newElement = this.checker.apply(oldValue, newElement);
+
+        this.value.remove(oldElement);
+        this.value.add(newElement);
+
+        this.fireInvalidationListeners();
+        this.fireListChangeListeners(oldValue, newElement);
+        this.fireChangeListeners(old, this.value);
+    }
+
+    @Override
     public int indexOf(final T element)
     {
         return this.value.indexOf(element);

@@ -1,12 +1,12 @@
 package fr.ourten.teabeans.test;
 
-import java.util.NoSuchElementException;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import fr.ourten.teabeans.value.BaseProperty;
 import fr.ourten.teabeans.value.IProperty;
+import org.junit.Test;
+
+import java.util.NoSuchElementException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Ourten 11 oct. 2016
@@ -18,7 +18,7 @@ public class IPropertyTest
     {
         final IProperty<String> property = new BaseProperty<>("test", "throwTestProperty");
 
-        Assert.assertEquals("should be equals", "test", property.getOrThrow());
+        assertThat(property.getOrThrow()).isEqualTo("test");
 
         property.setValue(null);
         property.getOrThrow();
@@ -29,10 +29,10 @@ public class IPropertyTest
     {
         final IProperty<String> property = new BaseProperty<>(null, "defaultTestProperty");
 
-        Assert.assertEquals("should be equals", property.getOrDefault("default"), "default");
+        assertThat(property.getOrDefault("default")).isEqualTo("default");
 
         property.setValue("test");
 
-        Assert.assertEquals("should be equals", property.getOrDefault("default"), "test");
+        assertThat(property.getOrDefault("default")).isEqualTo("test");
     }
 }

@@ -1,12 +1,12 @@
 package fr.ourten.teabeans.test;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import fr.ourten.teabeans.binding.BaseBinding;
 import fr.ourten.teabeans.binding.BidirectionalBinding;
 import fr.ourten.teabeans.value.BaseProperty;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BidirectionnalBindingTest
 {
@@ -43,13 +43,12 @@ public class BidirectionnalBindingTest
 
         p2.bindBidirectional(p3);
 
-        Assert.assertEquals("should be equals", "nonetoy", binding.getValue());
+        assertThat(binding.getValue()).isEqualTo("nonetoy");
 
         p1.bind(p3);
 
-        Assert.assertEquals("should be equals", "toytoy", binding.getValue());
-
-        Assert.assertEquals("should be equals", 2, this.count);
+        assertThat(binding.getValue()).isEqualTo("toytoy");
+        assertThat(this.count).isEqualTo(2);
     }
 
     @Test
@@ -60,17 +59,17 @@ public class BidirectionnalBindingTest
 
         p1.bindBidirectional(p2);
 
-        Assert.assertEquals("should be equals", p1.getValue(), p2.getValue());
+        assertThat(p1.getValue()).isEqualTo(p2.getValue());
 
         p2.setValue("lalala");
 
-        Assert.assertEquals("should be equals", p1.getValue(), p2.getValue());
+        assertThat(p1.getValue()).isEqualTo(p2.getValue());
 
         p1.unbindBidirectional(p2);
 
         p2.setValue("another value");
 
-        Assert.assertNotEquals("should not be equals", p1.getValue(), p2.getValue());
+        assertThat(p1.getValue()).isNotEqualTo(p2.getValue());
     }
 
     @Test
@@ -81,7 +80,7 @@ public class BidirectionnalBindingTest
 
         final BidirectionalBinding<String> binding1 = new BidirectionalBinding<>(p1, p2);
 
-        Assert.assertTrue("should be true", binding1.equals(binding1));
+        assertThat(binding1).isEqualTo(binding1);
     }
 
     @Test
@@ -94,6 +93,6 @@ public class BidirectionnalBindingTest
         final BidirectionalBinding<String> binding1 = new BidirectionalBinding<>(p1, p2);
         final BidirectionalBinding<String> binding3 = new BidirectionalBinding<>(p2, p3);
 
-        Assert.assertFalse("should be false", binding1.equals(binding3));
+        assertThat(binding1.equals(binding3)).isFalse();
     }
 }

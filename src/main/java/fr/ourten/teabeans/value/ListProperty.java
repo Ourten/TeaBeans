@@ -1,11 +1,11 @@
 package fr.ourten.teabeans.value;
 
+import fr.ourten.teabeans.listener.ListValueChangeListener;
+
 import java.text.Collator;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-
-import fr.ourten.teabeans.listener.ListValueChangeListener;
 
 public interface ListProperty<T> extends IProperty<List<T>>
 {
@@ -34,6 +34,8 @@ public interface ListProperty<T> extends IProperty<List<T>>
     T remove(int index);
 
     void set(int index, T element);
+
+    void replace(T oldElement, T newElement);
 
     boolean contains(T element);
 

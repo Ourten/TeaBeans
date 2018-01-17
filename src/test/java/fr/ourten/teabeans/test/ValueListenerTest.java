@@ -1,13 +1,11 @@
 package fr.ourten.teabeans.test;
 
+import fr.ourten.teabeans.value.BaseProperty;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.ourten.teabeans.listener.ValueChangeListener;
-import fr.ourten.teabeans.listener.ValueInvalidationListener;
-import fr.ourten.teabeans.value.BaseProperty;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ValueListenerTest
 {
@@ -25,23 +23,23 @@ public class ValueListenerTest
     public void after()
     {
         this.property.setValue(6);
-        Assert.assertTrue("should be true", this.used);
+        assertThat(this.used).isTrue();
     }
 
     @Test
     public void testInvalidationListener()
     {
-        this.property.addListener((ValueInvalidationListener) observable -> ValueListenerTest.this.used = true);
+        this.property.addListener(observable -> ValueListenerTest.this.used = true);
     }
 
     @Test
     public void testChangeListener()
     {
-        this.property.addListener((ValueChangeListener<Integer>) (observable, oldValue, newValue) ->
+        this.property.addListener((observable, oldValue, newValue) ->
         {
             ValueListenerTest.this.used = true;
-            Assert.assertEquals("should be same", (Integer) 5, oldValue);
-            Assert.assertEquals("should be same", (Integer) 6, newValue);
+            assertThat(oldValue).isEqualTo(5);
+            assertThat(newValue).isEqualTo(6);
         });
     }
 }

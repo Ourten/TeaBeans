@@ -1,9 +1,9 @@
 package fr.ourten.teabeans.test;
 
-import org.junit.Assert;
+import fr.ourten.teabeans.value.BaseProperty;
 import org.junit.Test;
 
-import fr.ourten.teabeans.value.BaseProperty;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BasePropertyTest
 {
@@ -13,8 +13,8 @@ public class BasePropertyTest
         final BaseProperty<String> property = new BaseProperty<>("value", "name");
         final BaseProperty<String> property2 = new BaseProperty<>("value");
 
-        Assert.assertEquals("should be equals", "name", property.getName());
-        Assert.assertEquals("should be equals", "", property2.getName());
+        assertThat(property.getName()).isEqualTo("name");
+        assertThat(property2.getName()).isEmpty();
     }
 
     @Test
@@ -22,9 +22,7 @@ public class BasePropertyTest
     {
         final BaseProperty<Float> property = new BaseProperty<>(5f, "testFloatProperty");
 
-        final float expected = 5f;
-        final float actual = property.getValue();
-        Assert.assertEquals("should be equals", expected, actual, 0);
+        assertThat(property.getValue()).isEqualTo(5f);
     }
 
     @Test
@@ -34,12 +32,12 @@ public class BasePropertyTest
         final BaseProperty<Integer> property2 = new BaseProperty<>(5, "testIntegerProperty1");
 
         property2.bind(property1);
-        Assert.assertEquals("should be equals", property1.getValue(), property2.getValue());
+        assertThat(property1.getValue()).isEqualTo(property2.getValue());
 
         property1.setValue(10);
-        Assert.assertEquals("should be equals", (Integer) 10, property2.getValue());
+        assertThat(property2.getValue()).isEqualTo(10);
 
-        Assert.assertTrue("should be true", property2.isBound());
+        assertThat(property2.isBound()).isTrue();
     }
 
     @Test
@@ -50,13 +48,13 @@ public class BasePropertyTest
 
         property2.bindBidirectional(property1);
 
-        Assert.assertEquals("should be equals", property1.getValue(), property2.getValue());
+        assertThat(property1.getValue()).isEqualTo(property2.getValue());
 
         property1.setValue(10);
-        Assert.assertEquals("should be equals", (Integer) 10, property2.getValue());
+        assertThat(property2.getValue()).isEqualTo(10);
 
         property2.setValue(15);
-        Assert.assertEquals("should be equals", (Integer) 15, property1.getValue());
+        assertThat(property1.getValue()).isEqualTo(15);
     }
 
     @Test(expected = RuntimeException.class)

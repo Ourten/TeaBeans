@@ -1,10 +1,10 @@
 package fr.ourten.teabeans.test;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import fr.ourten.teabeans.binding.BaseExpression;
 import fr.ourten.teabeans.value.BaseProperty;
+import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Ourten 15 oct. 2016
@@ -18,11 +18,11 @@ public class BaseExpressionTest
 
         final BaseExpression<Integer> transform = BaseExpression.transform(p1, (n1) -> n1 * 4);
 
-        Assert.assertEquals("should be equals", (Integer) 8, transform.getValue());
+        assertThat(transform.getValue()).isEqualTo(8);
 
         p1.setValue(null);
 
-        Assert.assertNull("should be null", transform.getValue());
+        assertThat(transform.getValue()).isNull();
     }
 
     @Test
@@ -32,11 +32,11 @@ public class BaseExpressionTest
 
         final BaseExpression<Integer> multiplyConstant = BaseExpression.constantCombine(p1, 2, (n1, n2) -> n1 * n2);
 
-        Assert.assertEquals("should be equals", (Integer) 4, multiplyConstant.getValue());
+        assertThat(multiplyConstant.getValue()).isEqualTo(4);
 
         p1.setValue(null);
 
-        Assert.assertNull("should be null", multiplyConstant.getValue());
+        assertThat(multiplyConstant.getValue()).isNull();
     }
 
     @Test
@@ -47,11 +47,11 @@ public class BaseExpressionTest
 
         final BaseExpression<Integer> multiply = BaseExpression.biCombine(p1, p2, (n1, n2) -> n1 * n2);
 
-        Assert.assertEquals("should be equals", (Integer) 6, multiply.getValue());
+        assertThat(multiply.getValue()).isEqualTo(6);
 
         p2.setValue(null);
 
-        Assert.assertNull("should be null", multiply.getValue());
+        assertThat(multiply.getValue()).isNull();
     }
 
     @Test
@@ -63,11 +63,11 @@ public class BaseExpressionTest
 
         final BaseExpression<Integer> multiply = BaseExpression.triCombine(p1, p2, p3, (n1, n2, n3) -> n1 * n2 * n3);
 
-        Assert.assertEquals("should be equals", (Integer) 24, multiply.getValue());
+        assertThat(multiply.getValue()).isEqualTo(24);
 
         p2.setValue(null);
 
-        Assert.assertNull("should be null", multiply.getValue());
+        assertThat(multiply.getValue()).isNull();
     }
 
     @Test
@@ -81,11 +81,11 @@ public class BaseExpressionTest
         final BaseExpression<Integer> multiply = BaseExpression.tetraCombine(p1, p2, p3, p4,
                 (n1, n2, n3, n4) -> n1 * n2 * n3 * n4);
 
-        Assert.assertEquals("should be equals", (Integer) 120, multiply.getValue());
+        assertThat(multiply.getValue()).isEqualTo(120);
 
         p2.setValue(null);
 
-        Assert.assertNull("should be null", multiply.getValue());
+        assertThat(multiply.getValue()).isNull();
     }
 
     @Test
@@ -100,11 +100,11 @@ public class BaseExpressionTest
         final BaseExpression<Integer> multiply = BaseExpression.petaCombine(p1, p2, p3, p4, p5,
                 (n1, n2, n3, n4, n5) -> n1 * n2 * n3 * n4 * n5);
 
-        Assert.assertEquals("should be equals", (Integer) 720, multiply.getValue());
+        assertThat(multiply.getValue()).isEqualTo(720);
 
         p2.setValue(null);
 
-        Assert.assertNull("should be null", multiply.getValue());
+        assertThat(multiply.getValue()).isNull();
     }
 
     @Test
@@ -120,10 +120,10 @@ public class BaseExpressionTest
         final BaseExpression<Integer> multiply = BaseExpression.hexaCombine(p1, p2, p3, p4, p5, p6,
                 (n1, n2, n3, n4, n5, n6) -> n1 * n2 * n3 * n4 * n5 * n6);
 
-        Assert.assertEquals("should be equals", (Integer) 5040, multiply.getValue());
+        assertThat(multiply.getValue()).isEqualTo(5040);
 
         p2.setValue(null);
 
-        Assert.assertNull("should be null", multiply.getValue());
+        assertThat(multiply.getValue()).isNull();
     }
 }

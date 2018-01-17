@@ -1,14 +1,14 @@
 package fr.ourten.teabeans.test;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import fr.ourten.teabeans.binding.BaseBinding;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.value.BaseProperty;
 import fr.ourten.teabeans.value.Observable;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BindingTest
 {
@@ -42,17 +42,16 @@ public class BindingTest
         };
 
         // Only here to check lazy evaluation
-        Assert.assertNotNull("should not be null", binding.getValue());
+        assertThat(binding.getValue()).isNotNull();
 
-        Assert.assertEquals("should be equals", "nonenothing", binding.getValue());
+        assertThat(binding.getValue()).isEqualTo("nonenothing");
 
         p1.setValue("lala");
-        Assert.assertEquals("should be equals", "lalanothing", binding.getValue());
+        assertThat(binding.getValue()).isEqualTo("lalanothing");
 
         p2.setValue("toto");
-        Assert.assertEquals("should be equals", "lalatoto", binding.getValue());
-
-        Assert.assertEquals("should be equals", 3, this.count);
+        assertThat(binding.getValue()).isEqualTo("lalatoto");
+        assertThat(this.count).isEqualTo(3);
     }
 
     @Test
@@ -78,9 +77,8 @@ public class BindingTest
             }
         });
 
-        Assert.assertEquals("should be equals", "nonenothing", p3.getValue());
-
-        Assert.assertEquals("should be equals", 1, this.count);
+        assertThat(p3.getValue()).isEqualTo("nonenothing");
+        assertThat(this.count).isEqualTo(1);
     }
 
     @Test
@@ -104,11 +102,11 @@ public class BindingTest
             }
         };
 
-        Assert.assertArrayEquals(binding.getDependencies().toArray(), new Observable[] { p1, p2 });
+        assertThat(binding.getDependencies().toArray()).containsExactly(new Observable[] { p1, p2 });
 
         binding.unbind(p1, p2);
 
-        Assert.assertArrayEquals(binding.getDependencies().toArray(), new Observable[] {});
+        assertThat(binding.getDependencies().toArray()).containsExactly(new Observable[0]);
     }
 
     @Test
@@ -119,17 +117,17 @@ public class BindingTest
 
         p1.bind(p2);
 
-        Assert.assertEquals("should be equals", p1.getValue(), p2.getValue());
+        assertThat(p1.getValue()).isEqualTo(p2.getValue());
 
         p2.setValue("lalala");
 
-        Assert.assertEquals("should be equals", p1.getValue(), p2.getValue());
+        assertThat(p1.getValue()).isEqualTo(p2.getValue());
 
         p1.unbind();
 
         p2.setValue("another value");
 
-        Assert.assertNotEquals("should not be equals", p1.getValue(), p2.getValue());
+        assertThat(p1.getValue()).isNotEqualTo(p2.getValue());
     }
 
     @Test
@@ -153,15 +151,13 @@ public class BindingTest
             }
         };
 
-        Assert.assertFalse("should be false", binding.isValid());
-
-        Assert.assertEquals("should be equals", binding.getValue(), "nonenothing");
-
-        Assert.assertTrue("should be true", binding.isValid());
+        assertThat(binding.isValid()).isFalse();
+        assertThat(binding.getValue()).isEqualTo("nonenothing");
+        assertThat(binding.isValid()).isTrue();
 
         p1.setValue("another");
 
-        Assert.assertFalse("should be false", binding.isValid());
+        assertThat(binding.isValid()).isFalse();
     }
 
     @Test
@@ -191,20 +187,20 @@ public class BindingTest
         binding.addListener(listener2);
         binding.getValue();
 
-        Assert.assertEquals("should be equals", 1, this.count);
+        assertThat(this.count).isEqualTo(1);
 
         p1.setValue("none");
 
-        Assert.assertEquals("should be equals", 2, this.count);
+        assertThat(this.count).isEqualTo(2);
         binding.removeListener(listener);
         p1.setValue("test");
 
-        Assert.assertEquals("should be equals", 3, this.count);
+        assertThat(this.count).isEqualTo(3);
 
         binding.removeListener(listener2);
         p1.setValue("testagain");
 
-        Assert.assertEquals("should be equals", 3, this.count);
+        assertThat(this.count).isEqualTo(3);
     }
 
     @Test
@@ -227,31 +223,31 @@ public class BindingTest
 
         binding.addListener((observable, oldValue, newValue) -> BindingTest.this.count++);
 
-        Assert.assertNotNull("should not be null", binding.getValue());
-        Assert.assertEquals("should be equals", 1, this.count);
+        assertThat(binding.getValue()).isNotNull();
+        assertThat(this.count).isEqualTo(1);
 
         p1.setValue(null);
 
-        Assert.assertNull("should be null", binding.getValue());
-        Assert.assertEquals("should be equals", 2, this.count);
+        assertThat(binding.getValue()).isNull();
+        assertThat(this.count).isEqualTo(2);
 
         binding.invalidate();
 
-        Assert.assertNull("should be null", binding.getValue());
-        Assert.assertEquals("should be equals", 2, this.count);
+        assertThat(binding.getValue()).isNull();
+        assertThat(this.count).isEqualTo(2);
 
         p1.setValue(null);
 
-        Assert.assertEquals("should be equals", 2, this.count);
+        assertThat(this.count).isEqualTo(2);
 
         p1.setValue("nonnull");
 
-        Assert.assertNotNull("should not be null", binding.getValue());
-        Assert.assertEquals("should be equals", 3, this.count);
+        assertThat(binding.getValue()).isNotNull();
+        assertThat(this.count).isEqualTo(3);
 
         binding.invalidate();
 
-        Assert.assertNotNull("should not be null", binding.getValue());
-        Assert.assertEquals("should be equals", 3, this.count);
+        assertThat(binding.getValue()).isNotNull();
+        assertThat(this.count).isEqualTo(3);
     }
 }

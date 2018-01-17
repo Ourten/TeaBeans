@@ -1,12 +1,13 @@
 package fr.ourten.teabeans.test;
 
 import fr.ourten.teabeans.value.BaseListProperty;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.function.BiFunction;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CheckerListPropertyTest
 {
@@ -21,10 +22,7 @@ public class CheckerListPropertyTest
     @Test
     public void testCheckerNull()
     {
-        BiFunction<String, String, String> expected = null;
-        BiFunction<String, String, String> actual = this.property.getElementChecker();
-
-        Assert.assertEquals(actual, expected);
+        assertThat(this.property.getElementChecker()).isNull();
     }
 
     @Test
@@ -34,10 +32,9 @@ public class CheckerListPropertyTest
                 newValue != null && !newValue.isEmpty() ? newValue : oldValue;
 
         this.property.setElementChecker(checker);
-        BiFunction<String, String, String> expected = checker;
         BiFunction<String, String, String> actual = this.property.getElementChecker();
 
-        Assert.assertEquals(actual, expected);
+        assertThat(actual).isEqualTo(checker);
     }
 
     @Test
@@ -52,14 +49,12 @@ public class CheckerListPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        String expected = "42";
-
         this.property.setElementChecker(checker);
         this.property.add("42");
 
         String actual = this.property.get(0);
 
-        Assert.assertEquals(actual, expected);
+        assertThat(actual).isEqualTo("42");
     }
 
     @Test
@@ -68,14 +63,12 @@ public class CheckerListPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        String expected = null;
-
         this.property.setElementChecker(checker);
         this.property.add("");
 
         String actual = this.property.get(0);
 
-        Assert.assertEquals(actual, expected);
+        assertThat(actual).isNull();
     }
 
     @Test
@@ -84,14 +77,12 @@ public class CheckerListPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        String expected = null;
-
         this.property.setElementChecker(checker);
         this.property.add(null);
 
         String actual = this.property.get(0);
 
-        Assert.assertEquals(actual, expected);
+        assertThat(actual).isNull();
     }
 
     @Test
@@ -100,14 +91,12 @@ public class CheckerListPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        String expected = null;
-
         this.property.setElementChecker(checker);
         this.property.add("2");
 
         String actual = this.property.get(0);
 
-        Assert.assertEquals(actual, expected);
+        assertThat(actual).isNull();
     }
 
     @Test
@@ -116,7 +105,6 @@ public class CheckerListPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        String expected = "42";
         this.property.add("0");
 
         this.property.setElementChecker(checker);
@@ -124,7 +112,7 @@ public class CheckerListPropertyTest
 
         String actual = this.property.get(0);
 
-        Assert.assertEquals(actual, expected);
+        assertThat(actual).isEqualTo("42");
     }
 
     @Test
@@ -133,7 +121,6 @@ public class CheckerListPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        String expected = "0";
         this.property.add("0");
 
         this.property.setElementChecker(checker);
@@ -141,7 +128,7 @@ public class CheckerListPropertyTest
 
         String actual = this.property.get(0);
 
-        Assert.assertEquals(actual, expected);
+        assertThat(actual).isEqualTo("0");
     }
 
     @Test
@@ -150,7 +137,6 @@ public class CheckerListPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        String expected = "0";
         this.property.add("0");
 
         this.property.setElementChecker(checker);
@@ -158,7 +144,7 @@ public class CheckerListPropertyTest
 
         String actual = this.property.get(0);
 
-        Assert.assertEquals(actual, expected);
+        assertThat(actual).isEqualTo("0");
     }
 
     @Test
@@ -167,7 +153,6 @@ public class CheckerListPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        String expected = "0";
         this.property.add("0");
 
         this.property.setElementChecker(checker);
@@ -175,6 +160,6 @@ public class CheckerListPropertyTest
 
         String actual = this.property.get(0);
 
-        Assert.assertEquals(actual, expected);
+        assertThat(actual).isEqualTo("0");
     }
 }
