@@ -9,8 +9,8 @@ import java.util.function.Supplier;
 
 public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements MapProperty<K, T>
 {
-    private Supplier<Map<K, T>>                                   mapSupplier;
-    private BiFunction<T, T, T>                                   checker;
+    private Supplier<Map<K, T>> mapSupplier;
+    private BiFunction<T, T, T> checker;
 
     /**
      * The list of attached listeners that need to be notified when the value
@@ -93,11 +93,11 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     @Override
     public T put(final K key, T value)
     {
-        Map<K, T> old = null;
+        Map<K, T> oldMap = null;
         if (!this.valueChangeListeners.isEmpty())
         {
-            old = this.mapSupplier.get();
-            old.putAll(this.value);
+            oldMap = this.mapSupplier.get();
+            oldMap.putAll(this.value);
         }
 
         if (this.checker != null)
@@ -105,9 +105,7 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
 
         this.value.put(key, value);
 
-        this.fireInvalidationListeners();
-        this.fireListChangeListeners(key, null, value);
-        this.fireChangeListeners(old, this.value);
+        this.invalidateElement(key, null, value, oldMap);
         return null;
     }
 
@@ -151,18 +149,16 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     public T remove(final K key)
     {
         final T oldValue = this.value.get(key);
-        Map<K, T> old = null;
+        Map<K, T> oldMap = null;
 
         if (!this.valueChangeListeners.isEmpty())
         {
-            old = this.mapSupplier.get();
-            old.putAll(this.value);
+            oldMap = this.mapSupplier.get();
+            oldMap.putAll(this.value);
         }
         final T rtn = this.value.remove(key);
 
-        this.fireInvalidationListeners();
-        this.fireListChangeListeners(key, oldValue, null);
-        this.fireChangeListeners(old, this.value);
+        this.invalidateElement(key, oldValue, null, oldMap);
         return rtn;
     }
 
@@ -170,11 +166,11 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     public T replace(final K key, T element)
     {
         final T oldValue = this.value.get(key);
-        Map<K, T> old = null;
+        Map<K, T> oldMap = null;
         if (!this.valueChangeListeners.isEmpty())
         {
-            old = this.mapSupplier.get();
-            old.putAll(this.value);
+            oldMap = this.mapSupplier.get();
+            oldMap.putAll(this.value);
         }
 
         if (this.checker != null)
@@ -182,28 +178,37 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
 
         final T rtn = this.value.replace(key, element);
 
-        this.fireInvalidationListeners();
-        this.fireListChangeListeners(key, oldValue, element);
-        this.fireChangeListeners(old, this.value);
+        this.invalidateElement(key, oldValue, element, oldMap);
         return rtn;
+    }
+
+    public void invalidateElement(K key, T oldElement, T newElement, Map<K, T> oldMap)
+    {
+        if (this.isMuted())
+            return;
+
+        this.fireListChangeListeners(key, oldElement, newElement);
+        this.invalidate(oldMap);
     }
 
     @Override
     public void clear()
     {
-        Map<K, T> old = null;
+        Map<K, T> oldMap = null;
 
         if (!this.valueChangeListeners.isEmpty() || !this.mapValueChangeListeners.isEmpty())
         {
-            old = this.mapSupplier.get();
-            old.putAll(this.value);
+            oldMap = this.mapSupplier.get();
+            oldMap.putAll(this.value);
         }
         this.value.clear();
 
-        this.fireInvalidationListeners();
-        this.fireChangeListeners(old, this.value);
-        if (old != null)
-            old.forEach((key, oldValue) -> this.fireListChangeListeners(key, oldValue, null));
+        if (this.isMuted())
+            return;
+
+        if (oldMap != null)
+            oldMap.forEach((key, oldValue) -> this.fireListChangeListeners(key, oldValue, null));
+        this.invalidate(oldMap);
     }
 
     @Override

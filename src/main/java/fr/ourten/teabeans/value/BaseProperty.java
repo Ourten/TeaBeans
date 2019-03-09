@@ -20,12 +20,15 @@ public class BaseProperty<T> implements IProperty<T>
     /**
      * The listener used to bind this property to another.
      */
-    private ValueInvalidationListener                         listener;
-    private ObservableValue<? extends T>                      observable;
-    private boolean                                           isObserving;
-    private BiFunction<T, T, T>                               checker;
-    private final String                                      NAME;
-    protected T                                               value;
+    private       ValueInvalidationListener    listener;
+    private       ObservableValue<? extends T> observable;
+    private       boolean                      isObserving;
+    private       BiFunction<T, T, T>          checker;
+    private final String                       NAME;
+    protected     T                            value;
+
+    private boolean isMuted;
+    private T       valueBeforeMute;
 
     public BaseProperty(final T value, final String name)
     {
@@ -77,6 +80,34 @@ public class BaseProperty<T> implements IProperty<T>
     }
 
     @Override
+    public void mute()
+    {
+        this.isMuted = true;
+        this.valueBeforeMute = this.getValue();
+    }
+
+    @Override
+    public void unmute()
+    {
+        this.isMuted = false;
+        this.invalidate(this.valueBeforeMute);
+    }
+
+    @Override
+    public void muteWhile(Runnable runnable)
+    {
+        this.mute();
+        runnable.run();
+        this.unmute();
+    }
+
+    @Override
+    public boolean isMuted()
+    {
+        return this.isMuted;
+    }
+
+    @Override
     public T getValue()
     {
         return this.observable == null ? this.value : this.observable.getValue();
@@ -118,6 +149,9 @@ public class BaseProperty<T> implements IProperty<T>
     @Override
     public void invalidate(final T oldValue)
     {
+        if(this.isMuted())
+            return;
+
         if (this.value == null || !this.value.equals(oldValue))
             this.fireChangeListeners(oldValue, this.value);
         this.fireInvalidationListeners();
@@ -135,6 +169,9 @@ public class BaseProperty<T> implements IProperty<T>
                 this.listener = obs -> BaseProperty.this.setPropertyValue(BaseProperty.this.observable.getValue());
             if (!this.valueChangeListeners.isEmpty() || !this.valueInvalidationListeners.isEmpty())
                 this.startObserving();
+
+            if(this.isMuted())
+                return;
             if (this.value == null || !this.value.equals(observable.getValue()))
                 this.fireChangeListeners(this.value, observable.getValue());
             this.fireInvalidationListeners();

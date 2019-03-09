@@ -2,6 +2,7 @@ package fr.ourten.teabeans.listener;
 
 import fr.ourten.teabeans.value.ObservableValue;
 
+@FunctionalInterface
 public interface MapValueChangeListener<K, T>
 {
     /**

@@ -9,8 +9,8 @@ import java.util.function.Supplier;
 
 public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListProperty<T>
 {
-    private Supplier<List<T>>                                   listSupplier;
-    private BiFunction<T, T, T>                                 checker;
+    private Supplier<List<T>>   listSupplier;
+    private BiFunction<T, T, T> checker;
 
     /**
      * The list of attached listeners that need to be notified when the value
@@ -86,11 +86,11 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
 
     private void add(T element, final Consumer<T> action)
     {
-        List<T> old = null;
+        List<T> oldList = null;
         if (!this.valueChangeListeners.isEmpty())
         {
-            old = this.listSupplier.get();
-            old.addAll(this.value);
+            oldList = this.listSupplier.get();
+            oldList.addAll(this.value);
         }
 
         if (this.checker != null)
@@ -98,9 +98,7 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
 
         action.accept(element);
 
-        this.fireInvalidationListeners();
-        this.fireListChangeListeners(null, element);
-        this.fireChangeListeners(old, this.value);
+        this.invalidateElement(null, element, oldList);
     }
 
     @Override
@@ -124,17 +122,15 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     @Override
     public T remove(final int index)
     {
-        List<T> old = null;
+        List<T> oldList = null;
         if (!this.valueChangeListeners.isEmpty())
         {
-            old = this.listSupplier.get();
-            old.addAll(this.value);
+            oldList = this.listSupplier.get();
+            oldList.addAll(this.value);
         }
         final T rtn = this.value.remove(index);
 
-        this.fireInvalidationListeners();
-        this.fireListChangeListeners(rtn, null);
-        this.fireChangeListeners(old, this.value);
+        this.invalidateElement(rtn, null, oldList);
         return rtn;
     }
 
@@ -145,14 +141,14 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     }
 
     @Override
-    public void set(final int index, T element)
+    public void set(int index, T element)
     {
         final T oldValue = this.value.get(index);
-        List<T> old = null;
+        List<T> oldList = null;
         if (!this.valueChangeListeners.isEmpty())
         {
-            old = this.listSupplier.get();
-            old.addAll(this.value);
+            oldList = this.listSupplier.get();
+            oldList.addAll(this.value);
         }
 
         if (this.checker != null)
@@ -160,20 +156,18 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
 
         this.value.set(index, element);
 
-        this.fireInvalidationListeners();
-        this.fireListChangeListeners(oldValue, element);
-        this.fireChangeListeners(old, this.value);
+        this.invalidateElement(oldValue, element, oldList);
     }
 
     @Override
     public void replace(T oldElement, T newElement)
     {
         final T oldValue = this.value.contains(oldElement) ? oldElement : null;
-        List<T> old = null;
+        List<T> oldList = null;
         if (!this.valueChangeListeners.isEmpty())
         {
-            old = this.listSupplier.get();
-            old.addAll(this.value);
+            oldList = this.listSupplier.get();
+            oldList.addAll(this.value);
         }
 
         if (this.checker != null)
@@ -182,9 +176,16 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
         this.value.remove(oldElement);
         this.value.add(newElement);
 
-        this.fireInvalidationListeners();
-        this.fireListChangeListeners(oldValue, newElement);
-        this.fireChangeListeners(old, this.value);
+        this.invalidateElement(oldElement, newElement, oldList);
+    }
+
+    public void invalidateElement(T oldElement, T newElement, List<T> oldList)
+    {
+        if (this.isMuted())
+            return;
+
+        this.fireListChangeListeners(oldElement, newElement);
+        this.invalidate(oldList);
     }
 
     @Override
@@ -196,20 +197,21 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     @Override
     public void clear()
     {
-        List<T> old = null;
+        List<T> oldList = null;
 
         if (!this.valueChangeListeners.isEmpty() || !this.listValueChangeListeners.isEmpty())
         {
-            old = this.listSupplier.get();
-            old.addAll(this.value);
+            oldList = this.listSupplier.get();
+            oldList.addAll(this.value);
         }
         this.value.clear();
 
-        this.fireInvalidationListeners();
-        this.fireChangeListeners(old, this.value);
+        if (this.isMuted())
+            return;
 
-        if (old != null)
-            old.forEach(oldValue -> this.fireListChangeListeners(oldValue, null));
+        if (oldList != null)
+            oldList.forEach(oldValue -> this.fireListChangeListeners(oldValue, null));
+        this.invalidate(oldList);
     }
 
     @Override

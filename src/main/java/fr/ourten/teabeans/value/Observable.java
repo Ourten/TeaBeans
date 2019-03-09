@@ -7,4 +7,12 @@ public interface Observable
     void addListener(ValueInvalidationListener listener);
 
     void removeListener(ValueInvalidationListener listener);
+
+    void mute();
+
+    void unmute();
+
+    void muteWhile(Runnable runnable);
+
+    boolean isMuted();
 }

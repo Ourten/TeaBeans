@@ -21,7 +21,7 @@ public interface ListProperty<T> extends IProperty<List<T>>
 
     void addAll(Collection<T> elements);
 
-    public default boolean remove(final T element)
+    default boolean remove(final T element)
     {
         if (this.indexOf(element) != -1)
         {

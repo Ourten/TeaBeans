@@ -13,9 +13,12 @@ public abstract class BaseBinding<T> implements Binding<T>
     private final ArrayList<Observable>                     dependencies               = new ArrayList<>();
     private final ArrayList<ValueChangeListener<? super T>> valueChangeListeners       = new ArrayList<>();
     private final ArrayList<ValueInvalidationListener>      valueInvalidationListeners = new ArrayList<>();
-    protected T                                             value;
-    private boolean                                         isValid;
-    private ValueInvalidationListener                       listener;
+    private       ValueInvalidationListener                 listener;
+
+    protected T       value;
+    private   boolean isValid;
+
+    private boolean isMuted;
 
     @Override
     public void addListener(final ValueChangeListener<? super T> listener)
@@ -48,11 +51,13 @@ public abstract class BaseBinding<T> implements Binding<T>
         {
             final T computed = this.computeValue();
 
-            if (computed == null && this.value != null)
-                this.fireChangeListeners(this.value, computed);
-            else if (computed != null && !computed.equals(this.value))
-                this.fireChangeListeners(this.value, computed);
-
+            if (!this.isMuted())
+            {
+                if (computed == null && this.value != null)
+                    this.fireChangeListeners(this.value, computed);
+                else if (computed != null && !computed.equals(this.value))
+                    this.fireChangeListeners(this.value, computed);
+            }
             this.value = computed;
             this.isValid = true;
         }
@@ -106,6 +111,33 @@ public abstract class BaseBinding<T> implements Binding<T>
     {
         this.isValid = false;
         this.fireInvalidationListeners();
+    }
+
+    @Override
+    public void mute()
+    {
+        this.isMuted = true;
+    }
+
+    @Override
+    public void unmute()
+    {
+        this.isMuted = false;
+        this.invalidate();
+    }
+
+    @Override
+    public void muteWhile(Runnable runnable)
+    {
+        this.mute();
+        runnable.run();
+        this.unmute();
+    }
+
+    @Override
+    public boolean isMuted()
+    {
+        return this.isMuted;
     }
 
     protected void fireChangeListeners(final T oldValue, final T newValue)
