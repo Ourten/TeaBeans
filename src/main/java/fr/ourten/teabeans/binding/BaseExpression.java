@@ -1,16 +1,16 @@
 package fr.ourten.teabeans.binding;
 
-import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import fr.ourten.teabeans.function.HexaFunction;
 import fr.ourten.teabeans.function.PetaFunction;
 import fr.ourten.teabeans.function.TetraFunction;
 import fr.ourten.teabeans.function.TriFunction;
 import fr.ourten.teabeans.value.Observable;
 import fr.ourten.teabeans.value.ObservableValue;
+
+import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author Ourten 15 oct. 2016
@@ -31,6 +31,14 @@ public class BaseExpression<T> extends BaseBinding<T>
         return this.closure.get();
     }
 
+    /**
+     * This method is not intended for direct use.
+     * It will eventually be removed in a future version of the library.
+     * Prefer to use ObservableValue#map instead
+     *
+     * Marked for removal @since 1.2.0
+     */
+    @Deprecated
     public static <A, R> BaseExpression<R> transform(final ObservableValue<A> obs,
             final Function<? super A, ? extends R> closure)
     {
@@ -43,6 +51,14 @@ public class BaseExpression<T> extends BaseBinding<T>
         }, obs);
     }
 
+    /**
+     * This method is not intended for direct use.
+     * It will eventually be removed in a future version of the library.
+     * Prefer to use ObservableValue#map instead
+     *
+     * Marked for removal @since 1.2.0
+     */
+    @Deprecated
     public static <A, B, R> BaseExpression<R> constantCombine(final ObservableValue<A> obs1, final B constant,
             final BiFunction<? super A, ? super B, ? extends R> closure)
     {
@@ -56,6 +72,14 @@ public class BaseExpression<T> extends BaseBinding<T>
         }, obs1);
     }
 
+    /**
+     * This method is not intended for direct use.
+     * It will eventually be removed in a future version of the library.
+     * Prefer to use ObservableValue#combine instead
+     *
+     * Marked for removal @since 1.2.0
+     */
+    @Deprecated
     public static <A, B, R> BaseExpression<R> biCombine(final ObservableValue<A> obs1, final ObservableValue<B> obs2,
             final BiFunction<? super A, ? super B, ? extends R> closure)
     {
@@ -70,6 +94,14 @@ public class BaseExpression<T> extends BaseBinding<T>
         }, obs1, obs2);
     }
 
+    /**
+     * This method is not intended for direct use.
+     * It will eventually be removed in a future version of the library.
+     * Prefer to use ObservableValue#combine instead
+     *
+     * Marked for removal @since 1.2.0
+     */
+    @Deprecated
     public static <A, B, C, R> BaseExpression<R> triCombine(final ObservableValue<A> obs1,
             final ObservableValue<B> obs2, final ObservableValue<C> obs3,
             final TriFunction<? super A, ? super B, ? super C, ? extends R> closure)
@@ -86,6 +118,14 @@ public class BaseExpression<T> extends BaseBinding<T>
         }, obs1, obs2, obs3);
     }
 
+    /**
+     * This method is not intended for direct use.
+     * It will eventually be removed in a future version of the library.
+     * Prefer to use ObservableValue#combine instead
+     *
+     * Marked for removal @since 1.2.0
+     */
+    @Deprecated
     public static <A, B, C, D, R> BaseExpression<R> tetraCombine(final ObservableValue<A> obs1,
             final ObservableValue<B> obs2, final ObservableValue<C> obs3, final ObservableValue<D> obs4,
             final TetraFunction<? super A, ? super B, ? super C, ? super D, ? extends R> closure)
@@ -104,6 +144,14 @@ public class BaseExpression<T> extends BaseBinding<T>
         }, obs1, obs2, obs3, obs4);
     }
 
+    /**
+     * This method is not intended for direct use.
+     * It will eventually be removed in a future version of the library.
+     * Prefer to use ObservableValue#combine instead
+     *
+     * Marked for removal @since 1.2.0
+     */
+    @Deprecated
     public static <A, B, C, D, E, R> BaseExpression<R> petaCombine(final ObservableValue<A> obs1,
             final ObservableValue<B> obs2, final ObservableValue<C> obs3, final ObservableValue<D> obs4,
             final ObservableValue<E> obs5,
@@ -125,6 +173,14 @@ public class BaseExpression<T> extends BaseBinding<T>
         }, obs1, obs2, obs3, obs4, obs5);
     }
 
+    /**
+     * This method is not intended for direct use.
+     * It will eventually be removed in a future version of the library.
+     * Prefer to use ObservableValue#combine instead
+     *
+     * Marked for removal @since 1.2.0
+     */
+    @Deprecated
     public static <A, B, C, D, E, F, R> BaseExpression<R> hexaCombine(final ObservableValue<A> obs1,
             final ObservableValue<B> obs2, final ObservableValue<C> obs3, final ObservableValue<D> obs4,
             final ObservableValue<E> obs5, final ObservableValue<F> obs6,
