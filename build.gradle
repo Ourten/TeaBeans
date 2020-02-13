@@ -18,6 +18,10 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.sonarqube" version "2.7"
+}
+
 apply plugin: 'java'
 
 //IDE
@@ -38,7 +42,7 @@ archivesBaseName = "teabeans"
 version = "${project.teabeans_version}"
 
 dependencies {
-	testCompile "junit:junit:4.12"
+    testCompile "junit:junit:4.12"
     testCompile 'org.assertj:assertj-core-java8:1.0.0m1'
     testRuntime "org.slf4j:slf4j-api:1.7.10"
 }
@@ -84,6 +88,18 @@ publishing {
     }
 }
 
+apply plugin: 'org.sonarqube'
+
+sonarqube {
+    properties {
+        property "sonar.host.url", project.hasProperty('sonarqube_url') ? project.sonarqube_url : System.getenv('SONARQUBE_URL')
+        property "sonar.login", project.hasProperty('sonarqube_login') ? project.sonarqube_login : System.getenv('SONARQUBE_LOGIN')
+        property "sonar.projectKey", "Teabeans"
+        property "sonar.projectName", "Teabeans"
+        property "sonar.groovy.binaries", "${project.buildDir.name}${File.separator}classes"
+    }
+}
+
 apply plugin: "jacoco"
 
 jacocoTestReport {
@@ -92,3 +108,7 @@ jacocoTestReport {
         html.enabled true
     }
 }
+
+test.finalizedBy jacocoTestReport
+project.tasks["sonarqube"].dependsOn jacocoTestReport
+
