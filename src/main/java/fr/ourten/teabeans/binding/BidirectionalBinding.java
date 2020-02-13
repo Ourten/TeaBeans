@@ -34,7 +34,7 @@ public class BidirectionalBinding<T> implements ValueChangeListener<T>
     public void valueChanged(final ObservableValue<? extends T> observable, final T oldValue, final T newValue)
     {
         if (!this.updating)
-            if (this.getProperty1() == null || this.getProperty1() == null)
+            if (this.getProperty1() == null || this.getProperty2() == null)
             {
                 if (this.getProperty1() != null)
                     this.getProperty1().removeListener(this);
