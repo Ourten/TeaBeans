@@ -2,7 +2,11 @@ package fr.ourten.teabeans.value;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -10,6 +14,8 @@ public class BaseSetProperty<T> extends BaseProperty<Set<T>> implements SetPrope
 {
     private Supplier<Set<T>>    setSupplier;
     private BiFunction<T, T, T> checker;
+
+    private Set<T> immutableView;
 
     /**
      * The list of attached listeners that need to be notified when the value
@@ -46,7 +52,9 @@ public class BaseSetProperty<T> extends BaseProperty<Set<T>> implements SetPrope
     @Override
     public Set<T> getValue()
     {
-        return Collections.unmodifiableSet(this.value);
+        if (immutableView == null)
+            immutableView = Collections.unmodifiableSet(this.value);
+        return immutableView;
     }
 
     public Set<T> getModifiableValue()

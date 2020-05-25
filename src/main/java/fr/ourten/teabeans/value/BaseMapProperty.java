@@ -2,8 +2,13 @@ package fr.ourten.teabeans.value;
 
 import fr.ourten.teabeans.listener.MapValueChangeListener;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -11,6 +16,8 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
 {
     private Supplier<Map<K, T>> mapSupplier;
     private BiFunction<T, T, T> checker;
+
+    private Map<K, T> immutableView;
 
     /**
      * The list of attached listeners that need to be notified when the value
@@ -47,7 +54,9 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     @Override
     public Map<K, T> getValue()
     {
-        return Collections.unmodifiableMap(this.value);
+        if (immutableView == null)
+            immutableView = Collections.unmodifiableMap(this.value);
+        return immutableView;
     }
 
     public Map<K, T> getModifiableValue()

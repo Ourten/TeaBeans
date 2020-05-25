@@ -2,7 +2,11 @@ package fr.ourten.teabeans.value;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -11,6 +15,8 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
 {
     private Supplier<List<T>>   listSupplier;
     private BiFunction<T, T, T> checker;
+
+    private List<T> immutableView;
 
     /**
      * The list of attached listeners that need to be notified when the value
@@ -47,7 +53,9 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     @Override
     public List<T> getValue()
     {
-        return Collections.unmodifiableList(this.value);
+        if (immutableView == null)
+            immutableView = Collections.unmodifiableList(this.value);
+        return immutableView;
     }
 
     public List<T> getModifiableValue()
