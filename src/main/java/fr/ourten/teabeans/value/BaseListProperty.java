@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -242,5 +243,11 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     public int size()
     {
         return this.getValue().size();
+    }
+
+    @Override
+    public Iterator<T> iterator()
+    {
+        return getValue().iterator();
     }
 }

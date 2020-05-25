@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-public interface ListProperty<T> extends IProperty<List<T>>
+public interface ListProperty<T> extends IProperty<List<T>>, Iterable<T>
 {
     void addListener(ListValueChangeListener<? super T> listener);
 

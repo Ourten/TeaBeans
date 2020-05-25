@@ -5,7 +5,7 @@ import fr.ourten.teabeans.listener.ListValueChangeListener;
 import java.util.Collection;
 import java.util.Set;
 
-public interface SetProperty<T> extends IProperty<Set<T>>
+public interface SetProperty<T> extends IProperty<Set<T>>, Iterable<T>
 {
     void addListener(ListValueChangeListener<? super T> listener);
 
