@@ -5,8 +5,8 @@ import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.value.BaseProperty;
 import fr.ourten.teabeans.value.Observable;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,7 +14,7 @@ public class BindingTest
 {
     private int count;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.count = 0;

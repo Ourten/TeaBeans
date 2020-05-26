@@ -2,8 +2,8 @@ package fr.ourten.teabeans.test;
 
 import fr.ourten.teabeans.listener.MapValueChangeListener;
 import fr.ourten.teabeans.value.BaseMapProperty;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -17,7 +17,7 @@ public class BaseMapPropertyTest
     BaseMapProperty<String, Integer> property;
     int                              count;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.map = new HashMap<>();

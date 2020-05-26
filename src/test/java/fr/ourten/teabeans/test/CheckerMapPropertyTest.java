@@ -1,8 +1,8 @@
 package fr.ourten.teabeans.test;
 
 import fr.ourten.teabeans.value.BaseMapProperty;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.function.BiFunction;
@@ -13,7 +13,7 @@ public class CheckerMapPropertyTest
 {
     BaseMapProperty<Integer, String> property;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.property = new BaseMapProperty<>(new HashMap<>(), "test");

@@ -3,8 +3,8 @@ package fr.ourten.teabeans.test;
 import fr.ourten.teabeans.listener.ListValueChangeListener;
 import fr.ourten.teabeans.value.BaseSetProperty;
 import org.assertj.core.util.Sets;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,7 +19,7 @@ public class BaseSetPropertyTest
     BaseSetProperty<Integer> property;
     int                      count;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.set = Sets.newHashSet(Arrays.asList(0, 2, 3, 5));

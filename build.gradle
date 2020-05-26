@@ -24,7 +24,7 @@ plugins {
 
 apply plugin: 'java'
 
-//IDE
+// IDE
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 
@@ -42,9 +42,10 @@ archivesBaseName = "teabeans"
 version = "${project.teabeans_version}"
 
 dependencies {
-    testCompile "junit:junit:4.12"
-    testCompile 'org.assertj:assertj-core-java8:1.0.0m1'
-    testRuntime "org.slf4j:slf4j-api:1.7.10"
+    testCompile('org.junit.jupiter:junit-jupiter-api:5.6.2')
+    testCompile('org.assertj:assertj-core:3.16.1')
+
+    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.6.2')
 }
 
 // Publications
@@ -62,7 +63,7 @@ artifactory {
             maven = true
         }
         defaults {
-            publications ('mavenJava')
+            publications('mavenJava')
         }
     }
 }
@@ -80,7 +81,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifact (sourcesJar) { 
+            artifact(sourcesJar) {
                 classifier = 'sources'
             }
             artifact source: sourcesJar, classifier: 'sources', extension: 'jar'
@@ -98,6 +99,10 @@ sonarqube {
         property "sonar.projectName", "Teabeans"
         property "sonar.groovy.binaries", "${project.buildDir.name}${File.separator}classes"
     }
+}
+
+test {
+    useJUnitPlatform()
 }
 
 apply plugin: "jacoco"

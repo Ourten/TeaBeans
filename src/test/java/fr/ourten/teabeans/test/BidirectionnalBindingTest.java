@@ -3,8 +3,8 @@ package fr.ourten.teabeans.test;
 import fr.ourten.teabeans.binding.BaseBinding;
 import fr.ourten.teabeans.binding.BidirectionalBinding;
 import fr.ourten.teabeans.value.BaseProperty;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,7 +12,7 @@ public class BidirectionnalBindingTest
 {
     private int count;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.count = 0;

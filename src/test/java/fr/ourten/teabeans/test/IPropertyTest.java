@@ -2,18 +2,19 @@ package fr.ourten.teabeans.test;
 
 import fr.ourten.teabeans.value.BaseProperty;
 import fr.ourten.teabeans.value.IProperty;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Ourten 11 oct. 2016
  */
 public class IPropertyTest
 {
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void testThrow()
     {
         final IProperty<String> property = new BaseProperty<>("test", "throwTestProperty");
@@ -21,7 +22,8 @@ public class IPropertyTest
         assertThat(property.getOrThrow()).isEqualTo("test");
 
         property.setValue(null);
-        property.getOrThrow();
+
+        assertThrows(NoSuchElementException.class, () -> property.getOrThrow());
     }
 
     @Test

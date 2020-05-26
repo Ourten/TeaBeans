@@ -1,9 +1,10 @@
 package fr.ourten.teabeans.test;
 
 import fr.ourten.teabeans.value.BaseProperty;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BasePropertyTest
 {
@@ -57,7 +58,7 @@ public class BasePropertyTest
         assertThat(property1.getValue()).isEqualTo(15);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testBindingError()
     {
         final BaseProperty<Integer> property1 = new BaseProperty<>(3, "testIntegerProperty1");
@@ -65,6 +66,6 @@ public class BasePropertyTest
 
         property2.bind(property1);
 
-        property2.setValue(2);
+        assertThrows(RuntimeException.class, () -> property2.setValue(2));
     }
 }

@@ -1,8 +1,8 @@
 package fr.ourten.teabeans.test;
 
 import fr.ourten.teabeans.value.BaseProperty;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.function.BiFunction;
 
@@ -12,7 +12,7 @@ public class CheckerPropertyTest
 {
     BaseProperty<String> property;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.property = new BaseProperty<>("test");

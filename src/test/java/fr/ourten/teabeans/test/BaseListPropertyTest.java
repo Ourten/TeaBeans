@@ -2,8 +2,8 @@ package fr.ourten.teabeans.test;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
 import fr.ourten.teabeans.value.BaseListProperty;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,7 +18,7 @@ public class BaseListPropertyTest
     BaseListProperty<Integer> property;
     int                       count;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.list = Arrays.asList(0, 2, 3, 5);

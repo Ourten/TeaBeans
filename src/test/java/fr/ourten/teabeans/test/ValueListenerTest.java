@@ -1,9 +1,9 @@
 package fr.ourten.teabeans.test;
 
 import fr.ourten.teabeans.value.BaseProperty;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,14 +12,14 @@ public class ValueListenerTest
     private boolean               used;
     private BaseProperty<Integer> property;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.property = new BaseProperty<>(5, "testIntegerProperty");
         this.used = false;
     }
 
-    @After
+    @AfterEach
     public void after()
     {
         this.property.setValue(6);

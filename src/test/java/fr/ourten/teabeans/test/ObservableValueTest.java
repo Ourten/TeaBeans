@@ -3,8 +3,8 @@ package fr.ourten.teabeans.test;
 import fr.ourten.teabeans.value.BaseProperty;
 import fr.ourten.teabeans.value.ObservableValue;
 import fr.ourten.teabeans.value.WritableValue;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,7 +15,7 @@ public class ObservableValueTest
 {
     private int count;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.count = 0;
