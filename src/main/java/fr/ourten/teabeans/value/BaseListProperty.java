@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -49,6 +50,15 @@ public class BaseListProperty<T> extends BaseProperty<List<T>> implements ListPr
     public BaseListProperty(final List<T> value)
     {
         this(value, "");
+    }
+
+    @Override
+    protected void setPropertyValue(List<T> value)
+    {
+        if (immutableView != null && !Objects.equals(value, this.value))
+            immutableView = Collections.unmodifiableList(value);
+
+        super.setPropertyValue(value);
     }
 
     @Override

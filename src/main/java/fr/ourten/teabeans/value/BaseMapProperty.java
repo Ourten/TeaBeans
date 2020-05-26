@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
@@ -49,6 +50,15 @@ public class BaseMapProperty<K, T> extends BaseProperty<Map<K, T>> implements Ma
     public BaseMapProperty(final Map<K, T> value)
     {
         this(value, "");
+    }
+
+    @Override
+    protected void setPropertyValue(Map<K, T> value)
+    {
+        if (immutableView != null && !Objects.equals(value, this.value))
+            immutableView = Collections.unmodifiableMap(value);
+
+        super.setPropertyValue(value);
     }
 
     @Override

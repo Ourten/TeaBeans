@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
@@ -48,6 +49,15 @@ public class BaseSetProperty<T> extends BaseProperty<Set<T>> implements SetPrope
     public BaseSetProperty(final Set<T> value)
     {
         this(value, "");
+    }
+
+    @Override
+    protected void setPropertyValue(Set<T> value)
+    {
+        if (immutableView != null && !Objects.equals(value, this.value))
+            immutableView = Collections.unmodifiableSet(value);
+
+        super.setPropertyValue(value);
     }
 
     @Override
