@@ -1,9 +1,10 @@
-package fr.ourten.teabeans.value;
+package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.binding.BidirectionalBinding;
 import fr.ourten.teabeans.binding.WeakObservableListener;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
+import fr.ourten.teabeans.value.ObservableValue;
 
 import java.util.ArrayList;
 import java.util.Objects;

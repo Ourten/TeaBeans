@@ -1,10 +1,10 @@
-package fr.ourten.teabeans.value;
+package fr.ourten.teabeans.property;
+
+import fr.ourten.teabeans.listener.MapValueChangeListener;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
-import fr.ourten.teabeans.listener.MapValueChangeListener;
 
 public interface IMapProperty<K, T> extends IProperty<Map<K, T>>
 {
@@ -36,16 +36,15 @@ public interface IMapProperty<K, T> extends IProperty<Map<K, T>>
 
     T remove(K key);
 
-    default boolean removeValue(final T value)
+    default boolean removeValue(T value)
     {
-        @SuppressWarnings("unchecked")
-        K[] keys = (K[]) this.keySet().toArray();
+        K[] keys = (K[]) keySet().toArray();
         boolean find = false;
         for (int i = 0; i < keys.length; i++)
         {
-            if (this.get(keys[i]).equals(value))
+            if (get(keys[i]).equals(value))
             {
-                this.remove(keys[i]);
+                remove(keys[i]);
                 find = true;
             }
         }
@@ -60,6 +59,6 @@ public interface IMapProperty<K, T> extends IProperty<Map<K, T>>
 
     default boolean isEmpty()
     {
-        return this.size() == 0;
+        return size() == 0;
     }
 }

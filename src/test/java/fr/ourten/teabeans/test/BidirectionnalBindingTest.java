@@ -2,7 +2,7 @@ package fr.ourten.teabeans.test;
 
 import fr.ourten.teabeans.binding.BidirectionalBinding;
 import fr.ourten.teabeans.binding.Binding;
-import fr.ourten.teabeans.value.Property;
+import fr.ourten.teabeans.property.Property;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -1,73 +1,72 @@
 package fr.ourten.teabeans.binding;
 
 import fr.ourten.teabeans.listener.ValueChangeListener;
-import fr.ourten.teabeans.value.IProperty;
+import fr.ourten.teabeans.property.IProperty;
 import fr.ourten.teabeans.value.ObservableValue;
 
 import java.util.Objects;
 
 public class BidirectionalBinding<T> implements ValueChangeListener<T>
 {
-    private boolean            updating;
+    private       boolean      updating;
     private final IProperty<T> property1;
     private final IProperty<T> property2;
 
-    public BidirectionalBinding(final IProperty<T> p1, final IProperty<T> p2)
+    public BidirectionalBinding(IProperty<T> p1, IProperty<T> p2)
     {
         Objects.requireNonNull(p1, "Cannot bind to null!");
         Objects.requireNonNull(p2, "Cannot bind to null!");
-        this.property1 = p1;
-        this.property2 = p2;
+        property1 = p1;
+        property2 = p2;
 
-        this.getProperty1().setValue(p2.getValue());
-        this.getProperty1().addListener(this);
-        this.getProperty2().addListener(this);
+        getProperty1().setValue(p2.getValue());
+        getProperty1().addListener(this);
+        getProperty2().addListener(this);
     }
 
     public void unbind()
     {
-        this.getProperty1().removeListener(this);
-        this.getProperty2().removeListener(this);
+        getProperty1().removeListener(this);
+        getProperty2().removeListener(this);
     }
 
     @Override
-    public void valueChanged(final ObservableValue<? extends T> observable, final T oldValue, final T newValue)
+    public void valueChanged(ObservableValue<? extends T> observable, T oldValue, T newValue)
     {
-        if (!this.updating)
-            if (this.getProperty1() == null || this.getProperty2() == null)
+        if (!updating)
+            if (getProperty1() == null || getProperty2() == null)
             {
-                if (this.getProperty1() != null)
-                    this.getProperty1().removeListener(this);
-                if (this.getProperty2() != null)
-                    this.getProperty2().removeListener(this);
+                if (getProperty1() != null)
+                    getProperty1().removeListener(this);
+                if (getProperty2() != null)
+                    getProperty2().removeListener(this);
             }
             else
             {
-                this.updating = true;
-                if (this.getProperty1() == observable)
-                    this.getProperty2().setValue(newValue);
+                updating = true;
+                if (getProperty1() == observable)
+                    getProperty2().setValue(newValue);
                 else
-                    this.getProperty1().setValue(newValue);
-                this.updating = false;
+                    getProperty1().setValue(newValue);
+                updating = false;
             }
     }
 
     @Override
-    public boolean equals(final Object obj)
+    public boolean equals(Object obj)
     {
         if (this == obj)
             return true;
 
-        final Object propertyA1 = this.getProperty1();
-        final Object propertyA2 = this.getProperty2();
+        Object propertyA1 = getProperty1();
+        Object propertyA2 = getProperty2();
         if (propertyA1 == null || propertyA2 == null)
             return false;
         if (obj instanceof BidirectionalBinding)
         {
-            @SuppressWarnings("unchecked")
-            final BidirectionalBinding<T> otherBinding = (BidirectionalBinding<T>) obj;
-            final Object propertyB1 = otherBinding.getProperty1();
-            final Object propertyB2 = otherBinding.getProperty2();
+            BidirectionalBinding<T> otherBinding = (BidirectionalBinding<T>) obj;
+            Object propertyB1 = otherBinding.getProperty1();
+            Object propertyB2 = otherBinding.getProperty2();
             if (propertyB1 == null || propertyB2 == null)
                 return false;
             if (propertyA1 == propertyB1 && propertyA2 == propertyB2
@@ -79,11 +78,11 @@ public class BidirectionalBinding<T> implements ValueChangeListener<T>
 
     public IProperty<T> getProperty1()
     {
-        return this.property1;
+        return property1;
     }
 
     public IProperty<T> getProperty2()
     {
-        return this.property2;
+        return property2;
     }
 }

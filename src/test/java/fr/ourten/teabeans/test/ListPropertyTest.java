@@ -1,7 +1,7 @@
 package fr.ourten.teabeans.test;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
-import fr.ourten.teabeans.value.ListProperty;
+import fr.ourten.teabeans.property.ListProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

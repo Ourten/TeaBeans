@@ -1,9 +1,9 @@
 package fr.ourten.teabeans.test;
 
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
+import fr.ourten.teabeans.property.Property;
+import fr.ourten.teabeans.property.ReduceProperty;
 import fr.ourten.teabeans.value.Observable;
-import fr.ourten.teabeans.value.Property;
-import fr.ourten.teabeans.value.ReduceProperty;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;

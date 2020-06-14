@@ -1,10 +1,12 @@
-package fr.ourten.teabeans.value;
+package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.binding.BidirectionalBinding;
 import fr.ourten.teabeans.binding.Binding;
 import fr.ourten.teabeans.binding.WeakObservableListener;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
+import fr.ourten.teabeans.value.Observable;
+import fr.ourten.teabeans.value.ObservableValue;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -93,7 +95,7 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
         fireInvalidationListeners();
 
         oldValue = value;
-        
+
         if (actAsBinding)
             setValid(false);
     }

@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.value;
+package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.MapValueChangeListener;
 

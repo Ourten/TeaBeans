@@ -1,6 +1,6 @@
 package fr.ourten.teabeans.test;
 
-import fr.ourten.teabeans.value.Property;
+import fr.ourten.teabeans.property.Property;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;

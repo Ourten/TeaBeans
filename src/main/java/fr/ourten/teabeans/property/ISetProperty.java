@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.value;
+package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
 
@@ -15,7 +15,7 @@ public interface ISetProperty<T> extends IProperty<Set<T>>, Iterable<T>
 
     void addAll(Collection<T> elements);
 
-    boolean remove( T element);
+    boolean remove(T element);
 
     void replace(T oldElement, T newElement);
 
@@ -27,6 +27,6 @@ public interface ISetProperty<T> extends IProperty<Set<T>>, Iterable<T>
 
     default boolean isEmpty()
     {
-        return this.size() == 0;
+        return size() == 0;
     }
 }

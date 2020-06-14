@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.value;
+package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
 
@@ -21,11 +21,11 @@ public interface IListProperty<T> extends IProperty<List<T>>, Iterable<T>
 
     void addAll(Collection<T> elements);
 
-    default boolean remove(final T element)
+    default boolean remove(T element)
     {
-        if (this.indexOf(element) != -1)
+        if (indexOf(element) != -1)
         {
-            this.remove(this.indexOf(element));
+            remove(indexOf(element));
             return true;
         }
         return false;
@@ -47,7 +47,7 @@ public interface IListProperty<T> extends IProperty<List<T>>, Iterable<T>
 
     default boolean isEmpty()
     {
-        return this.size() == 0;
+        return size() == 0;
     }
 
     void sort(Comparator<? super T> comparator);
@@ -57,8 +57,7 @@ public interface IListProperty<T> extends IProperty<List<T>>, Iterable<T>
      */
     default void sort()
     {
-        @SuppressWarnings("unchecked")
-        final Comparator<T> naturalOrder = (o1, o2) ->
+        Comparator<T> naturalOrder = (o1, o2) ->
         {
             if (o1 == null && o2 == null)
                 return 0;
@@ -72,6 +71,6 @@ public interface IListProperty<T> extends IProperty<List<T>>, Iterable<T>
 
             return Collator.getInstance().compare(o1.toString(), o2.toString());
         };
-        this.sort(naturalOrder);
+        sort(naturalOrder);
     }
 }

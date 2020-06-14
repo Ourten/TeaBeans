@@ -1,4 +1,7 @@
-package fr.ourten.teabeans.value;
+package fr.ourten.teabeans.property;
+
+import fr.ourten.teabeans.value.ObservableValue;
+import fr.ourten.teabeans.value.WritableValue;
 
 import java.util.NoSuchElementException;
 
