@@ -15,8 +15,9 @@ public abstract class Binding<T> implements IBinding<T>
     protected final ArrayList<ValueInvalidationListener>      valueInvalidationListeners = new ArrayList<>();
     private         ValueInvalidationListener                 listener;
 
-    protected T       value;
-    private   boolean isValid;
+    protected T value;
+
+    private boolean isValid;
 
     private boolean isMuted;
 
@@ -70,7 +71,7 @@ public abstract class Binding<T> implements IBinding<T>
         for (Observable obs : observables)
             Objects.requireNonNull(obs, "Cannot bind to null!");
         if (listener == null)
-            listener = observable -> invalidate();
+            listener = new WeakObservableListener(this);
         for (Observable observable : observables)
         {
             observable.addListener(listener);

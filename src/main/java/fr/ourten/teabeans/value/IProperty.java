@@ -4,8 +4,6 @@ import java.util.NoSuchElementException;
 
 public interface IProperty<T> extends WritableValue<T>
 {
-    void invalidate(T oldValue);
-
     void bindProperty(ObservableValue<? extends T> observable);
 
     void unbind();

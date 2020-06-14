@@ -197,6 +197,12 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
         invalidate(oldList);
     }
 
+    protected void invalidate(List<T> oldList)
+    {
+        oldValue = oldList;
+        invalidate();
+    }
+
     @Override
     public int indexOf(T element)
     {

@@ -1,45 +1,48 @@
 package fr.ourten.teabeans.test;
 
 import fr.ourten.teabeans.value.Property;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ValueListenerTest
 {
-    private boolean           used;
-    private Property<Integer> property;
-
-    @BeforeEach
-    public void setup()
+    @Test
+    void invalidate_givenSimpleChange_thenShouldTriggerInvalidation()
     {
-        property = new Property<>(5);
-        used = false;
-    }
+        Property<Integer> property = new Property<>(5);
 
-    @AfterEach
-    public void after()
-    {
+        AtomicInteger counter = new AtomicInteger(0);
+
+        property.addListener(obs -> counter.getAndIncrement());
+
+        property.setValue(property.getValue());
+        assertThat(counter.get()).isEqualTo(1);
+
         property.setValue(6);
-        assertThat(used).isTrue();
+        assertThat(counter.get()).isEqualTo(2);
     }
 
     @Test
-    public void testInvalidationListener()
+    void invalidate_givenSimpleChange_thenShouldTriggerChanges()
     {
-        property.addListener(observable -> used = true);
-    }
+        Property<Integer> property = new Property<>(5);
 
-    @Test
-    public void testChangeListener()
-    {
+        AtomicInteger counter = new AtomicInteger(0);
+
         property.addListener((observable, oldValue, newValue) ->
         {
-            used = true;
+            counter.getAndIncrement();
             assertThat(oldValue).isEqualTo(5);
             assertThat(newValue).isEqualTo(6);
         });
+
+        property.setValue(property.getValue());
+        assertThat(counter.get()).isEqualTo(0);
+
+        property.setValue(6);
+        assertThat(counter.get()).isEqualTo(1);
     }
 }

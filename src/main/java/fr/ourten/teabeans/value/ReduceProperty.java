@@ -2,6 +2,7 @@ package fr.ourten.teabeans.value;
 
 import fr.ourten.teabeans.binding.BidirectionalBinding;
 import fr.ourten.teabeans.binding.Binding;
+import fr.ourten.teabeans.binding.WeakObservableListener;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 
@@ -19,6 +20,8 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
     private ValueInvalidationListener    propertyInvalidator;
     private ObservableValue<? extends V> observable;
     private boolean                      isObserving;
+
+    protected V oldValue;
 
     /**
      * Dependencies previously used when this property acted as a Binding. Kept in case of reactivation.
@@ -80,13 +83,19 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
     }
 
     @Override
-    public void invalidate(V oldValue)
+    public void invalidate()
     {
         if (isMuted())
             return;
 
-        if (value == null || !value.equals(oldValue))
+        if (!Objects.equals(value, oldValue))
             fireChangeListeners(oldValue, value);
+        fireInvalidationListeners();
+
+        oldValue = value;
+        
+        if (actAsBinding)
+            setValid(false);
     }
 
     @Override
@@ -99,7 +108,7 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
             unbind();
             this.observable = observable;
             if (propertyInvalidator == null)
-                propertyInvalidator = obs -> setPropertyValue(ReduceProperty.this.observable.getValue());
+                propertyInvalidator = new WeakObservableListener(this);
             if (!valueChangeListeners.isEmpty() || !valueInvalidationListeners.isEmpty())
                 startObserving();
 
@@ -190,9 +199,8 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
 
     protected void setPropertyValue(V value)
     {
-        V oldValue = this.value;
         this.value = value;
-        invalidate(oldValue);
+        invalidate();
     }
 
     private void startObserving()

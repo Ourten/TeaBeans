@@ -1,6 +1,7 @@
 package fr.ourten.teabeans.value;
 
 import fr.ourten.teabeans.binding.BidirectionalBinding;
+import fr.ourten.teabeans.binding.WeakObservableListener;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 
@@ -26,8 +27,9 @@ public class Property<T> implements IProperty<T>
     private   BiFunction<T, T, T>          checker;
     protected T                            value;
 
+    protected T oldValue;
+
     private boolean isMuted;
-    private T       valueBeforeMute;
 
     public Property(T value)
     {
@@ -36,6 +38,7 @@ public class Property<T> implements IProperty<T>
 
         isObserving = false;
         this.value = value;
+        oldValue = value;
     }
 
     @Override
@@ -76,14 +79,13 @@ public class Property<T> implements IProperty<T>
     public void mute()
     {
         isMuted = true;
-        valueBeforeMute = getValue();
     }
 
     @Override
     public void unmute()
     {
         isMuted = false;
-        invalidate(valueBeforeMute);
+        invalidate();
     }
 
     @Override
@@ -128,20 +130,21 @@ public class Property<T> implements IProperty<T>
 
     protected void setPropertyValue(T value)
     {
-        T oldValue = this.value;
         this.value = value;
-        invalidate(oldValue);
+        invalidate();
     }
 
     @Override
-    public void invalidate(T oldValue)
+    public void invalidate()
     {
         if (isMuted())
             return;
 
-        if (value == null || !value.equals(oldValue))
+        if (!Objects.equals(value, oldValue))
             fireChangeListeners(oldValue, value);
         fireInvalidationListeners();
+
+        oldValue = value;
     }
 
     @Override
@@ -153,7 +156,7 @@ public class Property<T> implements IProperty<T>
             unbind();
             this.observable = observable;
             if (propertyInvalidator == null)
-                propertyInvalidator = obs -> setPropertyValue(Property.this.observable.getValue());
+                propertyInvalidator = new WeakObservableListener(this);
             if (!valueChangeListeners.isEmpty() || !valueInvalidationListeners.isEmpty())
                 startObserving();
 

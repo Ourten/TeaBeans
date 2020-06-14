@@ -200,6 +200,12 @@ public class MapProperty<K, T> extends Property<Map<K, T>> implements IMapProper
         invalidate(oldMap);
     }
 
+    protected void invalidate(Map<K, T> oldMap)
+    {
+        oldValue = oldMap;
+        invalidate();
+    }
+
     @Override
     public void clear()
     {

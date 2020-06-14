@@ -20,16 +20,18 @@ public interface ObservableValue<T> extends Observable
 
     T getValue();
 
+    void invalidate();
+
     default boolean isPresent()
     {
-        return this.getValue() != null;
+        return getValue() != null;
     }
 
-    default void ifPresent(final Consumer<T> function)
+    default void ifPresent(Consumer<T> function)
     {
         T value;
 
-        value = this.getValue();
+        value = getValue();
         if (value != null)
             function.accept(value);
     }

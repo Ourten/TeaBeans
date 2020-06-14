@@ -162,6 +162,12 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
         invalidate(oldSet);
     }
 
+    protected void invalidate(Set<T> oldSet)
+    {
+        oldValue = oldSet;
+        invalidate();
+    }
+
     @Override
     public void clear()
     {
