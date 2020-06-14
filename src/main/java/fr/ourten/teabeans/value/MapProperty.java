@@ -10,13 +10,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 public class MapProperty<K, T> extends Property<Map<K, T>> implements IMapProperty<K, T>
 {
     private Supplier<Map<K, T>> mapSupplier;
-    private BiFunction<T, T, T> checker;
 
     private Map<K, T> immutableView;
 
@@ -83,16 +81,6 @@ public class MapProperty<K, T> extends Property<Map<K, T>> implements IMapProper
             listener.valueChanged(this, key, oldValue, newValue);
     }
 
-    public BiFunction<T, T, T> getElementChecker()
-    {
-        return checker;
-    }
-
-    public void setElementChecker(BiFunction<T, T, T> checker)
-    {
-        this.checker = checker;
-    }
-
     @Override
     public T get(K key)
     {
@@ -108,9 +96,6 @@ public class MapProperty<K, T> extends Property<Map<K, T>> implements IMapProper
             oldMap = mapSupplier.get();
             oldMap.putAll(this.value);
         }
-
-        if (checker != null)
-            value = checker.apply(null, value);
 
         this.value.put(key, value);
 
@@ -181,9 +166,6 @@ public class MapProperty<K, T> extends Property<Map<K, T>> implements IMapProper
             oldMap = mapSupplier.get();
             oldMap.putAll(value);
         }
-
-        if (checker != null)
-            element = checker.apply(value.get(key), element);
 
         T rtn = value.replace(key, element);
 

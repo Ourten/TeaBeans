@@ -9,13 +9,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
 {
-    private Supplier<Set<T>>    setSupplier;
-    private BiFunction<T, T, T> checker;
+    private Supplier<Set<T>> setSupplier;
 
     private Set<T> immutableView;
 
@@ -76,16 +74,6 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
         listValueChangeListeners.remove(listener);
     }
 
-    public BiFunction<T, T, T> getElementChecker()
-    {
-        return checker;
-    }
-
-    public void setElementChecker(BiFunction<T, T, T> checker)
-    {
-        this.checker = checker;
-    }
-
     @Override
     public void add(T element)
     {
@@ -95,9 +83,6 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
             oldSet = setSupplier.get();
             oldSet.addAll(value);
         }
-
-        if (checker != null)
-            element = checker.apply(null, element);
 
         boolean added = value.add(element);
 
@@ -143,9 +128,6 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
             oldSet = setSupplier.get();
             oldSet.addAll(value);
         }
-
-        if (checker != null)
-            newElement = checker.apply(oldValue, newElement);
 
         value.remove(oldElement);
         value.add(newElement);

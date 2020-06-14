@@ -7,7 +7,6 @@ import fr.ourten.teabeans.listener.ValueInvalidationListener;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.function.BiFunction;
 
 public class Property<T> implements IProperty<T>
 {
@@ -24,7 +23,6 @@ public class Property<T> implements IProperty<T>
     private   ValueInvalidationListener    propertyInvalidator;
     private   ObservableValue<? extends T> observable;
     private   boolean                      isObserving;
-    private   BiFunction<T, T, T>          checker;
     protected T                            value;
 
     protected T oldValue;
@@ -113,19 +111,7 @@ public class Property<T> implements IProperty<T>
     {
         if (isBound())
             throw new RuntimeException("Cannot set the value of a bound property");
-        if (checker != null)
-            value = checker.apply(this.value, value);
         setPropertyValue(value);
-    }
-
-    public BiFunction<T, T, T> getChecker()
-    {
-        return checker;
-    }
-
-    public void setChecker(BiFunction<T, T, T> checker)
-    {
-        this.checker = checker;
     }
 
     protected void setPropertyValue(T value)

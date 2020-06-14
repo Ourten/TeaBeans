@@ -9,14 +9,12 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ListProperty<T> extends Property<List<T>> implements IListProperty<T>
 {
-    private Supplier<List<T>>   listSupplier;
-    private BiFunction<T, T, T> checker;
+    private Supplier<List<T>> listSupplier;
 
     private List<T> immutableView;
 
@@ -77,16 +75,6 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
         listValueChangeListeners.remove(listener);
     }
 
-    public BiFunction<T, T, T> getElementChecker()
-    {
-        return checker;
-    }
-
-    public void setElementChecker(BiFunction<T, T, T> checker)
-    {
-        this.checker = checker;
-    }
-
     @Override
     public T get(int index)
     {
@@ -101,9 +89,6 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
             oldList = listSupplier.get();
             oldList.addAll(value);
         }
-
-        if (checker != null)
-            element = checker.apply(null, element);
 
         action.accept(element);
 
@@ -160,9 +145,6 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
             oldList.addAll(value);
         }
 
-        if (checker != null)
-            element = checker.apply(value.get(index), element);
-
         value.set(index, element);
 
         invalidateElement(oldValue, element, oldList);
@@ -178,9 +160,6 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
             oldList = listSupplier.get();
             oldList.addAll(value);
         }
-
-        if (checker != null)
-            newElement = checker.apply(oldValue, newElement);
 
         value.remove(oldElement);
         value.add(newElement);
