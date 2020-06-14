@@ -45,7 +45,7 @@ public class BidirectionnalBindingTest
 
         assertThat(binding.getValue()).isEqualTo("nonetoy");
 
-        p1.bind(p3);
+        p1.bindProperty(p3);
 
         assertThat(binding.getValue()).isEqualTo("toytoy");
         assertThat(count).isEqualTo(2);

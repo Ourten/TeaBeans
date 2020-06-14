@@ -62,7 +62,7 @@ public class BindingTest
 
         Property<String> p3 = new Property<>("");
 
-        p3.bind(new Binding<String>()
+        p3.bindProperty(new Binding<String>()
         {
             {
                 super.bind(p1);
@@ -115,7 +115,7 @@ public class BindingTest
         Property<String> p1 = new Property<>("none");
         Property<String> p2 = new Property<>("nothing");
 
-        p1.bind(p2);
+        p1.bindProperty(p2);
 
         assertThat(p1.getValue()).isEqualTo(p2.getValue());
 

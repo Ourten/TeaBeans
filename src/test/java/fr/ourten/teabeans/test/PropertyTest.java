@@ -22,7 +22,7 @@ public class PropertyTest
         Property<Integer> property1 = new Property<>(3);
         Property<Integer> property2 = new Property<>(5);
 
-        property2.bind(property1);
+        property2.bindProperty(property1);
         assertThat(property1.getValue()).isEqualTo(property2.getValue());
 
         property1.setValue(10);
@@ -54,7 +54,7 @@ public class PropertyTest
         Property<Integer> property1 = new Property<>(3);
         Property<Integer> property2 = new Property<>(5);
 
-        property2.bind(property1);
+        property2.bindProperty(property1);
 
         assertThrows(RuntimeException.class, () -> property2.setValue(2));
     }

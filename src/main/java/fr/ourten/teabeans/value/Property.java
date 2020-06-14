@@ -145,7 +145,7 @@ public class Property<T> implements IProperty<T>
     }
 
     @Override
-    public void bind(ObservableValue<? extends T> observable)
+    public void bindProperty(ObservableValue<? extends T> observable)
     {
         Objects.requireNonNull(observable, "Cannot bind to null");
         if (!observable.equals(this.observable))

@@ -6,7 +6,7 @@ public interface IProperty<T> extends WritableValue<T>
 {
     void invalidate(T oldValue);
 
-    void bind(ObservableValue<? extends T> observable);
+    void bindProperty(ObservableValue<? extends T> observable);
 
     void unbind();
 
@@ -20,17 +20,17 @@ public interface IProperty<T> extends WritableValue<T>
     {
         T value;
 
-        value = this.getValue();
+        value = getValue();
         if (value == null)
             throw new NoSuchElementException();
         return value;
     }
 
-    default T getOrDefault(final T defaultValue)
+    default T getOrDefault(T defaultValue)
     {
         T value;
 
-        value = this.getValue();
+        value = getValue();
         if (value == null)
             return defaultValue;
         return value;

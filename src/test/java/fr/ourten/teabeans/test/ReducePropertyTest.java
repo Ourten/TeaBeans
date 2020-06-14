@@ -6,6 +6,8 @@ import fr.ourten.teabeans.value.Property;
 import fr.ourten.teabeans.value.ReduceProperty;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static java.util.stream.Collectors.joining;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -53,6 +55,91 @@ public class ReducePropertyTest
 
         ReduceProperty<Integer, String> concatenated = ReduceProperty.reduce(values -> values.map(String::valueOf).collect(joining(",")));
         assertThatThrownBy(() -> concatenated.bind(two, observable)).isInstanceOf(RuntimeException.class).hasMessageContaining("ObservableValue");
+    }
+
+    @Test
+    void setValue_givenManualSet_thenShouldStopBinding()
+    {
+        Property<Integer> two = new Property<>(2);
+        Property<Integer> four = new Property<>(4);
+
+        ReduceProperty<Integer, String> concatenated = ReduceProperty.reduce(values -> values.map(String::valueOf).collect(joining(",")), two, four);
+
+        assertThat(concatenated.getValue()).isEqualTo("2,4");
+
+        concatenated.setValue("ABC");
+        assertThat(concatenated.getValue()).isEqualTo("ABC");
+
+        four.setValue(8);
+        assertThat(concatenated.getValue()).isEqualTo("ABC");
+    }
+
+    @Test
+    void setValue_givenPropertyBind_thenShouldStopBinding()
+    {
+        Property<Integer> two = new Property<>(2);
+        Property<Integer> four = new Property<>(4);
+
+        Property<String> result = new Property<>("ABC");
+
+        ReduceProperty<Integer, String> concatenated = ReduceProperty.reduce(values -> values.map(String::valueOf).collect(joining(",")), two, four);
+
+        assertThat(concatenated.getValue()).isEqualTo("2,4");
+
+        concatenated.bindProperty(result);
+        assertThat(concatenated.getValue()).isEqualTo(result.getValue());
+
+        four.setValue(8);
+        assertThat(concatenated.getValue()).isEqualTo(result.getValue());
+    }
+
+    @Test
+    void setValue_givenPropertyBind_thenShouldPropagateChange()
+    {
+        Property<Integer> two = new Property<>(2);
+        Property<Integer> four = new Property<>(4);
+
+        Property<String> result = new Property<>("ABC");
+
+        AtomicInteger invalidated = new AtomicInteger();
+        AtomicInteger changed = new AtomicInteger();
+
+        ReduceProperty<Integer, String> concatenated = ReduceProperty.reduce(values -> values.map(String::valueOf).collect(joining(",")), two, four);
+        concatenated.addListener(obs -> invalidated.getAndIncrement());
+
+        assertThat(concatenated.getValue()).isEqualTo("2,4");
+
+        concatenated.addListener((obs, oldValue, newValue) ->
+        {
+            changed.getAndIncrement();
+            assertThat(oldValue).isEqualTo("2,4");
+            assertThat(newValue).isEqualTo(result.getValue());
+        });
+
+        concatenated.bindProperty(result);
+
+        assertThat(invalidated.get()).isEqualTo(1);
+        assertThat(changed.get()).isEqualTo(1);
+    }
+
+    @Test
+    void actAsBinding_givenPropertyBehaviorThenBinding_thenShouldRestoreBindingDependencies()
+    {
+        Property<Integer> two = new Property<>(2);
+        Property<Integer> four = new Property<>(4);
+
+        Property<String> result = new Property<>("ABC");
+
+        ReduceProperty<Integer, String> concatenated = ReduceProperty.reduce(values -> values.map(String::valueOf).collect(joining(",")), two, four);
+        concatenated.bindProperty(result);
+
+        assertThat(concatenated.getValue()).isEqualTo(result.getValue());
+
+        concatenated.actAsBinding();
+
+        assertThat(concatenated.getValue()).isEqualTo("2,4");
+        four.setValue(8);
+        assertThat(concatenated.getValue()).isEqualTo("2,8");
     }
 
     private static class TestObservable implements Observable
