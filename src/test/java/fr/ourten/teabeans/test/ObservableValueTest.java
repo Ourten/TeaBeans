@@ -1,7 +1,7 @@
 package fr.ourten.teabeans.test;
 
-import fr.ourten.teabeans.value.BaseProperty;
 import fr.ourten.teabeans.value.ObservableValue;
+import fr.ourten.teabeans.value.Property;
 import fr.ourten.teabeans.value.WritableValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,13 +18,13 @@ public class ObservableValueTest
     @BeforeEach
     public void setup()
     {
-        this.count = 0;
+        count = 0;
     }
 
     @Test
     public void testPresentCheck()
     {
-        final ObservableValue<Integer> obs = new BaseProperty<>(2, "testObservableValue");
+        ObservableValue<Integer> obs = new Property<>(2);
 
         assertThat(obs.isPresent()).isTrue();
 
@@ -32,14 +32,14 @@ public class ObservableValueTest
 
         assertThat(obs.isPresent()).isFalse();
 
-        obs.ifPresent(i -> this.count++);
+        obs.ifPresent(i -> count++);
 
-        assertThat(this.count).isEqualTo(0);
+        assertThat(count).isEqualTo(0);
 
         ((WritableValue<Integer>) obs).setValue(5);
 
-        obs.ifPresent(i -> this.count++);
+        obs.ifPresent(i -> count++);
 
-        assertThat(this.count).isEqualTo(1);
+        assertThat(count).isEqualTo(1);
     }
 }

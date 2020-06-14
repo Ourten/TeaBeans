@@ -1,65 +1,228 @@
 package fr.ourten.teabeans.value;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
 import fr.ourten.teabeans.listener.MapValueChangeListener;
 
-public interface MapProperty<K, T> extends IProperty<Map<K, T>>
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
+
+public class MapProperty<K, T> extends Property<Map<K, T>> implements IMapProperty<K, T>
 {
-    void addListener(MapValueChangeListener<K, ? super T> listener);
+    private Supplier<Map<K, T>> mapSupplier;
+    private BiFunction<T, T, T> checker;
 
-    void removeListener(MapValueChangeListener<K, ? super T> listener);
+    private Map<K, T> immutableView;
 
-    T put(K key, T value);
+    /**
+     * The list of attached listeners that need to be notified when the value
+     * change.
+     */
+    private final ArrayList<MapValueChangeListener<K, ? super T>> mapValueChangeListeners;
 
-    void putAll(Map<K, ? extends T> elements);
-
-    T get(K key);
-
-    default T getOrDefault(K key, T defaultValue)
+    public MapProperty(Supplier<Map<K, T>> mapSupplier, Map<K, T> value)
     {
-        T t;
-        return (((t = get(key)) != null) || containsKey(key)) ? t : defaultValue;
+        super(value);
+        mapValueChangeListeners = new ArrayList<>();
+
+        this.value = mapSupplier.get();
+        if (value != null)
+            this.value.putAll(value);
+        this.mapSupplier = mapSupplier;
     }
 
-    Set<Map.Entry<K, T>> entrySet();
-
-    Set<K> keySet();
-
-    Collection<T> values();
-
-    boolean containsKey(K key);
-
-    boolean containsValue(T value);
-
-    T remove(K key);
-
-    default boolean removeValue(final T value)
+    public MapProperty(Map<K, T> value)
     {
-        @SuppressWarnings("unchecked")
-        K[] keys = (K[]) this.keySet().toArray();
-        boolean find = false;
-        for (int i = 0; i < keys.length; i++)
+        this(HashMap::new, value);
+    }
+
+    @Override
+    protected void setPropertyValue(Map<K, T> value)
+    {
+        if (immutableView != null && !Objects.equals(value, this.value))
+            immutableView = Collections.unmodifiableMap(value);
+
+        super.setPropertyValue(value);
+    }
+
+    @Override
+    public Map<K, T> getValue()
+    {
+        if (immutableView == null)
+            immutableView = Collections.unmodifiableMap(value);
+        return immutableView;
+    }
+
+    public Map<K, T> getModifiableValue()
+    {
+        return value;
+    }
+
+    @Override
+    public void addListener(MapValueChangeListener<K, ? super T> listener)
+    {
+        if (!mapValueChangeListeners.contains(listener))
+            mapValueChangeListeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(MapValueChangeListener<K, ? super T> listener)
+    {
+        mapValueChangeListeners.remove(listener);
+    }
+
+    private void fireListChangeListeners(K key, T oldValue, T newValue)
+    {
+        for (MapValueChangeListener<K, ? super T> listener : mapValueChangeListeners)
+            listener.valueChanged(this, key, oldValue, newValue);
+    }
+
+    public BiFunction<T, T, T> getElementChecker()
+    {
+        return checker;
+    }
+
+    public void setElementChecker(BiFunction<T, T, T> checker)
+    {
+        this.checker = checker;
+    }
+
+    @Override
+    public T get(K key)
+    {
+        return value.get(key);
+    }
+
+    @Override
+    public T put(K key, T value)
+    {
+        Map<K, T> oldMap = null;
+        if (!valueChangeListeners.isEmpty())
         {
-            if (this.get(keys[i]).equals(value))
-            {
-                this.remove(keys[i]);
-                find = true;
-            }
+            oldMap = mapSupplier.get();
+            oldMap.putAll(this.value);
         }
-        return find;
+
+        if (checker != null)
+            value = checker.apply(null, value);
+
+        this.value.put(key, value);
+
+        invalidateElement(key, null, value, oldMap);
+        return null;
     }
 
-    T replace(K key, T element);
-
-    void clear();
-
-    int size();
-
-    default boolean isEmpty()
+    @Override
+    public void putAll(Map<K, ? extends T> elements)
     {
-        return this.size() == 0;
+        elements.forEach(this::put);
+    }
+
+    @Override
+    public Set<Entry<K, T>> entrySet()
+    {
+        return value.entrySet();
+    }
+
+    @Override
+    public Set<K> keySet()
+    {
+        return value.keySet();
+    }
+
+    @Override
+    public Collection<T> values()
+    {
+        return value.values();
+    }
+
+    @Override
+    public boolean containsKey(K key)
+    {
+        return value.containsKey(key);
+    }
+
+    @Override
+    public boolean containsValue(T value)
+    {
+        return this.value.containsValue(value);
+    }
+
+    @Override
+    public T remove(K key)
+    {
+        T oldValue = value.get(key);
+        Map<K, T> oldMap = null;
+
+        if (!valueChangeListeners.isEmpty())
+        {
+            oldMap = mapSupplier.get();
+            oldMap.putAll(value);
+        }
+        T rtn = value.remove(key);
+
+        invalidateElement(key, oldValue, null, oldMap);
+        return rtn;
+    }
+
+    @Override
+    public T replace(K key, T element)
+    {
+        T oldValue = value.get(key);
+        Map<K, T> oldMap = null;
+        if (!valueChangeListeners.isEmpty())
+        {
+            oldMap = mapSupplier.get();
+            oldMap.putAll(value);
+        }
+
+        if (checker != null)
+            element = checker.apply(value.get(key), element);
+
+        T rtn = value.replace(key, element);
+
+        invalidateElement(key, oldValue, element, oldMap);
+        return rtn;
+    }
+
+    public void invalidateElement(K key, T oldElement, T newElement, Map<K, T> oldMap)
+    {
+        if (isMuted())
+            return;
+
+        fireListChangeListeners(key, oldElement, newElement);
+        invalidate(oldMap);
+    }
+
+    @Override
+    public void clear()
+    {
+        Map<K, T> oldMap = null;
+
+        if (!valueChangeListeners.isEmpty() || !mapValueChangeListeners.isEmpty())
+        {
+            oldMap = mapSupplier.get();
+            oldMap.putAll(value);
+        }
+        value.clear();
+
+        if (isMuted())
+            return;
+
+        if (oldMap != null)
+            oldMap.forEach((key, oldValue) -> fireListChangeListeners(key, oldValue, null));
+        invalidate(oldMap);
+    }
+
+    @Override
+    public int size()
+    {
+        return value.size();
     }
 }

@@ -1,27 +1,17 @@
 package fr.ourten.teabeans.test;
 
-import fr.ourten.teabeans.value.BaseProperty;
+import fr.ourten.teabeans.value.Property;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class BasePropertyTest
+public class PropertyTest
 {
-    @Test
-    public void testPropertyName()
-    {
-        final BaseProperty<String> property = new BaseProperty<>("value", "name");
-        final BaseProperty<String> property2 = new BaseProperty<>("value");
-
-        assertThat(property.getName()).isEqualTo("name");
-        assertThat(property2.getName()).isEmpty();
-    }
-
     @Test
     public void testPropertyValue()
     {
-        final BaseProperty<Float> property = new BaseProperty<>(5f, "testFloatProperty");
+        Property<Float> property = new Property<>(5f);
 
         assertThat(property.getValue()).isEqualTo(5f);
     }
@@ -29,8 +19,8 @@ public class BasePropertyTest
     @Test
     public void testPropertyBinding()
     {
-        final BaseProperty<Integer> property1 = new BaseProperty<>(3, "testIntegerProperty1");
-        final BaseProperty<Integer> property2 = new BaseProperty<>(5, "testIntegerProperty1");
+        Property<Integer> property1 = new Property<>(3);
+        Property<Integer> property2 = new Property<>(5);
 
         property2.bind(property1);
         assertThat(property1.getValue()).isEqualTo(property2.getValue());
@@ -44,8 +34,8 @@ public class BasePropertyTest
     @Test
     public void testBidirectionnalPropertyBinding()
     {
-        final BaseProperty<Integer> property1 = new BaseProperty<>(3, "testIntegerProperty1");
-        final BaseProperty<Integer> property2 = new BaseProperty<>(5, "testIntegerProperty1");
+        Property<Integer> property1 = new Property<>(3);
+        Property<Integer> property2 = new Property<>(5);
 
         property2.bindBidirectional(property1);
 
@@ -61,8 +51,8 @@ public class BasePropertyTest
     @Test
     public void testBindingError()
     {
-        final BaseProperty<Integer> property1 = new BaseProperty<>(3, "testIntegerProperty1");
-        final BaseProperty<Integer> property2 = new BaseProperty<>(5, "testIntegerProperty1");
+        Property<Integer> property1 = new Property<>(3);
+        Property<Integer> property2 = new Property<>(5);
 
         property2.bind(property1);
 

@@ -1,6 +1,6 @@
 package fr.ourten.teabeans.test;
 
-import fr.ourten.teabeans.value.BaseMapProperty;
+import fr.ourten.teabeans.value.MapProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,18 +11,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CheckerMapPropertyTest
 {
-    BaseMapProperty<Integer, String> property;
+    MapProperty<Integer, String> property;
 
     @BeforeEach
     public void setup()
     {
-        this.property = new BaseMapProperty<>(new HashMap<>(), "test");
+        property = new MapProperty<>(new HashMap<>());
     }
 
     @Test
     public void testCheckerNull()
     {
-        assertThat(this.property.getElementChecker()).isNull();
+        assertThat(property.getElementChecker()).isNull();
     }
 
     @Test
@@ -31,8 +31,8 @@ public class CheckerMapPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() ? newValue : oldValue;
 
-        this.property.setElementChecker(checker);
-        BiFunction<String, String, String> actual = this.property.getElementChecker();
+        property.setElementChecker(checker);
+        BiFunction<String, String, String> actual = property.getElementChecker();
 
         assertThat(actual).isEqualTo(checker);
     }
@@ -40,7 +40,7 @@ public class CheckerMapPropertyTest
     @Test
     public void testCheckerAddNull1()
     {
-        this.property.setElementChecker(null);
+        property.setElementChecker(null);
     }
 
     @Test
@@ -49,10 +49,10 @@ public class CheckerMapPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        this.property.setElementChecker(checker);
-        this.property.put(42, "42");
+        property.setElementChecker(checker);
+        property.put(42, "42");
 
-        String actual = this.property.get(42);
+        String actual = property.get(42);
 
         assertThat(actual).isEqualTo("42");
     }
@@ -63,10 +63,10 @@ public class CheckerMapPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        this.property.setElementChecker(checker);
-        this.property.put(-1, "");
+        property.setElementChecker(checker);
+        property.put(-1, "");
 
-        String actual = this.property.get(0);
+        String actual = property.get(0);
 
         assertThat(actual).isNull();
     }
@@ -77,10 +77,10 @@ public class CheckerMapPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        this.property.setElementChecker(checker);
-        this.property.put(-1, null);
+        property.setElementChecker(checker);
+        property.put(-1, null);
 
-        String actual = this.property.get(0);
+        String actual = property.get(0);
 
         assertThat(actual).isNull();
     }
@@ -91,10 +91,10 @@ public class CheckerMapPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        this.property.setElementChecker(checker);
-        this.property.put(-1, "2");
+        property.setElementChecker(checker);
+        property.put(-1, "2");
 
-        String actual = this.property.get(0);
+        String actual = property.get(0);
 
         assertThat(actual).isNull();
     }
@@ -105,12 +105,12 @@ public class CheckerMapPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        this.property.put(0, "0");
+        property.put(0, "0");
 
-        this.property.setElementChecker(checker);
-        this.property.replace(0, "42");
+        property.setElementChecker(checker);
+        property.replace(0, "42");
 
-        String actual = this.property.get(0);
+        String actual = property.get(0);
 
         assertThat(actual).isEqualTo("42");
     }
@@ -121,12 +121,12 @@ public class CheckerMapPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        this.property.put(0, "0");
+        property.put(0, "0");
 
-        this.property.setElementChecker(checker);
-        this.property.replace(0, "");
+        property.setElementChecker(checker);
+        property.replace(0, "");
 
-        String actual = this.property.get(0);
+        String actual = property.get(0);
 
         assertThat(actual).isEqualTo("0");
     }
@@ -137,12 +137,12 @@ public class CheckerMapPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        this.property.put(0, "0");
+        property.put(0, "0");
 
-        this.property.setElementChecker(checker);
-        this.property.replace(0, null);
+        property.setElementChecker(checker);
+        property.replace(0, null);
 
-        String actual = this.property.get(0);
+        String actual = property.get(0);
 
         assertThat(actual).isEqualTo("0");
     }
@@ -153,12 +153,12 @@ public class CheckerMapPropertyTest
         BiFunction<String, String, String> checker = (String oldValue, String newValue) ->
                 newValue != null && !newValue.isEmpty() && newValue.length() > 1 ? newValue : oldValue;
 
-        this.property.put(0, "0");
+        property.put(0, "0");
 
-        this.property.setElementChecker(checker);
-        this.property.replace(0, "2");
+        property.setElementChecker(checker);
+        property.replace(0, "2");
 
-        String actual = this.property.get(0);
+        String actual = property.get(0);
 
         assertThat(actual).isEqualTo("0");
     }

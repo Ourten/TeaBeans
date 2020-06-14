@@ -1,8 +1,8 @@
 package fr.ourten.teabeans.test;
 
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
-import fr.ourten.teabeans.value.BaseProperty;
 import fr.ourten.teabeans.value.Observable;
+import fr.ourten.teabeans.value.Property;
 import fr.ourten.teabeans.value.ReduceProperty;
 import org.junit.jupiter.api.Test;
 
@@ -15,8 +15,8 @@ public class ReducePropertyTest
     @Test
     void computeValue_givenSimpleMultiplication_thenShouldReduce()
     {
-        BaseProperty<Integer> two = new BaseProperty<>(2, "two");
-        BaseProperty<Integer> four = new BaseProperty<>(4, "four");
+        Property<Integer> two = new Property<>(2);
+        Property<Integer> four = new Property<>(4);
 
         ReduceProperty<Integer, Integer> multiplied = ReduceProperty.reduce((first, second) -> first * second);
         multiplied.bind(two, four);
@@ -32,8 +32,8 @@ public class ReducePropertyTest
     @Test
     void computeValue_givenSimpleJoin_thenShouldReduce()
     {
-        BaseProperty<Integer> two = new BaseProperty<>(2, "two");
-        BaseProperty<Integer> four = new BaseProperty<>(4, "four");
+        Property<Integer> two = new Property<>(2);
+        Property<Integer> four = new Property<>(4);
 
         ReduceProperty<Integer, String> concatenated = ReduceProperty.reduce(values -> values.map(String::valueOf).collect(joining(",")), two, four);
 
@@ -48,7 +48,7 @@ public class ReducePropertyTest
     @Test
     void bind_givenInvalidObservable_thenShouldThrow()
     {
-        BaseProperty<Integer> two = new BaseProperty<>(2, "two");
+        Property<Integer> two = new Property<>(2);
         Observable observable = new TestObservable();
 
         ReduceProperty<Integer, String> concatenated = ReduceProperty.reduce(values -> values.map(String::valueOf).collect(joining(",")));

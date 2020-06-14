@@ -1,7 +1,7 @@
 package fr.ourten.teabeans.test;
 
-import fr.ourten.teabeans.value.BaseProperty;
 import fr.ourten.teabeans.value.IProperty;
+import fr.ourten.teabeans.value.Property;
 import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
@@ -17,7 +17,7 @@ public class IPropertyTest
     @Test
     public void testThrow()
     {
-        final IProperty<String> property = new BaseProperty<>("test", "throwTestProperty");
+        IProperty<String> property = new Property<>("test");
 
         assertThat(property.getOrThrow()).isEqualTo("test");
 
@@ -29,7 +29,7 @@ public class IPropertyTest
     @Test
     public void testDefault()
     {
-        final IProperty<String> property = new BaseProperty<>(null, "defaultTestProperty");
+        IProperty<String> property = new Property<>(null);
 
         assertThat(property.getOrDefault("default")).isEqualTo("default");
 

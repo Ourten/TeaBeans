@@ -15,11 +15,11 @@ import java.util.function.Supplier;
 /**
  * @author Ourten 15 oct. 2016
  */
-public class BaseExpression<T> extends BaseBinding<T>
+public class Expression<T> extends Binding<T>
 {
     private final Supplier<? extends T> closure;
 
-    public BaseExpression(final Supplier<? extends T> closure, final Observable... dependencies)
+    public Expression(final Supplier<? extends T> closure, final Observable... dependencies)
     {
         this.closure = closure;
         super.bind(dependencies);
@@ -39,11 +39,11 @@ public class BaseExpression<T> extends BaseBinding<T>
      * Marked for removal @since 1.2.0
      */
     @Deprecated
-    public static <A, R> BaseExpression<R> transform(final ObservableValue<A> obs,
-            final Function<? super A, ? extends R> closure)
+    public static <A, R> Expression<R> transform(final ObservableValue<A> obs,
+                                                 final Function<? super A, ? extends R> closure)
     {
         Objects.requireNonNull(obs, "Observables cannot be null!");
-        return BaseExpression.getExpression(() ->
+        return Expression.getExpression(() ->
         {
             if (obs.getValue() != null)
                 return closure.apply(obs.getValue());
@@ -59,12 +59,12 @@ public class BaseExpression<T> extends BaseBinding<T>
      * Marked for removal @since 1.2.0
      */
     @Deprecated
-    public static <A, B, R> BaseExpression<R> constantCombine(final ObservableValue<A> obs1, final B constant,
-            final BiFunction<? super A, ? super B, ? extends R> closure)
+    public static <A, B, R> Expression<R> constantCombine(final ObservableValue<A> obs1, final B constant,
+                                                          final BiFunction<? super A, ? super B, ? extends R> closure)
     {
         Objects.requireNonNull(obs1, "Observables cannot be null!");
         Objects.requireNonNull(closure, "Closure cannot be null!");
-        return BaseExpression.getExpression(() ->
+        return Expression.getExpression(() ->
         {
             if (obs1.getValue() != null && constant != null)
                 return closure.apply(obs1.getValue(), constant);
@@ -80,13 +80,13 @@ public class BaseExpression<T> extends BaseBinding<T>
      * Marked for removal @since 1.2.0
      */
     @Deprecated
-    public static <A, B, R> BaseExpression<R> biCombine(final ObservableValue<A> obs1, final ObservableValue<B> obs2,
-            final BiFunction<? super A, ? super B, ? extends R> closure)
+    public static <A, B, R> Expression<R> biCombine(final ObservableValue<A> obs1, final ObservableValue<B> obs2,
+                                                    final BiFunction<? super A, ? super B, ? extends R> closure)
     {
         Objects.requireNonNull(obs1, "Observables cannot be null!");
         Objects.requireNonNull(obs2, "Observables cannot be null!");
         Objects.requireNonNull(closure, "Closure cannot be null!");
-        return BaseExpression.getExpression(() ->
+        return Expression.getExpression(() ->
         {
             if (obs1.getValue() != null && obs2.getValue() != null)
                 return closure.apply(obs1.getValue(), obs2.getValue());
@@ -102,15 +102,15 @@ public class BaseExpression<T> extends BaseBinding<T>
      * Marked for removal @since 1.2.0
      */
     @Deprecated
-    public static <A, B, C, R> BaseExpression<R> triCombine(final ObservableValue<A> obs1,
-            final ObservableValue<B> obs2, final ObservableValue<C> obs3,
-            final TriFunction<? super A, ? super B, ? super C, ? extends R> closure)
+    public static <A, B, C, R> Expression<R> triCombine(final ObservableValue<A> obs1,
+                                                        final ObservableValue<B> obs2, final ObservableValue<C> obs3,
+                                                        final TriFunction<? super A, ? super B, ? super C, ? extends R> closure)
     {
         Objects.requireNonNull(obs1, "Observables cannot be null!");
         Objects.requireNonNull(obs2, "Observables cannot be null!");
         Objects.requireNonNull(obs3, "Observables cannot be null!");
         Objects.requireNonNull(closure, "Closure cannot be null!");
-        return BaseExpression.getExpression(() ->
+        return Expression.getExpression(() ->
         {
             if (obs1.getValue() != null && obs2.getValue() != null && obs3.getValue() != null)
                 return closure.apply(obs1.getValue(), obs2.getValue(), obs3.getValue());
@@ -126,16 +126,16 @@ public class BaseExpression<T> extends BaseBinding<T>
      * Marked for removal @since 1.2.0
      */
     @Deprecated
-    public static <A, B, C, D, R> BaseExpression<R> tetraCombine(final ObservableValue<A> obs1,
-            final ObservableValue<B> obs2, final ObservableValue<C> obs3, final ObservableValue<D> obs4,
-            final TetraFunction<? super A, ? super B, ? super C, ? super D, ? extends R> closure)
+    public static <A, B, C, D, R> Expression<R> tetraCombine(final ObservableValue<A> obs1,
+                                                             final ObservableValue<B> obs2, final ObservableValue<C> obs3, final ObservableValue<D> obs4,
+                                                             final TetraFunction<? super A, ? super B, ? super C, ? super D, ? extends R> closure)
     {
         Objects.requireNonNull(obs1, "Observables cannot be null!");
         Objects.requireNonNull(obs2, "Observables cannot be null!");
         Objects.requireNonNull(obs3, "Observables cannot be null!");
         Objects.requireNonNull(obs4, "Observables cannot be null!");
         Objects.requireNonNull(closure, "Closure cannot be null!");
-        return BaseExpression.getExpression(() ->
+        return Expression.getExpression(() ->
         {
             if (obs1.getValue() != null && obs2.getValue() != null && obs3.getValue() != null
                     && obs4.getValue() != null)
@@ -152,10 +152,10 @@ public class BaseExpression<T> extends BaseBinding<T>
      * Marked for removal @since 1.2.0
      */
     @Deprecated
-    public static <A, B, C, D, E, R> BaseExpression<R> petaCombine(final ObservableValue<A> obs1,
-            final ObservableValue<B> obs2, final ObservableValue<C> obs3, final ObservableValue<D> obs4,
-            final ObservableValue<E> obs5,
-            final PetaFunction<? super A, ? super B, ? super C, ? super D, ? super E, ? extends R> closure)
+    public static <A, B, C, D, E, R> Expression<R> petaCombine(final ObservableValue<A> obs1,
+                                                               final ObservableValue<B> obs2, final ObservableValue<C> obs3, final ObservableValue<D> obs4,
+                                                               final ObservableValue<E> obs5,
+                                                               final PetaFunction<? super A, ? super B, ? super C, ? super D, ? super E, ? extends R> closure)
     {
         Objects.requireNonNull(obs1, "Observables cannot be null!");
         Objects.requireNonNull(obs2, "Observables cannot be null!");
@@ -163,7 +163,7 @@ public class BaseExpression<T> extends BaseBinding<T>
         Objects.requireNonNull(obs4, "Observables cannot be null!");
         Objects.requireNonNull(obs5, "Observables cannot be null!");
         Objects.requireNonNull(closure, "Closure cannot be null!");
-        return BaseExpression.getExpression(() ->
+        return Expression.getExpression(() ->
         {
             if (obs1.getValue() != null && obs2.getValue() != null && obs3.getValue() != null && obs4.getValue() != null
                     && obs5.getValue() != null)
@@ -181,10 +181,10 @@ public class BaseExpression<T> extends BaseBinding<T>
      * Marked for removal @since 1.2.0
      */
     @Deprecated
-    public static <A, B, C, D, E, F, R> BaseExpression<R> hexaCombine(final ObservableValue<A> obs1,
-            final ObservableValue<B> obs2, final ObservableValue<C> obs3, final ObservableValue<D> obs4,
-            final ObservableValue<E> obs5, final ObservableValue<F> obs6,
-            final HexaFunction<? super A, ? super B, ? super C, ? super D, ? super E, ? super F, ? extends R> closure)
+    public static <A, B, C, D, E, F, R> Expression<R> hexaCombine(final ObservableValue<A> obs1,
+                                                                  final ObservableValue<B> obs2, final ObservableValue<C> obs3, final ObservableValue<D> obs4,
+                                                                  final ObservableValue<E> obs5, final ObservableValue<F> obs6,
+                                                                  final HexaFunction<? super A, ? super B, ? super C, ? super D, ? super E, ? super F, ? extends R> closure)
     {
         Objects.requireNonNull(obs1, "Observables cannot be null!");
         Objects.requireNonNull(obs2, "Observables cannot be null!");
@@ -193,7 +193,7 @@ public class BaseExpression<T> extends BaseBinding<T>
         Objects.requireNonNull(obs5, "Observables cannot be null!");
         Objects.requireNonNull(obs6, "Observables cannot be null!");
         Objects.requireNonNull(closure, "Closure cannot be null!");
-        return BaseExpression.getExpression(() ->
+        return Expression.getExpression(() ->
         {
             if (obs1.getValue() != null && obs2.getValue() != null && obs3.getValue() != null && obs4.getValue() != null
                     && obs5.getValue() != null && obs6.getValue() != null)
@@ -203,9 +203,9 @@ public class BaseExpression<T> extends BaseBinding<T>
         }, obs1, obs2, obs3, obs4, obs5, obs6);
     }
 
-    public static <V> BaseExpression<V> getExpression(final Supplier<? extends V> closure,
-            final Observable... dependencies)
+    public static <V> Expression<V> getExpression(final Supplier<? extends V> closure,
+                                                  final Observable... dependencies)
     {
-        return new BaseExpression<>(closure, dependencies);
+        return new Expression<>(closure, dependencies);
     }
 }

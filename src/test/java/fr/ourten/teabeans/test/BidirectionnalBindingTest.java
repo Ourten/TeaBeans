@@ -1,8 +1,8 @@
 package fr.ourten.teabeans.test;
 
-import fr.ourten.teabeans.binding.BaseBinding;
 import fr.ourten.teabeans.binding.BidirectionalBinding;
-import fr.ourten.teabeans.value.BaseProperty;
+import fr.ourten.teabeans.binding.Binding;
+import fr.ourten.teabeans.value.Property;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,18 +15,18 @@ public class BidirectionnalBindingTest
     @BeforeEach
     public void setup()
     {
-        this.count = 0;
+        count = 0;
     }
 
     @Test
     public void testComplexBinding()
     {
-        final BaseProperty<String> p1 = new BaseProperty<>("none", "testStringProperty");
-        final BaseProperty<String> p2 = new BaseProperty<>("nothing", "testStringProperty2");
+        Property<String> p1 = new Property<>("none");
+        Property<String> p2 = new Property<>("nothing");
 
-        final BaseProperty<String> p3 = new BaseProperty<>("toy", "testStringProperty3");
+        Property<String> p3 = new Property<>("toy");
 
-        final BaseBinding<String> binding = new BaseBinding<String>()
+        Binding<String> binding = new Binding<String>()
         {
             {
                 super.bind(p1);
@@ -36,7 +36,7 @@ public class BidirectionnalBindingTest
             @Override
             public String computeValue()
             {
-                BidirectionnalBindingTest.this.count++;
+                count++;
                 return p1.getValue() + p2.getValue();
             }
         };
@@ -48,14 +48,14 @@ public class BidirectionnalBindingTest
         p1.bind(p3);
 
         assertThat(binding.getValue()).isEqualTo("toytoy");
-        assertThat(this.count).isEqualTo(2);
+        assertThat(count).isEqualTo(2);
     }
 
     @Test
     public void testBidirectionnalUnbinding()
     {
-        final BaseProperty<String> p1 = new BaseProperty<>("none", "testStringProperty");
-        final BaseProperty<String> p2 = new BaseProperty<>("nothing", "testStringProperty2");
+        Property<String> p1 = new Property<>("none");
+        Property<String> p2 = new Property<>("nothing");
 
         p1.bindBidirectional(p2);
 
@@ -75,10 +75,10 @@ public class BidirectionnalBindingTest
     @Test
     public void testBidirectionnalBindingEquals()
     {
-        final BaseProperty<String> p1 = new BaseProperty<>("none", "testStringProperty");
-        final BaseProperty<String> p2 = new BaseProperty<>("nothing", "testStringProperty2");
+        Property<String> p1 = new Property<>("none");
+        Property<String> p2 = new Property<>("nothing");
 
-        final BidirectionalBinding<String> binding1 = new BidirectionalBinding<>(p1, p2);
+        BidirectionalBinding<String> binding1 = new BidirectionalBinding<>(p1, p2);
 
         assertThat(binding1).isEqualTo(binding1);
     }
@@ -86,12 +86,12 @@ public class BidirectionnalBindingTest
     @Test
     public void testBidirectionnalBindingNotEquals()
     {
-        final BaseProperty<String> p1 = new BaseProperty<>("none", "testStringProperty");
-        final BaseProperty<String> p2 = new BaseProperty<>("nothing", "testStringProperty2");
-        final BaseProperty<String> p3 = new BaseProperty<>("nowhere", "testStringProperty3");
+        Property<String> p1 = new Property<>("none");
+        Property<String> p2 = new Property<>("nothing");
+        Property<String> p3 = new Property<>("nowhere");
 
-        final BidirectionalBinding<String> binding1 = new BidirectionalBinding<>(p1, p2);
-        final BidirectionalBinding<String> binding3 = new BidirectionalBinding<>(p2, p3);
+        BidirectionalBinding<String> binding1 = new BidirectionalBinding<>(p1, p2);
+        BidirectionalBinding<String> binding3 = new BidirectionalBinding<>(p2, p3);
 
         assertThat(binding1.equals(binding3)).isFalse();
     }

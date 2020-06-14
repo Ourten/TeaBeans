@@ -1,6 +1,6 @@
 package fr.ourten.teabeans.test;
 
-import fr.ourten.teabeans.value.BaseProperty;
+import fr.ourten.teabeans.value.Property;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,12 +10,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CheckerPropertyTest
 {
-    BaseProperty<String> property;
+    Property<String> property;
 
     @BeforeEach
     public void setup()
     {
-        this.property = new BaseProperty<>("test");
+        this.property = new Property<>("test");
     }
 
     @Test
