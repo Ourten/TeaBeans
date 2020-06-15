@@ -23,7 +23,7 @@ public class IPropertyTest
 
         property.setValue(null);
 
-        assertThrows(NoSuchElementException.class, () -> property.getOrThrow());
+        assertThrows(NoSuchElementException.class, property::getOrThrow);
     }
 
     @Test

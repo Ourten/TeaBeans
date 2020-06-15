@@ -76,6 +76,12 @@ public class BidirectionalBinding<T> implements ValueChangeListener<T>
         return false;
     }
 
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(updating, property1, property2);
+    }
+
     public IProperty<T> getProperty1()
     {
         return property1;
