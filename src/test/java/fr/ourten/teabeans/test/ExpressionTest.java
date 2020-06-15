@@ -4,6 +4,10 @@ import fr.ourten.teabeans.property.Property;
 import fr.ourten.teabeans.value.ObservableValue;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -20,9 +24,7 @@ public class ExpressionTest
 
         assertThat(transform.getValue()).isEqualTo(8);
 
-        property.setValue(null);
-
-        assertThat(transform.getValue()).isNull();
+        testExpressionNullability(transform, singletonList(property));
     }
 
     @Test
@@ -34,9 +36,7 @@ public class ExpressionTest
 
         assertThat(multiplyConstant.getValue()).isEqualTo(4);
 
-        property.setValue(null);
-
-        assertThat(multiplyConstant.getValue()).isNull();
+        testExpressionNullability(multiplyConstant, singletonList(property));
     }
 
     @Test
@@ -49,9 +49,7 @@ public class ExpressionTest
 
         assertThat(multiply.getValue()).isEqualTo(6);
 
-        property2.setValue(null);
-
-        assertThat(multiply.getValue()).isNull();
+        testExpressionNullability(multiply, asList(property1, property2));
     }
 
     @Test
@@ -66,9 +64,7 @@ public class ExpressionTest
 
         assertThat(multiply.getValue()).isEqualTo(24);
 
-        property2.setValue(null);
-
-        assertThat(multiply.getValue()).isNull();
+        testExpressionNullability(multiply, asList(property1, property2, property3));
     }
 
     @Test
@@ -84,9 +80,7 @@ public class ExpressionTest
 
         assertThat(multiply.getValue()).isEqualTo(120);
 
-        property2.setValue(null);
-
-        assertThat(multiply.getValue()).isNull();
+        testExpressionNullability(multiply, asList(property1, property2, property3, property4));
     }
 
     @Test
@@ -103,9 +97,7 @@ public class ExpressionTest
 
         assertThat(multiply.getValue()).isEqualTo(720);
 
-        property2.setValue(null);
-
-        assertThat(multiply.getValue()).isNull();
+        testExpressionNullability(multiply, asList(property1, property2, property3, property4, property5));
     }
 
     @Test
@@ -123,8 +115,18 @@ public class ExpressionTest
 
         assertThat(multiply.getValue()).isEqualTo(5040);
 
-        property2.setValue(null);
+        testExpressionNullability(multiply, asList(property1, property2, property3, property4, property5, property6));
+    }
 
-        assertThat(multiply.getValue()).isNull();
+    private void testExpressionNullability(ObservableValue<Integer> expression, List<Property<Integer>> properties)
+    {
+        for (Property<Integer> property : properties)
+        {
+            int previous = property.getValue();
+            property.setValue(null);
+
+            assertThat(expression.getValue()).isNull();
+            property.setValue(previous);
+        }
     }
 }
