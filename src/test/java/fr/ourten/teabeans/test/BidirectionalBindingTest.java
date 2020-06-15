@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class BidirectionnalBindingTest
+public class BidirectionalBindingTest
 {
     private int count;
 
@@ -52,7 +52,7 @@ public class BidirectionnalBindingTest
     }
 
     @Test
-    public void testBidirectionnalUnbinding()
+    public void testBidirectionalUnbinding()
     {
         Property<String> p1 = new Property<>("none");
         Property<String> p2 = new Property<>("nothing");
@@ -73,7 +73,7 @@ public class BidirectionnalBindingTest
     }
 
     @Test
-    public void testBidirectionnalBindingEquals()
+    public void testBidirectionalBindingEquals()
     {
         Property<String> p1 = new Property<>("none");
         Property<String> p2 = new Property<>("nothing");
@@ -84,7 +84,7 @@ public class BidirectionnalBindingTest
     }
 
     @Test
-    public void testBidirectionnalBindingNotEquals()
+    public void testBidirectionalBindingNotEquals()
     {
         Property<String> p1 = new Property<>("none");
         Property<String> p2 = new Property<>("nothing");
@@ -94,5 +94,25 @@ public class BidirectionnalBindingTest
         BidirectionalBinding<String> binding3 = new BidirectionalBinding<>(p2, p3);
 
         assertThat(binding1.equals(binding3)).isFalse();
+    }
+
+    @Test
+    public void equals_givenIdenticalAndInvertedBinding_thenShouldMakeEqualityCheck()
+    {
+        Property<String> p1 = new Property<>("none");
+        Property<String> p2 = new Property<>("nothing");
+        Property<String> p3 = new Property<>("nothing again");
+
+        BidirectionalBinding<String> binding1 = new BidirectionalBinding<>(p1, p2);
+
+        BidirectionalBinding<String> sameBinding = new BidirectionalBinding<>(p1, p2);
+        BidirectionalBinding<String> invertedBinding = new BidirectionalBinding<>(p2, p1);
+
+        BidirectionalBinding<String> differingBinding = new BidirectionalBinding<>(p2, p3);
+
+        assertThat(binding1).isEqualTo(sameBinding);
+        assertThat(sameBinding).isEqualTo(invertedBinding);
+
+        assertThat(sameBinding).isNotEqualTo(differingBinding);
     }
 }

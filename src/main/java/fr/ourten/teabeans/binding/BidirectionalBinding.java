@@ -4,20 +4,21 @@ import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.property.IProperty;
 import fr.ourten.teabeans.value.ObservableValue;
 
+import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 public class BidirectionalBinding<T> implements ValueChangeListener<T>
 {
-    private       boolean      updating;
-    private final IProperty<T> property1;
-    private final IProperty<T> property2;
+    private       boolean                     updating;
+    private final WeakReference<IProperty<T>> property1;
+    private final WeakReference<IProperty<T>> property2;
 
     public BidirectionalBinding(IProperty<T> p1, IProperty<T> p2)
     {
         Objects.requireNonNull(p1, "Cannot bind to null!");
         Objects.requireNonNull(p2, "Cannot bind to null!");
-        property1 = p1;
-        property2 = p2;
+        property1 = new WeakReference<>(p1);
+        property2 = new WeakReference<>(p2);
 
         getProperty1().setValue(p2.getValue());
         getProperty1().addListener(this);
@@ -26,8 +27,10 @@ public class BidirectionalBinding<T> implements ValueChangeListener<T>
 
     public void unbind()
     {
-        getProperty1().removeListener(this);
-        getProperty2().removeListener(this);
+        if (getProperty1() != null)
+            getProperty1().removeListener(this);
+        if (getProperty2() != null)
+            getProperty2().removeListener(this);
     }
 
     @Override
@@ -84,11 +87,11 @@ public class BidirectionalBinding<T> implements ValueChangeListener<T>
 
     public IProperty<T> getProperty1()
     {
-        return property1;
+        return property1.get();
     }
 
     public IProperty<T> getProperty2()
     {
-        return property2;
+        return property2.get();
     }
 }
