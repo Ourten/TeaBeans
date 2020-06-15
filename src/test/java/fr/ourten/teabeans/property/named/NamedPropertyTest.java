@@ -1,10 +1,5 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.property.named;
 
-import fr.ourten.teabeans.property.named.NamedListProperty;
-import fr.ourten.teabeans.property.named.NamedMapProperty;
-import fr.ourten.teabeans.property.named.NamedProperty;
-import fr.ourten.teabeans.property.named.NamedReduceProperty;
-import fr.ourten.teabeans.property.named.NamedSetProperty;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Collections.*;

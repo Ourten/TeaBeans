@@ -1,15 +1,19 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
-import fr.ourten.teabeans.property.ListProperty;
+import fr.ourten.teabeans.listener.ValueChangeListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ListPropertyTest
@@ -178,11 +182,51 @@ public class ListPropertyTest
     }
 
     @Test
-    public void testListPropertyReplace()
+    public void replace_givenExistingElement_thenShouldReplaceAndTriggerChanges()
     {
-        property.replace(3, 9);
+        ListProperty<Integer> property = new ListProperty<>(IntStream.range(0, 10).boxed().collect(toList()));
+
+        property.replace(3, 10);
 
         assertThat(property.contains(9)).isTrue();
         assertThat(property.contains(3)).isFalse();
+
+        AtomicInteger invalidationCount = new AtomicInteger(0);
+        property.addListener(obs -> invalidationCount.getAndIncrement());
+
+        AtomicInteger valueChangeCount = new AtomicInteger(0);
+        List<List<Integer>> valueChangesOldValues = new ArrayList<>();
+        List<List<Integer>> valueChangesNewValues = new ArrayList<>();
+        property.addListener((ValueChangeListener<List<Integer>>) (obs, oldValue, newValue) ->
+        {
+            valueChangeCount.getAndIncrement();
+            valueChangesOldValues.add(oldValue);
+            valueChangesNewValues.add(newValue);
+        });
+
+        AtomicInteger listChangeCount = new AtomicInteger(0);
+        List<Integer> listValueChangesOldValues = new ArrayList<>();
+        List<Integer> listValueChangesNewValues = new ArrayList<>();
+        property.addListener((ListValueChangeListener<Integer>) (obs, oldValue, newValue) ->
+        {
+            listChangeCount.getAndIncrement();
+            listValueChangesOldValues.add(oldValue);
+            listValueChangesNewValues.add(newValue);
+        });
+
+        property.replace(2, 11);
+
+        assertThat(invalidationCount.get()).isEqualTo(1);
+        assertThat(valueChangeCount.get()).isEqualTo(1);
+        assertThat(listChangeCount.get()).isEqualTo(1);
+
+        assertThat(valueChangesOldValues).hasSize(1);
+        assertThat(valueChangesOldValues.get(0)).containsExactly(0, 1, 2, 10, 4, 5, 6, 7, 8, 9);
+
+        assertThat(valueChangesNewValues).hasSize(1);
+        assertThat(valueChangesNewValues.get(0)).containsExactly(0, 1, 11, 10, 4, 5, 6, 7, 8, 9);
+
+        assertThat(listValueChangesOldValues).containsExactly(2);
+        assertThat(listValueChangesNewValues).containsExactly(11);
     }
 }

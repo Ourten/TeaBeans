@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.binding;
 
 import fr.ourten.teabeans.property.Property;
 import fr.ourten.teabeans.value.ObservableValue;

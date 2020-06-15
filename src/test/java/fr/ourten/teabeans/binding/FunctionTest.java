@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.binding;
 
 import fr.ourten.teabeans.function.HexaFunction;
 import fr.ourten.teabeans.function.PetaFunction;

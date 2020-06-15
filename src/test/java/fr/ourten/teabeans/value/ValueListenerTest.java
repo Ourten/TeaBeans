@@ -1,4 +1,4 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.value;
 
 import fr.ourten.teabeans.property.Property;
 import org.junit.jupiter.api.Test;

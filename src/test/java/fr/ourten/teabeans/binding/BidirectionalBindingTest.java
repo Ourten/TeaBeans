@@ -1,7 +1,5 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.binding;
 
-import fr.ourten.teabeans.binding.BidirectionalBinding;
-import fr.ourten.teabeans.binding.Binding;
 import fr.ourten.teabeans.property.Property;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,5 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.property;
 
-import fr.ourten.teabeans.property.Property;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

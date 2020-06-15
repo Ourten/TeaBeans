@@ -1,8 +1,6 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
-import fr.ourten.teabeans.property.Property;
-import fr.ourten.teabeans.property.ReduceProperty;
 import fr.ourten.teabeans.value.Observable;
 import org.junit.jupiter.api.Test;
 

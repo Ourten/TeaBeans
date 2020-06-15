@@ -1,7 +1,6 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.MapValueChangeListener;
-import fr.ourten.teabeans.property.MapProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

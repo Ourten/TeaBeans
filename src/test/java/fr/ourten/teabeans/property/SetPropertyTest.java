@@ -1,7 +1,6 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
-import fr.ourten.teabeans.property.SetProperty;
 import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,5 @@
-package fr.ourten.teabeans.test;
+package fr.ourten.teabeans.binding;
 
-import fr.ourten.teabeans.binding.Binding;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.property.Property;
