@@ -1,16 +1,16 @@
 package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
-import fr.ourten.teabeans.listener.ValueChangeListener;
+import fr.ourten.teabeans.listener.recorder.ListValueChangeRecorder;
+import fr.ourten.teabeans.listener.recorder.ValueChangeRecorder;
+import fr.ourten.teabeans.listener.recorder.ValueInvalidationRecorder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
@@ -191,42 +191,23 @@ public class ListPropertyTest
         assertThat(property.contains(9)).isTrue();
         assertThat(property.contains(3)).isFalse();
 
-        AtomicInteger invalidationCount = new AtomicInteger(0);
-        property.addListener(obs -> invalidationCount.getAndIncrement());
-
-        AtomicInteger valueChangeCount = new AtomicInteger(0);
-        List<List<Integer>> valueChangesOldValues = new ArrayList<>();
-        List<List<Integer>> valueChangesNewValues = new ArrayList<>();
-        property.addListener((ValueChangeListener<List<Integer>>) (obs, oldValue, newValue) ->
-        {
-            valueChangeCount.getAndIncrement();
-            valueChangesOldValues.add(oldValue);
-            valueChangesNewValues.add(newValue);
-        });
-
-        AtomicInteger listChangeCount = new AtomicInteger(0);
-        List<Integer> listValueChangesOldValues = new ArrayList<>();
-        List<Integer> listValueChangesNewValues = new ArrayList<>();
-        property.addListener((ListValueChangeListener<Integer>) (obs, oldValue, newValue) ->
-        {
-            listChangeCount.getAndIncrement();
-            listValueChangesOldValues.add(oldValue);
-            listValueChangesNewValues.add(newValue);
-        });
+        ValueInvalidationRecorder invalidationRecorder = new ValueInvalidationRecorder(property);
+        ValueChangeRecorder<List<Integer>> valueChangeRecorder = new ValueChangeRecorder<>(property);
+        ListValueChangeRecorder<Integer> listValueChangeRecorder = new ListValueChangeRecorder<>(property);
 
         property.replace(2, 11);
 
-        assertThat(invalidationCount.get()).isEqualTo(1);
-        assertThat(valueChangeCount.get()).isEqualTo(1);
-        assertThat(listChangeCount.get()).isEqualTo(1);
+        assertThat(invalidationRecorder.getCount()).isEqualTo(1);
+        assertThat(valueChangeRecorder.getCount()).isEqualTo(1);
+        assertThat(listValueChangeRecorder.getCount()).isEqualTo(1);
 
-        assertThat(valueChangesOldValues).hasSize(1);
-        assertThat(valueChangesOldValues.get(0)).containsExactly(0, 1, 2, 10, 4, 5, 6, 7, 8, 9);
+        assertThat(valueChangeRecorder.getOldValues()).hasSize(1);
+        assertThat(valueChangeRecorder.getOldValues().get(0)).containsExactly(0, 1, 2, 10, 4, 5, 6, 7, 8, 9);
 
-        assertThat(valueChangesNewValues).hasSize(1);
-        assertThat(valueChangesNewValues.get(0)).containsExactly(0, 1, 11, 10, 4, 5, 6, 7, 8, 9);
+        assertThat(valueChangeRecorder.getNewValues()).hasSize(1);
+        assertThat(valueChangeRecorder.getNewValues().get(0)).containsExactly(0, 1, 11, 10, 4, 5, 6, 7, 8, 9);
 
-        assertThat(listValueChangesOldValues).containsExactly(2);
-        assertThat(listValueChangesNewValues).containsExactly(11);
+        assertThat(listValueChangeRecorder.getOldValues()).containsExactly(2);
+        assertThat(listValueChangeRecorder.getNewValues()).containsExactly(11);
     }
 }

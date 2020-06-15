@@ -12,6 +12,17 @@ public class ValueChangeRecorder<T> implements ValueChangeListener<T>, Recorder
     private final List<T> oldValues = new ArrayList<>();
     private final List<T> newValues = new ArrayList<>();
 
+    public ValueChangeRecorder()
+    {
+    }
+
+    @SafeVarargs
+    public ValueChangeRecorder(ObservableValue<T>... observables)
+    {
+        for (ObservableValue<T> observable : observables)
+            observable.addListener(this);
+    }
+
     @Override
     public int getCount()
     {

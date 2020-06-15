@@ -7,6 +7,17 @@ public class ValueInvalidationRecorder implements ValueInvalidationListener, Rec
 {
     private int count;
 
+    public ValueInvalidationRecorder()
+    {
+        
+    }
+
+    public ValueInvalidationRecorder(Observable... observables)
+    {
+        for (Observable observable : observables)
+            observable.addListener(this);
+    }
+
     @Override
     public void invalidated(Observable observable)
     {

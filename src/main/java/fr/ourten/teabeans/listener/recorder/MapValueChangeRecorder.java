@@ -1,6 +1,7 @@
 package fr.ourten.teabeans.listener.recorder;
 
 import fr.ourten.teabeans.listener.MapValueChangeListener;
+import fr.ourten.teabeans.property.MapProperty;
 import fr.ourten.teabeans.value.ObservableValue;
 
 import java.util.ArrayList;
@@ -13,6 +14,18 @@ public class MapValueChangeRecorder<K, V> implements MapValueChangeListener<K, V
     private final List<K> keys      = new ArrayList<>();
     private final List<V> oldValues = new ArrayList<>();
     private final List<V> newValues = new ArrayList<>();
+
+    public MapValueChangeRecorder()
+    {
+        
+    }
+
+    @SafeVarargs
+    public MapValueChangeRecorder(MapProperty<K, V>... mapProperties)
+    {
+        for (MapProperty<K, V> mapProperty : mapProperties)
+            mapProperty.addListener(this);
+    }
 
     @Override
     public int getCount()

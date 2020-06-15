@@ -1,6 +1,7 @@
 package fr.ourten.teabeans.listener.recorder;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.property.IListProperty;
 import fr.ourten.teabeans.value.ObservableValue;
 
 import java.util.ArrayList;
@@ -11,6 +12,18 @@ public class ListValueChangeRecorder<T> implements ListValueChangeListener<T>, R
     private       int     count;
     private final List<T> oldValues = new ArrayList<>();
     private final List<T> newValues = new ArrayList<>();
+
+    public ListValueChangeRecorder()
+    {
+        
+    }
+
+    @SafeVarargs
+    public ListValueChangeRecorder(IListProperty<T>... listProperties)
+    {
+        for (IListProperty<T> listProperty : listProperties)
+            listProperty.addListener(this);
+    }
 
     @Override
     public int getCount()

@@ -97,9 +97,9 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
             oldMap.putAll(this.value);
         }
 
-        this.value.put(key, value);
+        V previousValue = this.value.put(key, value);
 
-        invalidateElement(key, null, value, oldMap);
+        invalidateElement(key, previousValue, value, oldMap);
         return null;
     }
 
@@ -169,7 +169,11 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
 
         V rtn = value.replace(key, element);
 
-        invalidateElement(key, oldValue, element, oldMap);
+        if (rtn == null)
+            invalidate();
+        else
+            invalidateElement(key, oldValue, element, oldMap);
+        
         return rtn;
     }
 
