@@ -12,19 +12,19 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class MapProperty<K, T> extends Property<Map<K, T>> implements IMapProperty<K, T>
+public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProperty<K, V>
 {
-    private Supplier<Map<K, T>> mapSupplier;
+    private Supplier<Map<K, V>> mapSupplier;
 
-    private Map<K, T> immutableView;
+    private Map<K, V> immutableView;
 
     /**
      * The list of attached listeners that need to be notified when the value
      * change.
      */
-    private final ArrayList<MapValueChangeListener<K, ? super T>> mapValueChangeListeners;
+    private final ArrayList<MapValueChangeListener<K, ? super V>> mapValueChangeListeners;
 
-    public MapProperty(Supplier<Map<K, T>> mapSupplier, Map<K, T> value)
+    public MapProperty(Supplier<Map<K, V>> mapSupplier, Map<K, V> value)
     {
         super(value);
         mapValueChangeListeners = new ArrayList<>();
@@ -35,13 +35,13 @@ public class MapProperty<K, T> extends Property<Map<K, T>> implements IMapProper
         this.mapSupplier = mapSupplier;
     }
 
-    public MapProperty(Map<K, T> value)
+    public MapProperty(Map<K, V> value)
     {
         this(HashMap::new, value);
     }
 
     @Override
-    protected void setPropertyValue(Map<K, T> value)
+    protected void setPropertyValue(Map<K, V> value)
     {
         if (immutableView != null && !Objects.equals(value, this.value))
             immutableView = Collections.unmodifiableMap(value);
@@ -50,47 +50,47 @@ public class MapProperty<K, T> extends Property<Map<K, T>> implements IMapProper
     }
 
     @Override
-    public Map<K, T> getValue()
+    public Map<K, V> getValue()
     {
         if (immutableView == null)
             immutableView = Collections.unmodifiableMap(value);
         return immutableView;
     }
 
-    public Map<K, T> getModifiableValue()
+    public Map<K, V> getModifiableValue()
     {
         return value;
     }
 
     @Override
-    public void addListener(MapValueChangeListener<K, ? super T> listener)
+    public void addListener(MapValueChangeListener<K, ? super V> listener)
     {
         if (!mapValueChangeListeners.contains(listener))
             mapValueChangeListeners.add(listener);
     }
 
     @Override
-    public void removeListener(MapValueChangeListener<K, ? super T> listener)
+    public void removeListener(MapValueChangeListener<K, ? super V> listener)
     {
         mapValueChangeListeners.remove(listener);
     }
 
-    private void fireListChangeListeners(K key, T oldValue, T newValue)
+    private void fireListChangeListeners(K key, V oldValue, V newValue)
     {
-        for (MapValueChangeListener<K, ? super T> listener : mapValueChangeListeners)
+        for (MapValueChangeListener<K, ? super V> listener : mapValueChangeListeners)
             listener.valueChanged(this, key, oldValue, newValue);
     }
 
     @Override
-    public T get(K key)
+    public V get(K key)
     {
         return value.get(key);
     }
 
     @Override
-    public T put(K key, T value)
+    public V put(K key, V value)
     {
-        Map<K, T> oldMap = null;
+        Map<K, V> oldMap = null;
         if (!valueChangeListeners.isEmpty())
         {
             oldMap = mapSupplier.get();
@@ -104,13 +104,13 @@ public class MapProperty<K, T> extends Property<Map<K, T>> implements IMapProper
     }
 
     @Override
-    public void putAll(Map<K, ? extends T> elements)
+    public void putAll(Map<K, ? extends V> elements)
     {
         elements.forEach(this::put);
     }
 
     @Override
-    public Set<Entry<K, T>> entrySet()
+    public Set<Entry<K, V>> entrySet()
     {
         return value.entrySet();
     }
@@ -122,7 +122,7 @@ public class MapProperty<K, T> extends Property<Map<K, T>> implements IMapProper
     }
 
     @Override
-    public Collection<T> values()
+    public Collection<V> values()
     {
         return value.values();
     }
@@ -134,46 +134,46 @@ public class MapProperty<K, T> extends Property<Map<K, T>> implements IMapProper
     }
 
     @Override
-    public boolean containsValue(T value)
+    public boolean containsValue(V value)
     {
         return this.value.containsValue(value);
     }
 
     @Override
-    public T remove(K key)
+    public V remove(K key)
     {
-        T oldValue = value.get(key);
-        Map<K, T> oldMap = null;
+        V oldValue = value.get(key);
+        Map<K, V> oldMap = null;
 
         if (!valueChangeListeners.isEmpty())
         {
             oldMap = mapSupplier.get();
             oldMap.putAll(value);
         }
-        T rtn = value.remove(key);
+        V rtn = value.remove(key);
 
         invalidateElement(key, oldValue, null, oldMap);
         return rtn;
     }
 
     @Override
-    public T replace(K key, T element)
+    public V replace(K key, V element)
     {
-        T oldValue = value.get(key);
-        Map<K, T> oldMap = null;
+        V oldValue = value.get(key);
+        Map<K, V> oldMap = null;
         if (!valueChangeListeners.isEmpty())
         {
             oldMap = mapSupplier.get();
             oldMap.putAll(value);
         }
 
-        T rtn = value.replace(key, element);
+        V rtn = value.replace(key, element);
 
         invalidateElement(key, oldValue, element, oldMap);
         return rtn;
     }
 
-    public void invalidateElement(K key, T oldElement, T newElement, Map<K, T> oldMap)
+    public void invalidateElement(K key, V oldElement, V newElement, Map<K, V> oldMap)
     {
         if (isMuted())
             return;
@@ -182,7 +182,7 @@ public class MapProperty<K, T> extends Property<Map<K, T>> implements IMapProper
         invalidate(oldMap);
     }
 
-    protected void invalidate(Map<K, T> oldMap)
+    protected void invalidate(Map<K, V> oldMap)
     {
         oldValue = oldMap;
         invalidate();
@@ -191,7 +191,7 @@ public class MapProperty<K, T> extends Property<Map<K, T>> implements IMapProper
     @Override
     public void clear()
     {
-        Map<K, T> oldMap = null;
+        Map<K, V> oldMap = null;
 
         if (!valueChangeListeners.isEmpty() || !mapValueChangeListeners.isEmpty())
         {
