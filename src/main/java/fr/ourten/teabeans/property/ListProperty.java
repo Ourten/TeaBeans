@@ -161,10 +161,17 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
             oldList.addAll(value);
         }
 
-        value.remove(oldElement);
-        value.add(newElement);
+        if (oldValue != null)
+        {
+            int oldElementIndex = value.indexOf(oldValue);
+            value.set(oldElementIndex, newElement);
+        }
+        else
+            value.add(newElement);
 
-        invalidateElement(oldElement, newElement, oldList);
+        value.remove(oldElement);
+
+        invalidateElement(oldValue, newElement, oldList);
     }
 
     public void invalidateElement(T oldElement, T newElement, List<T> oldList)
