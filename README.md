@@ -1,4 +1,4 @@
-# TeaBeans [![Build Status](https://img.shields.io/travis/Ourten/TeaBeans.svg?style=flat-square)](https://travis-ci.org/Ourten/TeaBeans) [![codecov](https://codecov.io/gh/Ourten/TeaBeans/branch/master/graph/badge.svg)](https://codecov.io/gh/Ourten/TeaBeans)
+# TeaBeans [![Build Status](https://ci.ferenyr.info/app/rest/builds/buildType:(id:Teabeans_Build)/statusIcon)](https://ci.ferenyr.info/viewType.html?buildTypeId=Teabeans_Build&guest=1) [![codecov](https://codecov.io/gh/Ourten/TeaBeans/branch/master/graph/badge.svg)](https://codecov.io/gh/Ourten/TeaBeans)
 
 TeaBeans is a java beans and properties library. It allows to observe object changes and compute lazy expressions.
 
