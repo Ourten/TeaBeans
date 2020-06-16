@@ -1,5 +1,7 @@
 package fr.ourten.teabeans.property;
 
+import fr.ourten.teabeans.listener.recorder.ValueChangeRecorder;
+import fr.ourten.teabeans.listener.recorder.ValueInvalidationRecorder;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,5 +58,61 @@ public class PropertyTest
         property2.bindProperty(property1);
 
         assertThrows(RuntimeException.class, () -> property2.setValue(2));
+    }
+
+    @Test
+    void mute_givenMutedProperty_thenShouldNotPropagateChanges()
+    {
+        Property<Integer> property = new Property<>(0);
+        property.mute();
+
+        ValueInvalidationRecorder invalidationRecorder = new ValueInvalidationRecorder(property);
+        ValueChangeRecorder<Integer> valueChangeRecorder = new ValueChangeRecorder<>(property);
+
+        property.setValue(0);
+        property.setValue(5);
+        assertThat(invalidationRecorder.getCount()).isEqualTo(0);
+        assertThat(valueChangeRecorder.getCount()).isEqualTo(0);
+    }
+
+    @Test
+    void unmute_givenMutedPropertyThenUnmuted_thenShouldPropagateChanges()
+    {
+        Property<Integer> property = new Property<>(0);
+        property.mute();
+
+        ValueInvalidationRecorder invalidationRecorder = new ValueInvalidationRecorder(property);
+        ValueChangeRecorder<Integer> valueChangeRecorder = new ValueChangeRecorder<>(property);
+
+        property.setValue(3);
+        property.setValue(5);
+
+        property.unmute();
+
+        assertThat(invalidationRecorder.getCount()).isEqualTo(1);
+        assertThat(valueChangeRecorder.getCount()).isEqualTo(1);
+        assertThat(valueChangeRecorder.getOldValues()).containsExactly(0);
+        assertThat(valueChangeRecorder.getNewValues()).containsExactly(5);
+    }
+
+    @Test
+    void muteWhile_givenRunnable_thenShouldMuteOnlyDuringExecution()
+    {
+        Property<Integer> property = new Property<>(0);
+
+        ValueInvalidationRecorder invalidationRecorder = new ValueInvalidationRecorder(property);
+        ValueChangeRecorder<Integer> valueChangeRecorder = new ValueChangeRecorder<>(property);
+
+        property.muteWhile(() ->
+        {
+            property.setValue(3);
+            property.setValue(6);
+            property.setValue(5);
+        });
+
+        assertThat(invalidationRecorder.getCount()).isEqualTo(1);
+        assertThat(valueChangeRecorder.getCount()).isEqualTo(1);
+        assertThat(valueChangeRecorder.getOldValues()).containsExactly(0);
+        assertThat(valueChangeRecorder.getNewValues()).containsExactly(5);
     }
 }
