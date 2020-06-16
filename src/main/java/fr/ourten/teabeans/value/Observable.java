@@ -12,7 +12,12 @@ public interface Observable
 
     void unmute();
 
-    void muteWhile(Runnable runnable);
+    default void muteWhile(Runnable runnable)
+    {
+        mute();
+        runnable.run();
+        unmute();
+    }
 
     boolean isMuted();
 }

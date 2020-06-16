@@ -167,12 +167,6 @@ public class ReducePropertyTest
         }
 
         @Override
-        public void muteWhile(Runnable runnable)
-        {
-
-        }
-
-        @Override
         public boolean isMuted()
         {
             return false;

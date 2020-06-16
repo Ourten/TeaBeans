@@ -135,14 +135,6 @@ public abstract class Binding<T> implements IBinding<T>
     }
 
     @Override
-    public void muteWhile(Runnable runnable)
-    {
-        mute();
-        runnable.run();
-        unmute();
-    }
-
-    @Override
     public boolean isMuted()
     {
         return isMuted;

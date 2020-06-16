@@ -88,14 +88,6 @@ public class Property<T> implements IProperty<T>
     }
 
     @Override
-    public void muteWhile(Runnable runnable)
-    {
-        mute();
-        runnable.run();
-        unmute();
-    }
-
-    @Override
     public boolean isMuted()
     {
         return isMuted;
