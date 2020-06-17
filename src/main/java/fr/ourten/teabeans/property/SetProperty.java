@@ -64,14 +64,18 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     @Override
     public void addListener(ListValueChangeListener<? super T> listener)
     {
+        if (!isObserving() && hasObservable())
+            startObserving();
         if (!listValueChangeListeners.contains(listener))
             listValueChangeListeners.add(listener);
     }
 
     @Override
-    public void removeListener(ListValueChangeListener<?> listener)
+    public void removeListener(ListValueChangeListener<? super T> listener)
     {
         listValueChangeListeners.remove(listener);
+        if (listValueChangeListeners.isEmpty() && hasObservable())
+            stopObserving();
     }
 
     @Override

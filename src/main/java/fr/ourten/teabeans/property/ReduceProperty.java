@@ -78,7 +78,7 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
         for (Observable observable : observables)
         {
             if (!(observable instanceof ObservableValue))
-                throw new RuntimeException("ReduceProperty must bind to an ObservableValue");
+                throw new UnsupportedOperationException("ReduceProperty must bind to an ObservableValue");
         }
 
         super.bind(observables);
@@ -162,7 +162,7 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
     public void setValue(V value)
     {
         if (isBound())
-            throw new RuntimeException("Cannot set the value of a bound property");
+            throw new UnsupportedOperationException("Cannot set the value of a bound property");
         actAsProperty();
         setPropertyValue(value);
     }

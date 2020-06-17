@@ -65,6 +65,8 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     @Override
     public void addListener(MapValueChangeListener<K, ? super V> listener)
     {
+        if (!isObserving() && hasObservable())
+            startObserving();
         if (!mapValueChangeListeners.contains(listener))
             mapValueChangeListeners.add(listener);
     }
@@ -73,9 +75,11 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     public void removeListener(MapValueChangeListener<K, ? super V> listener)
     {
         mapValueChangeListeners.remove(listener);
+        if (mapValueChangeListeners.isEmpty() && hasObservable())
+            stopObserving();
     }
 
-    private void fireListChangeListeners(K key, V oldValue, V newValue)
+    private void fireMapChangeListeners(K key, V oldValue, V newValue)
     {
         for (MapValueChangeListener<K, ? super V> listener : mapValueChangeListeners)
             listener.valueChanged(this, key, oldValue, newValue);
@@ -173,7 +177,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
             invalidate();
         else
             invalidateElement(key, oldValue, element, oldMap);
-        
+
         return rtn;
     }
 
@@ -182,7 +186,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
         if (isMuted())
             return;
 
-        fireListChangeListeners(key, oldElement, newElement);
+        fireMapChangeListeners(key, oldElement, newElement);
         invalidate(oldMap);
     }
 
@@ -208,7 +212,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
             return;
 
         if (oldMap != null)
-            oldMap.forEach((key, oldValue) -> fireListChangeListeners(key, oldValue, null));
+            oldMap.forEach((key, oldValue) -> fireMapChangeListeners(key, oldValue, null));
         invalidate(oldMap);
     }
 

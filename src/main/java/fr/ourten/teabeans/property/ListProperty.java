@@ -65,6 +65,8 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     @Override
     public void addListener(ListValueChangeListener<? super T> listener)
     {
+        if (!isObserving() && hasObservable())
+            startObserving();
         if (!listValueChangeListeners.contains(listener))
             listValueChangeListeners.add(listener);
     }
@@ -73,6 +75,8 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     public void removeListener(ListValueChangeListener<? super T> listener)
     {
         listValueChangeListeners.remove(listener);
+        if (listValueChangeListeners.isEmpty() && hasObservable())
+            stopObserving();
     }
 
     @Override

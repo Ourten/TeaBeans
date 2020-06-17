@@ -103,7 +103,7 @@ public class Property<T> implements IProperty<T>
     public void setValue(T value)
     {
         if (isBound())
-            throw new RuntimeException("Cannot set the value of a bound property");
+            throw new UnsupportedOperationException("Cannot set the value of a bound property");
         setPropertyValue(value);
     }
 
@@ -189,15 +189,25 @@ public class Property<T> implements IProperty<T>
             listener.invalidated(this);
     }
 
-    private void startObserving()
+    protected void startObserving()
     {
         isObserving = true;
         observable.addListener(propertyInvalidator);
     }
 
-    private void stopObserving()
+    protected void stopObserving()
     {
         isObserving = false;
         observable.removeListener(propertyInvalidator);
+    }
+
+    protected boolean isObserving()
+    {
+        return isObserving;
+    }
+
+    protected boolean hasObservable()
+    {
+        return observable != null;
     }
 }
