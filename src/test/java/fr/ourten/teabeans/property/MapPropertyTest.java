@@ -1,6 +1,8 @@
 package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.MapValueChangeListener;
+import fr.ourten.teabeans.listener.ValueInvalidationListener;
+import fr.ourten.teabeans.listener.recorder.MapValueChangeRecorder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +15,8 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 public class MapPropertyTest
 {
@@ -267,5 +271,21 @@ public class MapPropertyTest
         assertThat(immutableValues).isNotSameAs(property.getValue());
         assertThat(property.getValue()).containsExactlyInAnyOrderEntriesOf(IntStream.range(10, 20).boxed()
                 .collect(toMap(String::valueOf, identity())));
+    }
+
+    @Test
+    void addListener_givenBoundPropertyThenAddingMapChangeListener_thenShouldStartObserving()
+    {
+        MapProperty<String, Integer> property = new MapProperty<>(IntStream.range(0, 10).boxed()
+                .collect(toMap(String::valueOf, identity())));
+        MapProperty<String, Integer> secondProperty = spy(new MapProperty<>(IntStream.range(10, 20).boxed()
+                .collect(toMap(String::valueOf, identity()))));
+        property.bindProperty(secondProperty);
+
+        verify(secondProperty, never()).addListener(any(ValueInvalidationListener.class));
+
+        new MapValueChangeRecorder<>(property);
+
+        verify(secondProperty, atMostOnce()).addListener(any(ValueInvalidationListener.class));
     }
 }

@@ -1,6 +1,7 @@
 package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.listener.recorder.ListValueChangeRecorder;
 import fr.ourten.teabeans.listener.recorder.ValueChangeRecorder;
 import fr.ourten.teabeans.listener.recorder.ValueInvalidationRecorder;
@@ -16,6 +17,8 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 public class ListPropertyTest
 {
@@ -241,5 +244,19 @@ public class ListPropertyTest
 
         assertThat(immutableValues).isNotSameAs(property.getValue());
         assertThat(property.getValue()).containsExactly(IntStream.range(10, 20).boxed().toArray(Integer[]::new));
+    }
+
+    @Test
+    void addListener_givenBoundPropertyThenAddingListChangeListener_thenShouldStartObserving()
+    {
+        ListProperty<Integer> property = new ListProperty<>(IntStream.range(0, 10).boxed().collect(toList()));
+        ListProperty<Integer> secondProperty = spy(new ListProperty<>(IntStream.range(10, 20).boxed().collect(toList())));
+        property.bindProperty(secondProperty);
+
+        verify(secondProperty, never()).addListener(any(ValueInvalidationListener.class));
+
+        new ListValueChangeRecorder<>(property);
+
+        verify(secondProperty, atMostOnce()).addListener(any(ValueInvalidationListener.class));
     }
 }

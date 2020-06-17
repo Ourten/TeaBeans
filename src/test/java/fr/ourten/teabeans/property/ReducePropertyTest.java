@@ -52,7 +52,7 @@ public class ReducePropertyTest
         Observable observable = new TestObservable();
 
         ReduceProperty<Integer, String> concatenated = ReduceProperty.reduce(values -> values.map(String::valueOf).collect(joining(",")));
-        assertThatThrownBy(() -> concatenated.bind(two, observable)).isInstanceOf(RuntimeException.class).hasMessageContaining("ObservableValue");
+        assertThatThrownBy(() -> concatenated.bind(two, observable)).isInstanceOf(UnsupportedOperationException.class).hasMessageContaining("ObservableValue");
     }
 
     @Test

@@ -1,11 +1,13 @@
 package fr.ourten.teabeans.property;
 
+import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.listener.recorder.ValueChangeRecorder;
 import fr.ourten.teabeans.listener.recorder.ValueInvalidationRecorder;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 public class PropertyTest
 {
@@ -57,7 +59,27 @@ public class PropertyTest
 
         property2.bindProperty(property1);
 
-        assertThrows(RuntimeException.class, () -> property2.setValue(2));
+        assertThrows(UnsupportedOperationException.class, () -> property2.setValue(2));
+    }
+
+    @Test
+    void bindProperty_givenAlreadyBoundWithSame_thenShouldNotRebind()
+    {
+        Property<Integer> property = new Property<>(0);
+        Property<Integer> secondProperty = new Property<>(10);
+
+        ValueInvalidationRecorder invalidationRecorder = new ValueInvalidationRecorder(property);
+        ValueChangeRecorder<Integer> valueChangeRecorder = new ValueChangeRecorder<>(property);
+
+        property.bindProperty(secondProperty);
+
+        assertThat(invalidationRecorder.getCount()).isEqualTo(1);
+        assertThat(valueChangeRecorder.getCount()).isEqualTo(1);
+
+        property.bindProperty(secondProperty);
+
+        assertThat(invalidationRecorder.getCount()).isEqualTo(1);
+        assertThat(valueChangeRecorder.getCount()).isEqualTo(1);
     }
 
     @Test
@@ -71,6 +93,10 @@ public class PropertyTest
 
         property.setValue(0);
         property.setValue(5);
+
+        Property<Integer> secondProperty = new Property<>(10);
+        property.bindProperty(secondProperty);
+
         assertThat(invalidationRecorder.getCount()).isEqualTo(0);
         assertThat(valueChangeRecorder.getCount()).isEqualTo(0);
     }
@@ -114,5 +140,33 @@ public class PropertyTest
         assertThat(valueChangeRecorder.getCount()).isEqualTo(1);
         assertThat(valueChangeRecorder.getOldValues()).containsExactly(0);
         assertThat(valueChangeRecorder.getNewValues()).containsExactly(5);
+    }
+
+    @Test
+    void addListener_givenBoundPropertyThenAddingInvalidationListener_thenShouldStartObserving()
+    {
+        Property<Integer> property = new Property<>(0);
+        Property<Integer> secondProperty = spy(new Property<>(10));
+        property.bindProperty(secondProperty);
+
+        verify(secondProperty, never()).addListener(any(ValueInvalidationListener.class));
+
+        new ValueInvalidationRecorder(property);
+
+        verify(secondProperty, atMostOnce()).addListener(any(ValueInvalidationListener.class));
+    }
+
+    @Test
+    void addListener_givenBoundPropertyThenAddingChangeListener_thenShouldStartObserving()
+    {
+        Property<Integer> property = new Property<>(0);
+        Property<Integer> secondProperty = spy(new Property<>(10));
+        property.bindProperty(secondProperty);
+
+        verify(secondProperty, never()).addListener(any(ValueInvalidationListener.class));
+
+        new ValueChangeRecorder<>(property);
+
+        verify(secondProperty, atMostOnce()).addListener(any(ValueInvalidationListener.class));
     }
 }
