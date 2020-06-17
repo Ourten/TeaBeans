@@ -79,12 +79,6 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
             stopObserving();
     }
 
-    private void fireMapChangeListeners(K key, V oldValue, V newValue)
-    {
-        for (MapValueChangeListener<K, ? super V> listener : mapValueChangeListeners)
-            listener.valueChanged(this, key, oldValue, newValue);
-    }
-
     @Override
     public V get(K key)
     {
@@ -220,5 +214,20 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     public int size()
     {
         return value.size();
+    }
+
+    @Override
+    protected boolean hasListeners()
+    {
+        return super.hasListeners() || !mapValueChangeListeners.isEmpty();
+    }
+
+    private void fireMapChangeListeners(K key, V oldValue, V newValue)
+    {
+        for (int i = 0, mapValueChangeListenersSize = mapValueChangeListeners.size(); i < mapValueChangeListenersSize; i++)
+        {
+            MapValueChangeListener<K, ? super V> listener = mapValueChangeListeners.get(i);
+            listener.valueChanged(this, key, oldValue, newValue);
+        }
     }
 }

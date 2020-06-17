@@ -13,7 +13,7 @@ public abstract class Binding<T> implements IBinding<T>
     private final   ArrayList<Observable>                     dependencies               = new ArrayList<>();
     protected final ArrayList<ValueChangeListener<? super T>> valueChangeListeners       = new ArrayList<>();
     protected final ArrayList<ValueInvalidationListener>      valueInvalidationListeners = new ArrayList<>();
-    private         ValueInvalidationListener                 listener;
+    private         ValueInvalidationListener                 bindingInvalidator;
 
     protected T value;
 
@@ -70,11 +70,11 @@ public abstract class Binding<T> implements IBinding<T>
     {
         for (Observable obs : observables)
             Objects.requireNonNull(obs, "Cannot bind to null!");
-        if (listener == null)
-            listener = new WeakObservableListener(this);
+        if (bindingInvalidator == null)
+            bindingInvalidator = new WeakObservableListener(this);
         for (Observable observable : observables)
         {
-            observable.addListener(listener);
+            observable.addListener(bindingInvalidator);
             dependencies.add(observable);
         }
     }
@@ -84,8 +84,8 @@ public abstract class Binding<T> implements IBinding<T>
     {
         for (Observable observable : observables)
         {
-            if (listener != null)
-                observable.removeListener(listener);
+            if (bindingInvalidator != null)
+                observable.removeListener(bindingInvalidator);
             dependencies.remove(observable);
         }
     }
@@ -93,7 +93,7 @@ public abstract class Binding<T> implements IBinding<T>
     @Override
     public void unbindAll()
     {
-        dependencies.forEach(obs -> obs.removeListener(listener));
+        dependencies.forEach(obs -> obs.removeListener(bindingInvalidator));
         dependencies.clear();
     }
 
@@ -142,13 +142,19 @@ public abstract class Binding<T> implements IBinding<T>
 
     protected void fireChangeListeners(T oldValue, T newValue)
     {
-        for (ValueChangeListener<? super T> listener : valueChangeListeners)
+        for (int i = 0, valueChangeListenersSize = valueChangeListeners.size(); i < valueChangeListenersSize; i++)
+        {
+            ValueChangeListener<? super T> listener = valueChangeListeners.get(i);
             listener.valueChanged(this, oldValue, newValue);
+        }
     }
 
     protected void fireInvalidationListeners()
     {
-        for (ValueInvalidationListener listener : valueInvalidationListeners)
+        for (int i = 0, valueInvalidationListenersSize = valueInvalidationListeners.size(); i < valueInvalidationListenersSize; i++)
+        {
+            ValueInvalidationListener listener = valueInvalidationListeners.get(i);
             listener.invalidated(this);
+        }
     }
 }

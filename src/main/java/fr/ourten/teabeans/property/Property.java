@@ -136,11 +136,12 @@ public class Property<T> implements IProperty<T>
             this.observable = observable;
             if (propertyInvalidator == null)
                 propertyInvalidator = new WeakObservableListener(this);
-            if (!valueChangeListeners.isEmpty() || !valueInvalidationListeners.isEmpty())
+            if (hasListeners())
                 startObserving();
 
             if (isMuted())
                 return;
+
             if (value == null || !value.equals(observable.getValue()))
                 fireChangeListeners(value, observable.getValue());
             fireInvalidationListeners();
@@ -179,14 +180,20 @@ public class Property<T> implements IProperty<T>
 
     protected void fireChangeListeners(T oldValue, T newValue)
     {
-        for (ValueChangeListener<? super T> listener : valueChangeListeners)
+        for (int i = 0, valueChangeListenersSize = valueChangeListeners.size(); i < valueChangeListenersSize; i++)
+        {
+            ValueChangeListener<? super T> listener = valueChangeListeners.get(i);
             listener.valueChanged(this, oldValue, newValue);
+        }
     }
 
     protected void fireInvalidationListeners()
     {
-        for (ValueInvalidationListener listener : valueInvalidationListeners)
+        for (int i = 0, valueInvalidationListenersSize = valueInvalidationListeners.size(); i < valueInvalidationListenersSize; i++)
+        {
+            ValueInvalidationListener listener = valueInvalidationListeners.get(i);
             listener.invalidated(this);
+        }
     }
 
     protected void startObserving()
@@ -209,5 +216,10 @@ public class Property<T> implements IProperty<T>
     protected boolean hasObservable()
     {
         return observable != null;
+    }
+
+    protected boolean hasListeners()
+    {
+        return !valueInvalidationListeners.isEmpty() || !valueChangeListeners.isEmpty();
     }
 }

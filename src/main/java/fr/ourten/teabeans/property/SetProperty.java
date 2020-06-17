@@ -174,12 +174,6 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
         invalidate(oldSet);
     }
 
-    private void fireListChangeListeners(T oldValue, T newValue)
-    {
-        for (ListValueChangeListener<? super T> listener : listValueChangeListeners)
-            listener.valueChanged(this, oldValue, newValue);
-    }
-
     @Override
     public int size()
     {
@@ -190,5 +184,20 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     public Iterator<T> iterator()
     {
         return getValue().iterator();
+    }
+
+    @Override
+    protected boolean hasListeners()
+    {
+        return super.hasListeners() || !listValueChangeListeners.isEmpty();
+    }
+
+    private void fireListChangeListeners(T oldValue, T newValue)
+    {
+        for (int i = 0, listValueChangeListenersSize = listValueChangeListeners.size(); i < listValueChangeListenersSize; i++)
+        {
+            ListValueChangeListener<? super T> listener = listValueChangeListeners.get(i);
+            listener.valueChanged(this, oldValue, newValue);
+        }
     }
 }

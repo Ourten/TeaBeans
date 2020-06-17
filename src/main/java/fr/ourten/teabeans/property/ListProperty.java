@@ -229,12 +229,6 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
         setValue(temp);
     }
 
-    private void fireListChangeListeners(T oldValue, T newValue)
-    {
-        for (ListValueChangeListener<? super T> listener : listValueChangeListeners)
-            listener.valueChanged(this, oldValue, newValue);
-    }
-
     @Override
     public int size()
     {
@@ -245,5 +239,20 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     public Iterator<T> iterator()
     {
         return getValue().iterator();
+    }
+
+    @Override
+    protected boolean hasListeners()
+    {
+        return super.hasListeners() || !listValueChangeListeners.isEmpty();
+    }
+
+    private void fireListChangeListeners(T oldValue, T newValue)
+    {
+        for (int i = 0, listValueChangeListenersSize = listValueChangeListeners.size(); i < listValueChangeListenersSize; i++)
+        {
+            ListValueChangeListener<? super T> listener = listValueChangeListeners.get(i);
+            listener.valueChanged(this, oldValue, newValue);
+        }
     }
 }

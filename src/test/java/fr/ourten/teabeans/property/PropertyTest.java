@@ -1,8 +1,10 @@
 package fr.ourten.teabeans.property;
 
+import fr.ourten.teabeans.binding.WeakObservableListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.listener.recorder.ValueChangeRecorder;
 import fr.ourten.teabeans.listener.recorder.ValueInvalidationRecorder;
+import fr.ourten.teabeans.test.GCUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -168,5 +170,21 @@ public class PropertyTest
         new ValueChangeRecorder<>(property);
 
         verify(secondProperty, atMostOnce()).addListener(any(ValueInvalidationListener.class));
+    }
+
+    @Test
+    void garbageCollection_givenBind_thenShouldNotRetainProperty()
+    {
+        Property<Integer> p1 = new Property<>(0);
+        Property<Integer> p2 = spy(new Property<>(10));
+
+        p1.bindProperty(p2);
+        p1.startObserving();
+
+        p1 = null;
+        GCUtils.fullFinalization();
+
+        p2.invalidate();
+        verify(p2).removeListener(any(WeakObservableListener.class));
     }
 }
