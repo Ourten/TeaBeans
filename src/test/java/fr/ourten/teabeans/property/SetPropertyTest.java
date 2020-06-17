@@ -9,8 +9,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.IntStream;
 
+import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class SetPropertyTest
 {
@@ -148,5 +151,36 @@ public class SetPropertyTest
 
         assertThat(property.contains(9)).isTrue();
         assertThat(property.contains(3)).isFalse();
+    }
+
+    @Test
+    void getValue_givenSimpleSet_thenShouldCreateImmutableView()
+    {
+        SetProperty<Integer> property = new SetProperty<>(IntStream.range(0, 10).boxed().collect(toSet()));
+
+        Set<Integer> immutableValues = property.getValue();
+
+        assertThat(immutableValues).containsExactlyInAnyOrder(IntStream.range(0, 10).boxed().toArray(Integer[]::new));
+
+        assertThatThrownBy(() -> immutableValues.add(0)).isInstanceOf(UnsupportedOperationException.class);
+
+        property.add(10);
+
+        assertThat(immutableValues).containsExactlyInAnyOrder(IntStream.range(0, 11).boxed().toArray(Integer[]::new));
+    }
+
+    @Test
+    void getValue_givenSimpleSetThenReplaced_thenShouldReCreateImmutableView()
+    {
+        SetProperty<Integer> property = new SetProperty<>(IntStream.range(0, 10).boxed().collect(toSet()));
+
+        Set<Integer> immutableValues = property.getValue();
+        assertThat(immutableValues).isSameAs(property.getValue());
+
+        property.setValue(IntStream.range(10, 20).boxed().collect(toSet()));
+        assertThat(immutableValues).containsExactlyInAnyOrder(IntStream.range(0, 10).boxed().toArray(Integer[]::new));
+
+        assertThat(immutableValues).isNotSameAs(property.getValue());
+        assertThat(property.getValue()).containsExactlyInAnyOrder(IntStream.range(10, 20).boxed().toArray(Integer[]::new));
     }
 }

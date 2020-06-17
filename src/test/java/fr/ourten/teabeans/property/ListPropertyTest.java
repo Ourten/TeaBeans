@@ -15,6 +15,7 @@ import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ListPropertyTest
 {
@@ -209,5 +210,36 @@ public class ListPropertyTest
 
         assertThat(listValueChangeRecorder.getOldValues()).containsExactly(2);
         assertThat(listValueChangeRecorder.getNewValues()).containsExactly(11);
+    }
+
+    @Test
+    void getValue_givenSimpleList_thenShouldCreateImmutableView()
+    {
+        ListProperty<Integer> property = new ListProperty<>(IntStream.range(0, 10).boxed().collect(toList()));
+
+        List<Integer> immutableValues = property.getValue();
+
+        assertThat(immutableValues).containsExactly(IntStream.range(0, 10).boxed().toArray(Integer[]::new));
+
+        assertThatThrownBy(() -> immutableValues.add(0)).isInstanceOf(UnsupportedOperationException.class);
+
+        property.add(10);
+
+        assertThat(immutableValues).containsExactly(IntStream.range(0, 11).boxed().toArray(Integer[]::new));
+    }
+
+    @Test
+    void getValue_givenSimpleListThenReplaced_thenShouldReCreateImmutableView()
+    {
+        ListProperty<Integer> property = new ListProperty<>(IntStream.range(0, 10).boxed().collect(toList()));
+
+        List<Integer> immutableValues = property.getValue();
+        assertThat(immutableValues).isSameAs(property.getValue());
+
+        property.setValue(IntStream.range(10, 20).boxed().collect(toList()));
+        assertThat(immutableValues).containsExactly(IntStream.range(0, 10).boxed().toArray(Integer[]::new));
+
+        assertThat(immutableValues).isNotSameAs(property.getValue());
+        assertThat(property.getValue()).containsExactly(IntStream.range(10, 20).boxed().toArray(Integer[]::new));
     }
 }

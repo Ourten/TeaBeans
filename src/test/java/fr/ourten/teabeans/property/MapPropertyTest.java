@@ -7,8 +7,12 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MapPropertyTest
 {
@@ -225,5 +229,43 @@ public class MapPropertyTest
 
         property.clear();
         assertThat(count).isEqualTo(5);
+    }
+
+    @Test
+    void getValue_givenSimpleMap_thenShouldCreateImmutableView()
+    {
+        MapProperty<String, Integer> property = new MapProperty<>(IntStream.range(0, 10).boxed()
+                .collect(toMap(String::valueOf, identity())));
+
+        Map<String, Integer> immutableValues = property.getValue();
+
+        assertThat(immutableValues).containsExactlyInAnyOrderEntriesOf(IntStream.range(0, 10).boxed()
+                .collect(toMap(String::valueOf, identity())));
+
+        assertThatThrownBy(() -> immutableValues.put("0", 0)).isInstanceOf(UnsupportedOperationException.class);
+
+        property.put("10", 10);
+
+        assertThat(immutableValues).containsExactlyInAnyOrderEntriesOf(IntStream.range(0, 11).boxed()
+                .collect(toMap(String::valueOf, identity())));
+    }
+
+    @Test
+    void getValue_givenSimpleMapThenReplaced_thenShouldReCreateImmutableView()
+    {
+        MapProperty<String, Integer> property = new MapProperty<>(IntStream.range(0, 10).boxed()
+                .collect(toMap(String::valueOf, identity())));
+
+        Map<String, Integer> immutableValues = property.getValue();
+        assertThat(immutableValues).isSameAs(property.getValue());
+
+        property.setValue(IntStream.range(10, 20).boxed()
+                .collect(toMap(String::valueOf, identity())));
+        assertThat(immutableValues).containsExactlyInAnyOrderEntriesOf(IntStream.range(0, 10).boxed()
+                .collect(toMap(String::valueOf, identity())));
+
+        assertThat(immutableValues).isNotSameAs(property.getValue());
+        assertThat(property.getValue()).containsExactlyInAnyOrderEntriesOf(IntStream.range(10, 20).boxed()
+                .collect(toMap(String::valueOf, identity())));
     }
 }
