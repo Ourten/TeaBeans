@@ -173,7 +173,7 @@ public class PropertyTest
     }
 
     @Test
-    void garbageCollection_givenBind_thenShouldNotRetainProperty()
+    void garbageCollection_givenBindAndFreeingBound_thenShouldRemoveListener()
     {
         Property<Integer> p1 = new Property<>(0);
         Property<Integer> p2 = spy(new Property<>(10));
