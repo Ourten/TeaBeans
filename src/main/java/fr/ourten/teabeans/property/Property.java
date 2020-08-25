@@ -7,6 +7,7 @@ import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.value.ObservableValue;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Property<T> implements IProperty<T>
@@ -15,8 +16,13 @@ public class Property<T> implements IProperty<T>
      * The list of attached listeners that need to be notified when the value
      * change.
      */
-    protected final ArrayList<ValueChangeListener<? super T>> valueChangeListeners;
-    protected final ArrayList<ValueInvalidationListener>      valueInvalidationListeners;
+    protected final List<ValueChangeListener<? super T>> valueChangeListeners;
+    protected final List<ValueInvalidationListener>      valueInvalidationListeners;
+
+    private final List<ValueChangeListener<? super T>> valueChangeListenersToRemove       = new ArrayList<>(1);
+    private final List<ValueInvalidationListener>      valueInvalidationListenersToRemove = new ArrayList<>(1);
+
+    private boolean isPropagatingEvents;
 
     /**
      * The listener used to bind this property to another.
@@ -52,6 +58,12 @@ public class Property<T> implements IProperty<T>
     @Override
     public void removeListener(ValueChangeListener<? super T> listener)
     {
+        if (isPropagatingEvents)
+        {
+            valueChangeListenersToRemove.add(listener);
+            return;
+        }
+
         valueChangeListeners.remove(listener);
         if (valueChangeListeners.isEmpty() && observable != null)
             stopObserving();
@@ -69,6 +81,12 @@ public class Property<T> implements IProperty<T>
     @Override
     public void removeListener(ValueInvalidationListener listener)
     {
+        if (isPropagatingEvents)
+        {
+            valueInvalidationListenersToRemove.add(listener);
+            return;
+        }
+
         valueInvalidationListeners.remove(listener);
         if (valueInvalidationListeners.isEmpty() && observable != null)
             stopObserving();
@@ -180,20 +198,26 @@ public class Property<T> implements IProperty<T>
 
     protected void fireChangeListeners(T oldValue, T newValue)
     {
-        for (int i = 0, valueChangeListenersSize = valueChangeListeners.size(); i < valueChangeListenersSize; i++)
-        {
-            ValueChangeListener<? super T> listener = valueChangeListeners.get(i);
+        isPropagatingEvents = true;
+        for (ValueChangeListener<? super T> listener : valueChangeListeners)
             listener.valueChanged(this, oldValue, newValue);
-        }
+
+        isPropagatingEvents = false;
+        for (ValueChangeListener<? super T> listener : valueChangeListenersToRemove)
+            valueChangeListeners.remove(listener);
+        valueChangeListenersToRemove.clear();
     }
 
     protected void fireInvalidationListeners()
     {
-        for (int i = 0, valueInvalidationListenersSize = valueInvalidationListeners.size(); i < valueInvalidationListenersSize; i++)
-        {
-            ValueInvalidationListener listener = valueInvalidationListeners.get(i);
+        isPropagatingEvents = true;
+        for (ValueInvalidationListener listener : valueInvalidationListeners)
             listener.invalidated(this);
-        }
+
+        isPropagatingEvents = false;
+        for (ValueInvalidationListener listener : valueInvalidationListenersToRemove)
+            valueInvalidationListeners.remove(listener);
+        valueInvalidationListenersToRemove.clear();
     }
 
     protected void startObserving()
