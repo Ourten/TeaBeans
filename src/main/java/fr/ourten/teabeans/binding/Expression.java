@@ -2,6 +2,7 @@ package fr.ourten.teabeans.binding;
 
 import fr.ourten.teabeans.value.Observable;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -9,7 +10,7 @@ import java.util.function.Supplier;
  */
 public class Expression<T> extends Binding<T>
 {
-    private final Supplier<? extends T> closure;
+    private Supplier<? extends T> closure;
 
     public Expression(Supplier<? extends T> closure, Observable... dependencies)
     {
@@ -21,6 +22,14 @@ public class Expression<T> extends Binding<T>
     public T computeValue()
     {
         return closure.get();
+    }
+
+    public void setClosure(Supplier<? extends T> closure)
+    {
+        Objects.requireNonNull(closure);
+        
+        this.closure = closure;
+        invalidate();
     }
 
     public static <V> Expression<V> getExpression(Supplier<? extends V> closure,
