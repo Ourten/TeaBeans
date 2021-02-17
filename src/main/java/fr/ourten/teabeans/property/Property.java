@@ -36,6 +36,11 @@ public class Property<T> implements IProperty<T>
 
     private boolean isMuted;
 
+    public Property()
+    {
+        this(null);
+    }
+
     public Property(T value)
     {
         valueChangeListeners = new ArrayList<>();

@@ -40,6 +40,11 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
         this(ArrayList::new, value);
     }
 
+    public ListProperty()
+    {
+        this(null);
+    }
+
     @Override
     protected void setPropertyValue(List<T> value)
     {

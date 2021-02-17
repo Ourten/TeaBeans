@@ -39,6 +39,11 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
         this(HashSet::new, value);
     }
 
+    public SetProperty()
+    {
+        this(null);
+    }
+
     @Override
     protected void setPropertyValue(Set<T> value)
     {

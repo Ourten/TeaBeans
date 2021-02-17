@@ -40,6 +40,11 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
         this(HashMap::new, value);
     }
 
+    public MapProperty()
+    {
+        this(null);
+    }
+
     @Override
     protected void setPropertyValue(Map<K, V> value)
     {
