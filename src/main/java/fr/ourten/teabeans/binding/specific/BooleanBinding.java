@@ -25,7 +25,10 @@ public abstract class BooleanBinding extends BindingBase<Boolean> implements Boo
             if (!isMuted())
             {
                 if (!Objects.equals(computed, value))
+                {
+                    fireChangeArglessListeners();
                     fireChangeListeners(value, computed);
+                }
             }
             value = computed;
             setValid(true);

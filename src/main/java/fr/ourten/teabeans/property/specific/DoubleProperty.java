@@ -25,7 +25,10 @@ public class DoubleProperty extends PropertyBase<Double> implements DoubleValue
     protected void afterBindProperty()
     {
         if (!Objects.equals(observable.getValue(), value))
+        {
+            fireChangeArglessListeners();
             fireChangeListeners(value, observable.getValue());
+        }
         fireInvalidationListeners();
     }
 
@@ -57,7 +60,10 @@ public class DoubleProperty extends PropertyBase<Double> implements DoubleValue
             return;
 
         if (value != oldValue)
+        {
+            fireChangeArglessListeners();
             fireChangeListeners(oldValue, value);
+        }
         fireInvalidationListeners();
 
         oldValue = value;

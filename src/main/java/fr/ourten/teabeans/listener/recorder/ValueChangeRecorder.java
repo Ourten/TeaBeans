@@ -13,7 +13,7 @@ public class ValueChangeRecorder<T> extends ObservableValueRecorder<T> implement
     public ValueChangeRecorder(ObservableValue<T>... observables)
     {
         for (ObservableValue<T> observable : observables)
-            observable.addListener(this);
+            observable.addChangeListener(this);
     }
 
     @Override

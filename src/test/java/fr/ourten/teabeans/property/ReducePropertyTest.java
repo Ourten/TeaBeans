@@ -107,7 +107,7 @@ public class ReducePropertyTest
 
         assertThat(concatenated.getValue()).isEqualTo("2,4");
 
-        concatenated.addListener((obs, oldValue, newValue) ->
+        concatenated.addChangeListener((obs, oldValue, newValue) ->
         {
             changed.getAndIncrement();
             assertThat(oldValue).isEqualTo("2,4");
@@ -150,6 +150,18 @@ public class ReducePropertyTest
 
         @Override
         public void removeListener(ValueInvalidationListener listener)
+        {
+
+        }
+
+        @Override
+        public void addChangeListener(ValueInvalidationListener listener)
+        {
+            
+        }
+
+        @Override
+        public void removeChangeListener(ValueInvalidationListener listener)
         {
 
         }

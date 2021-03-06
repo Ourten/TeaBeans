@@ -25,7 +25,10 @@ public abstract class FloatBinding extends BindingBase<Float> implements FloatVa
             if (!isMuted())
             {
                 if (!Objects.equals(computed, value))
+                {
+                    fireChangeArglessListeners();
                     fireChangeListeners(value, computed);
+                }
             }
             value = computed;
             setValid(true);

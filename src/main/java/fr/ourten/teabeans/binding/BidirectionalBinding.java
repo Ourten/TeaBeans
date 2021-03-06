@@ -21,16 +21,16 @@ public class BidirectionalBinding<T> implements ValueChangeListener<T>
         property2 = new WeakReference<>(p2);
 
         getProperty1().setValue(p2.getValue());
-        getProperty1().addListener(this);
-        getProperty2().addListener(this);
+        getProperty1().addChangeListener(this);
+        getProperty2().addChangeListener(this);
     }
 
     public void unbind()
     {
         if (getProperty1() != null)
-            getProperty1().removeListener(this);
+            getProperty1().removeChangeListener(this);
         if (getProperty2() != null)
-            getProperty2().removeListener(this);
+            getProperty2().removeChangeListener(this);
     }
 
     @Override
@@ -40,9 +40,9 @@ public class BidirectionalBinding<T> implements ValueChangeListener<T>
             if (getProperty1() == null || getProperty2() == null)
             {
                 if (getProperty1() != null)
-                    getProperty1().removeListener(this);
+                    getProperty1().removeChangeListener(this);
                 if (getProperty2() != null)
-                    getProperty2().removeListener(this);
+                    getProperty2().removeChangeListener(this);
             }
             else
             {

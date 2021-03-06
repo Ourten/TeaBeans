@@ -18,9 +18,9 @@ public interface ObservableValue<T> extends Observable
     String OBSERVABLES_NONNULL      = "Observables cannot be null";
     String COMBINE_FUNCTION_NONNULL = "Combine function cannot be null";
 
-    void addListener(ValueChangeListener<? super T> listener);
+    void addChangeListener(ValueChangeListener<? super T> listener);
 
-    void removeListener(ValueChangeListener<? super T> listener);
+    void removeChangeListener(ValueChangeListener<? super T> listener);
 
     T getValue();
 

@@ -25,7 +25,10 @@ public abstract class IntBinding extends BindingBase<Integer> implements IntValu
             if (!isMuted())
             {
                 if (!Objects.equals(computed, value))
+                {
+                    fireChangeArglessListeners();
                     fireChangeListeners(value, computed);
+                }
             }
             value = computed;
             setValid(true);

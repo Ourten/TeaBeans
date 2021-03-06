@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface IListProperty<T> extends IProperty<List<T>>, Iterable<T>
 {
-    void addListener(ListValueChangeListener<? super T> listener);
+    void addChangeListener(ListValueChangeListener<? super T> listener);
 
-    void removeListener(ListValueChangeListener<? super T> listener);
+    void removeChangeListener(ListValueChangeListener<? super T> listener);
 
     T get(int index);
 

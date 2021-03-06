@@ -8,6 +8,10 @@ public interface Observable
 
     void removeListener(ValueInvalidationListener listener);
 
+    void addChangeListener(ValueInvalidationListener listener);
+
+    void removeChangeListener(ValueInvalidationListener listener);
+
     void mute();
 
     void unmute();

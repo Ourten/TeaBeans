@@ -25,7 +25,10 @@ public abstract class DoubleBinding extends BindingBase<Double> implements Doubl
             if (!isMuted())
             {
                 if (!Objects.equals(computed, value))
+                {
+                    fireChangeArglessListeners();
                     fireChangeListeners(value, computed);
+                }
             }
             value = computed;
             setValid(true);

@@ -32,7 +32,7 @@ public class ValueListenerTest
 
         AtomicInteger counter = new AtomicInteger(0);
 
-        property.addListener((observable, oldValue, newValue) ->
+        property.addChangeListener((observable, oldValue, newValue) ->
         {
             counter.getAndIncrement();
             assertThat(oldValue).isEqualTo(5);

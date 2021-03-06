@@ -182,9 +182,9 @@ public class MapPropertyTest
             assertThat(oldValue).isEqualTo(0);
         };
 
-        property.addListener(removeListener);
+        property.addChangeListener(removeListener);
         property.remove("0");
-        property.removeListener(removeListener);
+        property.removeChangeListener(removeListener);
 
         MapValueChangeListener<String, Integer> changeListener = (observable, key, oldValue, newValue) ->
         {
@@ -194,9 +194,9 @@ public class MapPropertyTest
             assertThat(oldValue).isEqualTo(2);
             assertThat(newValue).isEqualTo(5);
         };
-        property.addListener(changeListener);
+        property.addChangeListener(changeListener);
         property.replace("2", 5);
-        property.removeListener(changeListener);
+        property.removeChangeListener(changeListener);
 
         MapValueChangeListener<String, Integer> addListener = (observable, key, oldValue, newValue) ->
         {
@@ -210,10 +210,10 @@ public class MapPropertyTest
         tempMap.put("43", 18);
         tempMap.put("44", 18);
 
-        property.addListener(addListener);
+        property.addChangeListener(addListener);
         property.put("18", 18);
         property.putAll(tempMap);
-        property.removeListener(addListener);
+        property.removeChangeListener(addListener);
 
         count = 0;
         property.clear();
@@ -229,7 +229,7 @@ public class MapPropertyTest
             assertThat(oldValue).isEqualTo(18);
             count++;
         };
-        property.addListener(clearListener);
+        property.addChangeListener(clearListener);
 
         property.clear();
         assertThat(count).isEqualTo(5);

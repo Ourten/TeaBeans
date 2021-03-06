@@ -132,7 +132,7 @@ public class BidirectionalBindingTest
 
         // Need to fake an update since actually changing the property would trash the mocked object
         binding.valueChanged(p1, p1.getValue(), "newvalue");
-        verify(p1).removeListener(binding);
+        verify(p1).removeChangeListener(binding);
 
         // Inverted scenario
 
@@ -146,7 +146,7 @@ public class BidirectionalBindingTest
 
         // Need to fake an update since actually changing the property would trash the mocked object
         binding2.valueChanged(p4, p4.getValue(), "newvalue");
-        verify(p4).removeListener(binding2);
+        verify(p4).removeChangeListener(binding2);
     }
 
     @Test

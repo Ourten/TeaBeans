@@ -20,7 +20,7 @@ public class MapValueChangeRecorder<K, V> extends ObservableValueRecorder<V> imp
     public MapValueChangeRecorder(MapProperty<K, V>... mapProperties)
     {
         for (MapProperty<K, V> mapProperty : mapProperties)
-            mapProperty.addListener(this);
+            mapProperty.addChangeListener(this);
     }
 
     public List<K> getKeys()

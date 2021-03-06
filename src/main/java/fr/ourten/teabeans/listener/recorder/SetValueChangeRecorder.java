@@ -15,7 +15,7 @@ public class SetValueChangeRecorder<T> extends ObservableValueRecorder<T> implem
     public SetValueChangeRecorder(ISetProperty<T>... setProperties)
     {
         for (ISetProperty<T> setProperty : setProperties)
-            setProperty.addListener(this);
+            setProperty.addChangeListener(this);
     }
 
     @Override

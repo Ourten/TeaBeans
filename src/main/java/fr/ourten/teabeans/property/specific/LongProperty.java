@@ -25,7 +25,10 @@ public class LongProperty extends PropertyBase<Long> implements LongValue
     protected void afterBindProperty()
     {
         if (!Objects.equals(observable.getValue(), value))
+        {
+            fireChangeArglessListeners();
             fireChangeListeners(value, observable.getValue());
+        }
         fireInvalidationListeners();
     }
 
@@ -57,7 +60,10 @@ public class LongProperty extends PropertyBase<Long> implements LongValue
             return;
 
         if (value != oldValue)
+        {
+            fireChangeArglessListeners();
             fireChangeListeners(oldValue, value);
+        }
         fireInvalidationListeners();
 
         oldValue = value;

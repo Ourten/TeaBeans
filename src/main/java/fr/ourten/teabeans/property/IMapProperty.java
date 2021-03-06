@@ -8,9 +8,9 @@ import java.util.Set;
 
 public interface IMapProperty<K, T> extends IProperty<Map<K, T>>
 {
-    void addListener(MapValueChangeListener<K, ? super T> listener);
+    void addChangeListener(MapValueChangeListener<K, ? super T> listener);
 
-    void removeListener(MapValueChangeListener<K, ? super T> listener);
+    void removeChangeListener(MapValueChangeListener<K, ? super T> listener);
 
     T put(K key, T value);
 

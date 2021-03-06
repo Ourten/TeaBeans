@@ -68,7 +68,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     }
 
     @Override
-    public void addListener(MapValueChangeListener<K, ? super V> listener)
+    public void addChangeListener(MapValueChangeListener<K, ? super V> listener)
     {
         if (!isObserving() && hasObservable())
             startObserving();
@@ -77,7 +77,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     }
 
     @Override
-    public void removeListener(MapValueChangeListener<K, ? super V> listener)
+    public void removeChangeListener(MapValueChangeListener<K, ? super V> listener)
     {
         mapValueChangeListeners.remove(listener);
         if (mapValueChangeListeners.isEmpty() && hasObservable())

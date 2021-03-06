@@ -25,7 +25,10 @@ public class FloatProperty extends PropertyBase<Float> implements FloatValue
     protected void afterBindProperty()
     {
         if (!Objects.equals(observable.getValue(), value))
+        {
+            fireChangeArglessListeners();
             fireChangeListeners(value, observable.getValue());
+        }
         fireInvalidationListeners();
     }
 
@@ -57,7 +60,10 @@ public class FloatProperty extends PropertyBase<Float> implements FloatValue
             return;
 
         if (value != oldValue)
+        {
+            fireChangeArglessListeners();
             fireChangeListeners(oldValue, value);
+        }
         fireInvalidationListeners();
 
         oldValue = value;

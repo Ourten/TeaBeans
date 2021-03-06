@@ -15,7 +15,7 @@ public class ListValueChangeRecorder<T> extends ObservableValueRecorder<T> imple
     public ListValueChangeRecorder(IListProperty<T>... listProperties)
     {
         for (IListProperty<T> listProperty : listProperties)
-            listProperty.addListener(this);
+            listProperty.addChangeListener(this);
     }
 
     @Override

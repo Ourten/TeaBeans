@@ -14,9 +14,15 @@ public abstract class Binding<T> extends BindingBase<T>
             if (!isMuted())
             {
                 if (computed == null && value != null)
+                {
+                    fireChangeArglessListeners();
                     fireChangeListeners(value, null);
+                }
                 else if (computed != null && !computed.equals(value))
+                {
+                    fireChangeArglessListeners();
                     fireChangeListeners(value, computed);
+                }
             }
             value = computed;
             setValid(true);

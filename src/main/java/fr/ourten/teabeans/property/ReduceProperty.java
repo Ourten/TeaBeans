@@ -91,7 +91,10 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
             return;
 
         if (!Objects.equals(value, oldValue))
+        {
+            fireChangeArglessListeners();
             fireChangeListeners(oldValue, value);
+        }
         fireInvalidationListeners();
 
         oldValue = value;
@@ -117,7 +120,10 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
             if (isMuted())
                 return;
             if (value == null || !value.equals(observable.getValue()))
+            {
+                fireChangeArglessListeners();
                 fireChangeListeners(value, observable.getValue());
+            }
             fireInvalidationListeners();
         }
     }
@@ -174,7 +180,7 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
     }
 
     @Override
-    public void addListener(ValueChangeListener<? super V> listener)
+    public void addChangeListener(ValueChangeListener<? super V> listener)
     {
         if (!isObserving && observable != null)
             startObserving();
@@ -182,10 +188,13 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
     }
 
     @Override
-    public void removeListener(ValueChangeListener<? super V> listener)
+    public void removeChangeListener(ValueChangeListener<? super V> listener)
     {
         valueChangeListeners.remove(listener);
-        if (valueChangeListeners.isEmpty() && observable != null)
+        if (valueInvalidationListeners.isEmpty() &&
+                valueChangeListeners.isEmpty() &&
+                valueChangeArglessListeners.isEmpty() &&
+                observable != null)
             stopObserving();
     }
 
@@ -201,7 +210,29 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
     public void removeListener(ValueInvalidationListener listener)
     {
         valueInvalidationListeners.remove(listener);
-        if (valueChangeListeners.isEmpty() && observable != null)
+        if (valueInvalidationListeners.isEmpty() &&
+                valueChangeListeners.isEmpty() &&
+                valueChangeArglessListeners.isEmpty() &&
+                observable != null)
+            stopObserving();
+    }
+
+    @Override
+    public void addChangeListener(ValueInvalidationListener listener)
+    {
+        if (!isObserving && observable != null)
+            startObserving();
+        valueChangeArglessListeners.add(listener);
+    }
+
+    @Override
+    public void removeChangeListener(ValueInvalidationListener listener)
+    {
+        valueChangeArglessListeners.remove(listener);
+        if (valueInvalidationListeners.isEmpty() &&
+                valueChangeListeners.isEmpty() &&
+                valueChangeArglessListeners.isEmpty() &&
+                observable != null)
             stopObserving();
     }
 

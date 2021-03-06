@@ -67,7 +67,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     }
 
     @Override
-    public void addListener(ListValueChangeListener<? super T> listener)
+    public void addChangeListener(ListValueChangeListener<? super T> listener)
     {
         if (!isObserving() && hasObservable())
             startObserving();
@@ -76,7 +76,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     }
 
     @Override
-    public void removeListener(ListValueChangeListener<? super T> listener)
+    public void removeChangeListener(ListValueChangeListener<? super T> listener)
     {
         listValueChangeListeners.remove(listener);
         if (listValueChangeListeners.isEmpty() && hasObservable())

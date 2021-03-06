@@ -25,7 +25,10 @@ public abstract class LongBinding extends BindingBase<Long> implements LongValue
             if (!isMuted())
             {
                 if (!Objects.equals(computed, value))
+                {
+                    fireChangeArglessListeners();
                     fireChangeListeners(value, computed);
+                }
             }
             value = computed;
             setValid(true);

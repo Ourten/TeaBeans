@@ -182,7 +182,7 @@ public class BindingTest
         ValueChangeListener<String> listener = (observable, oldValue, newValue) -> count++;
         ValueInvalidationListener listener2 = observable -> count++;
 
-        binding.addListener(listener);
+        binding.addChangeListener(listener);
         binding.addListener(listener2);
         binding.getValue();
 
@@ -191,7 +191,7 @@ public class BindingTest
         p1.setValue("none");
 
         assertThat(count).isEqualTo(2);
-        binding.removeListener(listener);
+        binding.removeChangeListener(listener);
         p1.setValue("test");
 
         assertThat(count).isEqualTo(3);
@@ -220,7 +220,7 @@ public class BindingTest
             }
         };
 
-        binding.addListener((observable, oldValue, newValue) -> count++);
+        binding.addChangeListener((observable, oldValue, newValue) -> count++);
 
         assertThat(binding.getValue()).isNotNull();
         assertThat(count).isEqualTo(1);

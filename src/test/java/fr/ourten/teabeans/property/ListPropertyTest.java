@@ -126,9 +126,9 @@ public class ListPropertyTest
             assertThat(oldValue).isEqualTo(0);
         };
 
-        property.addListener(removeListener);
+        property.addChangeListener(removeListener);
         property.remove(0);
-        property.removeListener(removeListener);
+        property.removeChangeListener(removeListener);
 
         ListValueChangeListener<Integer> changeListener = (observable, oldValue, newValue) ->
         {
@@ -138,9 +138,9 @@ public class ListPropertyTest
             assertThat(oldValue).isEqualTo(2);
             assertThat(newValue).isEqualTo(5);
         };
-        property.addListener(changeListener);
+        property.addChangeListener(changeListener);
         property.set(0, 5);
-        property.removeListener(changeListener);
+        property.removeChangeListener(changeListener);
 
         ListValueChangeListener<Integer> addListener = (observable, oldValue, newValue) ->
         {
@@ -149,12 +149,12 @@ public class ListPropertyTest
             assertThat(newValue).isEqualTo(18);
             count++;
         };
-        property.addListener(addListener);
+        property.addChangeListener(addListener);
         property.add(18);
         property.add(2, 18);
         property.addAll(Arrays.asList(18, 18, 18));
         assertThat(count).isEqualTo(5);
-        property.removeListener(addListener);
+        property.removeChangeListener(addListener);
 
         count = 0;
         property.clear();
@@ -166,7 +166,7 @@ public class ListPropertyTest
             assertThat(oldValue).isEqualTo(18);
             count++;
         };
-        property.addListener(clearListener);
+        property.addChangeListener(clearListener);
 
         property.clear();
         assertThat(count).isEqualTo(5);

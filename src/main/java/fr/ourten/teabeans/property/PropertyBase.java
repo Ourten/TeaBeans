@@ -16,11 +16,13 @@ public abstract class PropertyBase<T> implements IProperty<T>
      * The list of attached listeners that need to be notified when the value
      * change.
      */
-    protected final List<ValueChangeListener<? super T>> valueChangeListeners       = new ArrayList<>();
-    protected final List<ValueInvalidationListener>      valueInvalidationListeners = new ArrayList<>();
+    protected final List<ValueChangeListener<? super T>> valueChangeListeners        = new ArrayList<>();
+    protected final List<ValueInvalidationListener>      valueInvalidationListeners  = new ArrayList<>();
+    protected final ArrayList<ValueInvalidationListener> valueChangeArglessListeners = new ArrayList<>();
 
-    private final List<ValueChangeListener<? super T>> valueChangeListenersToRemove       = new ArrayList<>(1);
-    private final List<ValueInvalidationListener>      valueInvalidationListenersToRemove = new ArrayList<>(1);
+    private final List<ValueChangeListener<? super T>> valueChangeListenersToRemove        = new ArrayList<>(1);
+    private final List<ValueInvalidationListener>      valueInvalidationListenersToRemove  = new ArrayList<>(1);
+    private final List<ValueInvalidationListener>      valueChangeArglessListenersToRemove = new ArrayList<>(1);
 
     private boolean isPropagatingEvents;
 
@@ -39,7 +41,7 @@ public abstract class PropertyBase<T> implements IProperty<T>
     }
 
     @Override
-    public void addListener(ValueChangeListener<? super T> listener)
+    public void addChangeListener(ValueChangeListener<? super T> listener)
     {
         if (!isObserving && observable != null)
             startObserving();
@@ -48,7 +50,7 @@ public abstract class PropertyBase<T> implements IProperty<T>
     }
 
     @Override
-    public void removeListener(ValueChangeListener<? super T> listener)
+    public void removeChangeListener(ValueChangeListener<? super T> listener)
     {
         if (isPropagatingEvents)
         {
@@ -57,7 +59,10 @@ public abstract class PropertyBase<T> implements IProperty<T>
         }
 
         valueChangeListeners.remove(listener);
-        if (valueChangeListeners.isEmpty() && observable != null)
+        if (valueInvalidationListeners.isEmpty() &&
+                valueChangeListeners.isEmpty() &&
+                valueChangeArglessListeners.isEmpty() &&
+                observable != null)
             stopObserving();
     }
 
@@ -80,7 +85,36 @@ public abstract class PropertyBase<T> implements IProperty<T>
         }
 
         valueInvalidationListeners.remove(listener);
-        if (valueInvalidationListeners.isEmpty() && observable != null)
+        if (valueInvalidationListeners.isEmpty() &&
+                valueChangeListeners.isEmpty() &&
+                valueChangeArglessListeners.isEmpty() &&
+                observable != null)
+            stopObserving();
+    }
+
+    @Override
+    public void addChangeListener(ValueInvalidationListener listener)
+    {
+        if (!isObserving && observable != null)
+            startObserving();
+        if (!valueChangeArglessListeners.contains(listener))
+            valueChangeArglessListeners.add(listener);
+    }
+
+    @Override
+    public void removeChangeListener(ValueInvalidationListener listener)
+    {
+        if (isPropagatingEvents)
+        {
+            valueChangeArglessListenersToRemove.add(listener);
+            return;
+        }
+
+        valueChangeArglessListeners.remove(listener);
+        if (valueChangeArglessListeners.isEmpty() &&
+                valueChangeListeners.isEmpty() &&
+                valueChangeArglessListeners.isEmpty() &&
+                observable != null)
             stopObserving();
     }
 
@@ -182,6 +216,18 @@ public abstract class PropertyBase<T> implements IProperty<T>
         for (ValueInvalidationListener listener : valueInvalidationListenersToRemove)
             valueInvalidationListeners.remove(listener);
         valueInvalidationListenersToRemove.clear();
+    }
+
+    protected void fireChangeArglessListeners()
+    {
+        isPropagatingEvents = true;
+        for (ValueInvalidationListener listener : valueChangeArglessListeners)
+            listener.invalidated(this);
+
+        isPropagatingEvents = false;
+        for (ValueInvalidationListener listener : valueChangeArglessListenersToRemove)
+            valueChangeArglessListeners.remove(listener);
+        valueChangeArglessListenersToRemove.clear();
     }
 
     protected void startObserving()

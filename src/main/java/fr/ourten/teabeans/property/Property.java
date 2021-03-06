@@ -46,7 +46,10 @@ public class Property<T> extends PropertyBase<T>
             return;
 
         if (!Objects.equals(value, oldValue))
+        {
+            fireChangeArglessListeners();
             fireChangeListeners(oldValue, value);
+        }
         fireInvalidationListeners();
 
         oldValue = value;
@@ -56,7 +59,10 @@ public class Property<T> extends PropertyBase<T>
     protected void afterBindProperty()
     {
         if (value == null || !value.equals(observable.getValue()))
+        {
+            fireChangeArglessListeners();
             fireChangeListeners(value, observable.getValue());
+        }
         fireInvalidationListeners();
     }
 }

@@ -10,9 +10,10 @@ import java.util.Objects;
 
 public abstract class BindingBase<T> implements IBinding<T>
 {
-    private final   ArrayList<Observable>                     dependencies               = new ArrayList<>();
-    protected final ArrayList<ValueChangeListener<? super T>> valueChangeListeners       = new ArrayList<>();
-    protected final ArrayList<ValueInvalidationListener>      valueInvalidationListeners = new ArrayList<>();
+    private final   ArrayList<Observable>                     dependencies                = new ArrayList<>();
+    protected final ArrayList<ValueChangeListener<? super T>> valueChangeListeners        = new ArrayList<>();
+    protected final ArrayList<ValueInvalidationListener>      valueInvalidationListeners  = new ArrayList<>();
+    protected final ArrayList<ValueInvalidationListener>      valueChangeArglessListeners = new ArrayList<>();
     private         ValueInvalidationListener                 bindingInvalidator;
 
     private boolean isValid;
@@ -20,13 +21,13 @@ public abstract class BindingBase<T> implements IBinding<T>
     private boolean isMuted;
 
     @Override
-    public void addListener(ValueChangeListener<? super T> listener)
+    public void addChangeListener(ValueChangeListener<? super T> listener)
     {
         valueChangeListeners.add(listener);
     }
 
     @Override
-    public void removeListener(ValueChangeListener<? super T> listener)
+    public void removeChangeListener(ValueChangeListener<? super T> listener)
     {
         valueChangeListeners.remove(listener);
     }
@@ -41,6 +42,24 @@ public abstract class BindingBase<T> implements IBinding<T>
     public void removeListener(ValueInvalidationListener listener)
     {
         valueInvalidationListeners.remove(listener);
+    }
+
+    @Override
+    public void addChangeListener(ValueInvalidationListener listener)
+    {
+        valueChangeArglessListeners.add(listener);
+    }
+
+    @Override
+    public void removeChangeListener(ValueInvalidationListener listener)
+    {
+        valueChangeArglessListeners.remove(listener);
+    }
+
+    @Override
+    public T getValue()
+    {
+        return null;
     }
 
     @Override
@@ -132,6 +151,15 @@ public abstract class BindingBase<T> implements IBinding<T>
         for (int i = 0, valueInvalidationListenersSize = valueInvalidationListeners.size(); i < valueInvalidationListenersSize; i++)
         {
             ValueInvalidationListener listener = valueInvalidationListeners.get(i);
+            listener.invalidated(this);
+        }
+    }
+
+    protected void fireChangeArglessListeners()
+    {
+        for (int i = 0, valueChangeArglessListenersSize = valueChangeArglessListeners.size(); i < valueChangeArglessListenersSize; i++)
+        {
+            ValueInvalidationListener listener = valueChangeArglessListeners.get(i);
             listener.invalidated(this);
         }
     }
