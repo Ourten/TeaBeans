@@ -27,7 +27,7 @@ public class Expression<T> extends Binding<T>
     public void setClosure(Supplier<? extends T> closure)
     {
         Objects.requireNonNull(closure);
-        
+
         this.closure = closure;
         invalidate();
     }
@@ -35,6 +35,7 @@ public class Expression<T> extends Binding<T>
     public static <V> Expression<V> getExpression(Supplier<? extends V> closure,
                                                   Observable... dependencies)
     {
+        Objects.requireNonNull(closure);
         return new Expression<>(closure, dependencies);
     }
 }

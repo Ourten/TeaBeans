@@ -13,11 +13,10 @@ public interface IBinding<T> extends ObservableValue<T>
 
     void unbindAll();
 
-    T computeValue();
-
     List<Observable> getDependencies();
 
     boolean isValid();
 
+    @Override
     void invalidate();
 }

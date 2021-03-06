@@ -13,6 +13,8 @@ public interface IProperty<T> extends WritableValue<T>
 
     boolean isBound();
 
+    boolean isBoundTo(ObservableValue<? extends T> observable);
+
     void bindBidirectional(IProperty<T> other);
 
     void unbindBidirectional(IProperty<T> other);

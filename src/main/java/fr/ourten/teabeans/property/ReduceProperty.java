@@ -67,7 +67,7 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
     }
 
     @Override
-    public V computeValue()
+    protected V computeValue()
     {
         return reducingFunction.apply(getDependencies().stream().map(obs -> ((ObservableValue<T>) obs).getValue()));
     }
@@ -143,6 +143,12 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
     public boolean isBound()
     {
         return observable != null;
+    }
+
+    @Override
+    public boolean isBoundTo(ObservableValue<? extends V> observable)
+    {
+        return this.observable == observable;
     }
 
     @Override
