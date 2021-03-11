@@ -16,7 +16,7 @@ public class IntExpression extends IntBinding
     }
 
     @Override
-    public int computeValue()
+    protected int computeValue()
     {
         return closure.getAsInt();
     }

@@ -36,5 +36,5 @@ public abstract class IntBinding extends BindingBase<Integer> implements IntValu
         return value;
     }
 
-    abstract int computeValue();
+    protected abstract int computeValue();
 }

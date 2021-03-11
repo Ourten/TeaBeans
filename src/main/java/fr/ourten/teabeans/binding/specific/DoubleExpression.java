@@ -16,7 +16,7 @@ public class DoubleExpression extends DoubleBinding
     }
 
     @Override
-    double computeValue()
+    protected double computeValue()
     {
         return closure.getAsDouble();
     }

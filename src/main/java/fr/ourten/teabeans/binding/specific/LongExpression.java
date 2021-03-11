@@ -16,7 +16,7 @@ public class LongExpression extends LongBinding
     }
 
     @Override
-    long computeValue()
+    protected long computeValue()
     {
         return closure.getAsLong();
     }

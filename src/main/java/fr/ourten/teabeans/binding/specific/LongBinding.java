@@ -36,5 +36,5 @@ public abstract class LongBinding extends BindingBase<Long> implements LongValue
         return value;
     }
 
-    abstract long computeValue();
+    protected abstract long computeValue();
 }

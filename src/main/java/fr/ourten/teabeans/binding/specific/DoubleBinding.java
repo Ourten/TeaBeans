@@ -36,5 +36,5 @@ public abstract class DoubleBinding extends BindingBase<Double> implements Doubl
         return value;
     }
 
-    abstract double computeValue();
+    protected abstract double computeValue();
 }

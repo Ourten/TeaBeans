@@ -16,7 +16,7 @@ public class BooleanExpression extends BooleanBinding
     }
 
     @Override
-    boolean computeValue()
+    protected boolean computeValue()
     {
         return closure.getAsBoolean();
     }

@@ -36,5 +36,5 @@ public abstract class BooleanBinding extends BindingBase<Boolean> implements Boo
         return value;
     }
 
-    abstract boolean computeValue();
+    protected abstract boolean computeValue();
 }

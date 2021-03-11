@@ -16,7 +16,7 @@ public class FloatExpression extends FloatBinding
     }
 
     @Override
-    float computeValue()
+    protected float computeValue()
     {
         return closure.getAsFloat();
     }

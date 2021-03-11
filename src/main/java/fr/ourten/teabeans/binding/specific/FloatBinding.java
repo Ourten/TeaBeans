@@ -36,5 +36,5 @@ public abstract class FloatBinding extends BindingBase<Float> implements FloatVa
         return value;
     }
 
-    abstract float computeValue();
+    protected abstract float computeValue();
 }
