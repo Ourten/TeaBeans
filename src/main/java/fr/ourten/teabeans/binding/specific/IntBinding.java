@@ -5,7 +5,7 @@ import fr.ourten.teabeans.value.specific.IntValue;
 
 import java.util.Objects;
 
-public abstract class IntBinding extends BindingBase<Integer> implements IntValue
+public abstract class IntBinding extends BindingBase<Number> implements IntValue
 {
     protected int value;
 

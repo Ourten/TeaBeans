@@ -5,7 +5,7 @@ import fr.ourten.teabeans.value.specific.LongValue;
 
 import java.util.Objects;
 
-public abstract class LongBinding extends BindingBase<Long> implements LongValue
+public abstract class LongBinding extends BindingBase<Number> implements LongValue
 {
     protected long value;
 

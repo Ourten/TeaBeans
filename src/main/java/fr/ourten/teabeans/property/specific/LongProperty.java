@@ -5,7 +5,7 @@ import fr.ourten.teabeans.value.specific.LongValue;
 
 import java.util.Objects;
 
-public class LongProperty extends PropertyBase<Long> implements LongValue
+public class LongProperty extends PropertyBase<Number> implements LongValue
 {
     protected long value;
     protected long oldValue;
@@ -39,17 +39,17 @@ public class LongProperty extends PropertyBase<Long> implements LongValue
     }
 
     @Override
-    public void setValue(Long value)
+    public void setValue(Number value)
     {
         if (isBound())
             throw new UnsupportedOperationException("Cannot set the value of a bound property");
-        set(value);
+        set((long) value);
     }
 
     @Override
-    protected void setPropertyValue(Long value)
+    protected void setPropertyValue(Number value)
     {
-        this.value = value;
+        this.value = (long) value;
         invalidate();
     }
 
@@ -80,6 +80,6 @@ public class LongProperty extends PropertyBase<Long> implements LongValue
     @Override
     public long get()
     {
-        return observable == null ? value : observable.getValue();
+        return observable == null ? value : observable.getValue().longValue();
     }
 }

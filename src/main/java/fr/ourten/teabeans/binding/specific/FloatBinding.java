@@ -5,7 +5,7 @@ import fr.ourten.teabeans.value.specific.FloatValue;
 
 import java.util.Objects;
 
-public abstract class FloatBinding extends BindingBase<Float> implements FloatValue
+public abstract class FloatBinding extends BindingBase<Number> implements FloatValue
 {
     protected float value;
 

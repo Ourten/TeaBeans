@@ -5,7 +5,7 @@ import fr.ourten.teabeans.value.specific.IntValue;
 
 import java.util.Objects;
 
-public class IntProperty extends PropertyBase<Integer> implements IntValue
+public class IntProperty extends PropertyBase<Number> implements IntValue
 {
     protected int value;
     protected int oldValue;
@@ -39,17 +39,17 @@ public class IntProperty extends PropertyBase<Integer> implements IntValue
     }
 
     @Override
-    public void setValue(Integer value)
+    public void setValue(Number value)
     {
         if (isBound())
             throw new UnsupportedOperationException("Cannot set the value of a bound property");
-        set(value);
+        set((int) value);
     }
 
     @Override
-    protected void setPropertyValue(Integer value)
+    protected void setPropertyValue(Number value)
     {
-        this.value = value;
+        this.value = (int) value;
         invalidate();
     }
 
@@ -80,6 +80,6 @@ public class IntProperty extends PropertyBase<Integer> implements IntValue
     @Override
     public int get()
     {
-        return observable == null ? value : observable.getValue();
+        return observable == null ? value : observable.getValue().intValue();
     }
 }

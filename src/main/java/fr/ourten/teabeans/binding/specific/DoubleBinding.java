@@ -5,7 +5,7 @@ import fr.ourten.teabeans.value.specific.DoubleValue;
 
 import java.util.Objects;
 
-public abstract class DoubleBinding extends BindingBase<Double> implements DoubleValue
+public abstract class DoubleBinding extends BindingBase<Number> implements DoubleValue
 {
     protected double value;
 

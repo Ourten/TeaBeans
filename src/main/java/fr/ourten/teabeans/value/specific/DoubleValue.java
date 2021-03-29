@@ -6,11 +6,91 @@ import fr.ourten.teabeans.binding.specific.LongBinding;
 import fr.ourten.teabeans.binding.specific.LongExpression;
 import fr.ourten.teabeans.value.ObservableValue;
 
-public interface DoubleValue extends ObservableValue<Double>
+public interface DoubleValue extends ObservableValue<Number>
 {
     double get();
 
-    default ObservableValue<? extends Number> add(ObservableValue<? extends Number> term)
+    default ObservableValue<Number> add(int term)
+    {
+        return DoubleExpression.getExpression(() -> get() + term);
+    }
+
+    default ObservableValue<Number> add(long term)
+    {
+        return DoubleExpression.getExpression(() -> get() + term);
+    }
+
+    default ObservableValue<Number> add(float term)
+    {
+        return DoubleExpression.getExpression(() -> get() + term);
+    }
+
+    default ObservableValue<Number> add(double term)
+    {
+        return DoubleExpression.getExpression(() -> get() + term);
+    }
+
+    default ObservableValue<Number> subtract(int term)
+    {
+        return DoubleExpression.getExpression(() -> get() - term);
+    }
+
+    default ObservableValue<Number> subtract(long term)
+    {
+        return DoubleExpression.getExpression(() -> get() - term);
+    }
+
+    default ObservableValue<Number> subtract(float term)
+    {
+        return DoubleExpression.getExpression(() -> get() - term);
+    }
+
+    default ObservableValue<Number> subtract(double term)
+    {
+        return DoubleExpression.getExpression(() -> get() - term);
+    }
+
+    default ObservableValue<Number> multiply(int term)
+    {
+        return DoubleExpression.getExpression(() -> get() * term);
+    }
+
+    default ObservableValue<Number> multiply(long term)
+    {
+        return DoubleExpression.getExpression(() -> get() * term);
+    }
+
+    default ObservableValue<Number> multiply(float term)
+    {
+        return DoubleExpression.getExpression(() -> get() * term);
+    }
+
+    default ObservableValue<Number> multiply(double term)
+    {
+        return DoubleExpression.getExpression(() -> get() * term);
+    }
+
+    default ObservableValue<Number> divide(int term)
+    {
+        return DoubleExpression.getExpression(() -> get() / term);
+    }
+
+    default ObservableValue<Number> divide(long term)
+    {
+        return DoubleExpression.getExpression(() -> get() / term);
+    }
+
+    default ObservableValue<Number> divide(float term)
+    {
+        return DoubleExpression.getExpression(() -> get() / term);
+    }
+
+    default ObservableValue<Number> divide(double term)
+    {
+        return DoubleExpression.getExpression(() -> get() / term);
+    }
+
+    default ObservableValue<Number> add(ObservableValue<? extends Number> term)
     {
         if (term instanceof DoubleValue)
             return DoubleExpression.getExpression(() -> get() + ((DoubleValue) term).get(), term, this);
@@ -18,22 +98,22 @@ public interface DoubleValue extends ObservableValue<Double>
         return combine(term, (a, b) ->
         {
             if (b instanceof Integer)
-                return a + (Integer) b;
+                return (double) a + (Integer) b;
+            if (b instanceof Float)
+                return (double) a + (Float) b;
             if (b instanceof Double)
-                return a + (Double) b;
-            if (b instanceof Double)
-                return a + (Double) b;
+                return (double) a + (Double) b;
             if (b instanceof Long)
-                return a + (Long) b;
+                return (double) a + (Long) b;
             if (b instanceof Short)
-                return a + (Short) b;
+                return (double) a + (Short) b;
             if (b instanceof Byte)
-                return a + (Byte) b;
+                return (double) a + (Byte) b;
             return 0;
         });
     }
 
-    default ObservableValue<? extends Number> subtract(ObservableValue<? extends Number> term)
+    default ObservableValue<Number> subtract(ObservableValue<? extends Number> term)
     {
         if (term instanceof DoubleValue)
             return DoubleExpression.getExpression(() -> get() - ((DoubleValue) term).get(), term, this);
@@ -41,22 +121,22 @@ public interface DoubleValue extends ObservableValue<Double>
         return combine(term, (a, b) ->
         {
             if (b instanceof Integer)
-                return a - (Integer) b;
+                return (double) a - (Integer) b;
+            if (b instanceof Float)
+                return (double) a - (Float) b;
             if (b instanceof Double)
-                return a - (Double) b;
-            if (b instanceof Double)
-                return a - (Double) b;
+                return (double) a - (Double) b;
             if (b instanceof Long)
-                return a - (Long) b;
+                return (double) a - (Long) b;
             if (b instanceof Short)
-                return a - (Short) b;
+                return (double) a - (Short) b;
             if (b instanceof Byte)
-                return a - (Byte) b;
+                return (double) a - (Byte) b;
             return 0;
         });
     }
 
-    default ObservableValue<? extends Number> multiply(ObservableValue<? extends Number> factor)
+    default ObservableValue<Number> multiply(ObservableValue<? extends Number> factor)
     {
         if (factor instanceof DoubleValue)
             return DoubleExpression.getExpression(() -> get() * ((DoubleValue) factor).get(), factor, this);
@@ -64,22 +144,22 @@ public interface DoubleValue extends ObservableValue<Double>
         return combine(factor, (a, b) ->
         {
             if (b instanceof Integer)
-                return a * (Integer) b;
+                return (double) a * (Integer) b;
+            if (b instanceof Float)
+                return (double) a * (Float) b;
             if (b instanceof Double)
-                return a * (Double) b;
-            if (b instanceof Double)
-                return a * (Double) b;
+                return (double) a * (Double) b;
             if (b instanceof Long)
-                return a * (Long) b;
+                return (double) a * (Long) b;
             if (b instanceof Short)
-                return a * (Short) b;
+                return (double) a * (Short) b;
             if (b instanceof Byte)
-                return a * (Byte) b;
+                return (double) a * (Byte) b;
             return 0;
         });
     }
 
-    default ObservableValue<? extends Number> divide(ObservableValue<? extends Number> divisor)
+    default ObservableValue<Number> divide(ObservableValue<? extends Number> divisor)
     {
         if (divisor instanceof DoubleValue)
             return DoubleExpression.getExpression(() -> get() / ((DoubleValue) divisor).get(), divisor, this);
@@ -87,22 +167,22 @@ public interface DoubleValue extends ObservableValue<Double>
         return combine(divisor, (a, b) ->
         {
             if (b instanceof Integer)
-                return a / (Integer) b;
+                return (double) a / (Integer) b;
+            if (b instanceof Float)
+                return (double) a / (Float) b;
             if (b instanceof Double)
-                return a / (Double) b;
-            if (b instanceof Double)
-                return a / (Double) b;
+                return (double) a / (Double) b;
             if (b instanceof Long)
-                return a / (Long) b;
+                return (double) a / (Long) b;
             if (b instanceof Short)
-                return a / (Short) b;
+                return (double) a / (Short) b;
             if (b instanceof Byte)
-                return a / (Byte) b;
+                return (double) a / (Byte) b;
             return 0;
         });
     }
 
-    default ObservableValue<? extends Number> max(ObservableValue<? extends Number> toCompare)
+    default ObservableValue<Number> max(ObservableValue<? extends Number> toCompare)
     {
         if (toCompare instanceof DoubleValue)
             return DoubleExpression.getExpression(() -> Math.max(get(), ((DoubleValue) toCompare).get()), toCompare, this);
@@ -110,22 +190,22 @@ public interface DoubleValue extends ObservableValue<Double>
         return combine(toCompare, (a, b) ->
         {
             if (b instanceof Integer)
-                return Math.max(a, (Integer) b);
+                return Math.max((double) a, (Integer) b);
+            if (b instanceof Float)
+                return Math.max((double) a, (Float) b);
             if (b instanceof Double)
-                return Math.max(a, (Double) b);
-            if (b instanceof Double)
-                return Math.max(a, (Double) b);
+                return Math.max((double) a, (Double) b);
             if (b instanceof Long)
-                return Math.max(a, (Long) b);
+                return Math.max((double) a, (Long) b);
             if (b instanceof Short)
-                return Math.max(a, (Short) b);
+                return Math.max((double) a, (Short) b);
             if (b instanceof Byte)
-                return Math.max(a, (Byte) b);
+                return Math.max((double) a, (Byte) b);
             return 0;
         });
     }
 
-    default ObservableValue<? extends Number> min(ObservableValue<? extends Number> toCompare)
+    default ObservableValue<Number> min(ObservableValue<? extends Number> toCompare)
     {
         if (toCompare instanceof DoubleValue)
             return DoubleExpression.getExpression(() -> Math.min(get(), ((DoubleValue) toCompare).get()), toCompare, this);
@@ -133,17 +213,17 @@ public interface DoubleValue extends ObservableValue<Double>
         return combine(toCompare, (a, b) ->
         {
             if (b instanceof Integer)
-                return Math.min(a, (Integer) b);
+                return Math.min((double) a, (Integer) b);
+            if (b instanceof Float)
+                return Math.min((double) a, (Float) b);
             if (b instanceof Double)
-                return Math.min(a, (Double) b);
-            if (b instanceof Double)
-                return Math.min(a, (Double) b);
+                return Math.min((double) a, (Double) b);
             if (b instanceof Long)
-                return Math.min(a, (Long) b);
+                return Math.min((double) a, (Long) b);
             if (b instanceof Short)
-                return Math.min(a, (Short) b);
+                return Math.min((double) a, (Short) b);
             if (b instanceof Byte)
-                return Math.min(a, (Byte) b);
+                return Math.min((double) a, (Byte) b);
             return 0;
         });
     }

@@ -5,7 +5,7 @@ import fr.ourten.teabeans.value.specific.DoubleValue;
 
 import java.util.Objects;
 
-public class DoubleProperty extends PropertyBase<Double> implements DoubleValue
+public class DoubleProperty extends PropertyBase<Number> implements DoubleValue
 {
     protected double value;
     protected double oldValue;
@@ -39,17 +39,17 @@ public class DoubleProperty extends PropertyBase<Double> implements DoubleValue
     }
 
     @Override
-    public void setValue(Double value)
+    public void setValue(Number value)
     {
         if (isBound())
             throw new UnsupportedOperationException("Cannot set the value of a bound property");
-        set(value);
+        set((double) value);
     }
 
     @Override
-    protected void setPropertyValue(Double value)
+    protected void setPropertyValue(Number value)
     {
-        this.value = value;
+        this.value = (double) value;
         invalidate();
     }
 
@@ -80,6 +80,6 @@ public class DoubleProperty extends PropertyBase<Double> implements DoubleValue
     @Override
     public double get()
     {
-        return observable == null ? value : observable.getValue();
+        return observable == null ? value : observable.getValue().doubleValue();
     }
 }

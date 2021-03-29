@@ -5,7 +5,7 @@ import fr.ourten.teabeans.value.specific.FloatValue;
 
 import java.util.Objects;
 
-public class FloatProperty extends PropertyBase<Float> implements FloatValue
+public class FloatProperty extends PropertyBase<Number> implements FloatValue
 {
     protected float value;
     protected float oldValue;
@@ -39,17 +39,17 @@ public class FloatProperty extends PropertyBase<Float> implements FloatValue
     }
 
     @Override
-    public void setValue(Float value)
+    public void setValue(Number value)
     {
         if (isBound())
             throw new UnsupportedOperationException("Cannot set the value of a bound property");
-        set(value);
+        set((float) value);
     }
 
     @Override
-    protected void setPropertyValue(Float value)
+    protected void setPropertyValue(Number value)
     {
-        this.value = value;
+        this.value = (float) value;
         invalidate();
     }
 
@@ -80,6 +80,6 @@ public class FloatProperty extends PropertyBase<Float> implements FloatValue
     @Override
     public float get()
     {
-        return observable == null ? value : observable.getValue();
+        return observable == null ? value : observable.getValue().floatValue();
     }
 }
