@@ -35,6 +35,8 @@ public abstract class PropertyBase<T> implements IProperty<T>
     private boolean isObserving = false;
     private boolean isMuted;
 
+    private boolean pristine = true;
+
     public PropertyBase()
     {
 
@@ -179,6 +181,18 @@ public abstract class PropertyBase<T> implements IProperty<T>
     public boolean isBoundTo(ObservableValue<? extends T> observable)
     {
         return this.observable == observable;
+    }
+
+    @Override
+    public void setPristine(boolean isPristine)
+    {
+        pristine = isPristine;
+    }
+
+    @Override
+    public boolean isPristine()
+    {
+        return pristine;
     }
 
     @Override

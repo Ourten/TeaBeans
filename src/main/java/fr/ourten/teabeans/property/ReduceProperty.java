@@ -32,6 +32,8 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
 
     private boolean actAsBinding = true;
 
+    private boolean pristine;
+
     public ReduceProperty(Function<Stream<T>, V> reducingFunction)
     {
         this.reducingFunction = reducingFunction;
@@ -101,6 +103,18 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
 
         if (actAsBinding)
             setValid(false);
+    }
+
+    @Override
+    public void setPristine(boolean isPristine)
+    {
+        pristine = isPristine;
+    }
+
+    @Override
+    public boolean isPristine()
+    {
+        return pristine;
     }
 
     @Override
@@ -240,6 +254,9 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
     {
         this.value = value;
         invalidate();
+
+        if (isPristine())
+            setPristine(false);
     }
 
     private void startObserving()

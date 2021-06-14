@@ -26,6 +26,9 @@ public class IntProperty extends PropertyBase<Number> implements IntValue
     {
         if (!Objects.equals(observable.getValue(), value))
         {
+            if (isPristine())
+                setPristine(false);
+
             fireChangeArglessListeners();
             fireChangeListeners(value, observable.getValue());
         }
@@ -51,6 +54,9 @@ public class IntProperty extends PropertyBase<Number> implements IntValue
     {
         this.value = (int) value;
         invalidate();
+
+        if (isPristine())
+            setPristine(false);
     }
 
     @Override

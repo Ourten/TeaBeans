@@ -26,6 +26,9 @@ public class FloatProperty extends PropertyBase<Number> implements FloatValue
     {
         if (!Objects.equals(observable.getValue(), value))
         {
+            if (isPristine())
+                setPristine(false);
+
             fireChangeArglessListeners();
             fireChangeListeners(value, observable.getValue());
         }
@@ -51,6 +54,9 @@ public class FloatProperty extends PropertyBase<Number> implements FloatValue
     {
         this.value = (float) value;
         invalidate();
+
+        if (isPristine())
+            setPristine(false);
     }
 
     @Override

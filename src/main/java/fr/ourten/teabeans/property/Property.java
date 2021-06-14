@@ -37,6 +37,9 @@ public class Property<T> extends PropertyBase<T>
     {
         this.value = value;
         invalidate();
+
+        if (isPristine())
+            setPristine(false);
     }
 
     @Override
@@ -60,6 +63,9 @@ public class Property<T> extends PropertyBase<T>
     {
         if (value == null || !value.equals(observable.getValue()))
         {
+            if (isPristine())
+                setPristine(false);
+
             fireChangeArglessListeners();
             fireChangeListeners(value, observable.getValue());
         }

@@ -26,6 +26,9 @@ public class DoubleProperty extends PropertyBase<Number> implements DoubleValue
     {
         if (!Objects.equals(observable.getValue(), value))
         {
+            if (isPristine())
+                setPristine(false);
+
             fireChangeArglessListeners();
             fireChangeListeners(value, observable.getValue());
         }
@@ -51,6 +54,9 @@ public class DoubleProperty extends PropertyBase<Number> implements DoubleValue
     {
         this.value = (double) value;
         invalidate();
+
+        if (isPristine())
+            setPristine(false);
     }
 
     @Override

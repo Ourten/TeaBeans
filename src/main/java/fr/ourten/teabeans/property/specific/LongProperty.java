@@ -26,6 +26,9 @@ public class LongProperty extends PropertyBase<Number> implements LongValue
     {
         if (!Objects.equals(observable.getValue(), value))
         {
+            if (isPristine())
+                setPristine(false);
+
             fireChangeArglessListeners();
             fireChangeListeners(value, observable.getValue());
         }
@@ -51,6 +54,9 @@ public class LongProperty extends PropertyBase<Number> implements LongValue
     {
         this.value = (long) value;
         invalidate();
+
+        if (isPristine())
+            setPristine(false);
     }
 
     @Override

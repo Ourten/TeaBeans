@@ -26,6 +26,9 @@ public class BooleanProperty extends PropertyBase<Boolean> implements BooleanVal
     {
         if (!Objects.equals(observable.getValue(), value))
         {
+            if (isPristine())
+                setPristine(false);
+
             fireChangeArglessListeners();
             fireChangeListeners(value, observable.getValue());
         }
@@ -51,6 +54,9 @@ public class BooleanProperty extends PropertyBase<Boolean> implements BooleanVal
     {
         this.value = value;
         invalidate();
+
+        if (isPristine())
+            setPristine(false);
     }
 
     @Override
