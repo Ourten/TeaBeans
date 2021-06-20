@@ -8,8 +8,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class ListProperty<T> extends Property<List<T>> implements IListProperty<T>
@@ -84,13 +87,7 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
             stopObserving();
     }
 
-    @Override
-    public T get(int index)
-    {
-        return value.get(index);
-    }
-
-    private void add(T element, Consumer<T> action)
+    private boolean add(T element, Function<T, Boolean> action)
     {
         List<T> oldList = null;
         if (!valueChangeListeners.isEmpty())
@@ -99,27 +96,103 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
             oldList.addAll(value);
         }
 
-        action.accept(element);
+        boolean changed = action.apply(element);
 
         invalidateElement(null, element, oldList);
+        return changed;
     }
 
     @Override
-    public void add(T element)
+    public boolean add(T element)
     {
-        add(element, value::add);
+        return add(element, value::add);
     }
 
     @Override
     public void add(int index, T element)
     {
-        add(element, e -> value.add(index, e));
+        add(element, e ->
+        {
+            value.add(index, e);
+            return true;
+        });
     }
 
     @Override
-    public void addAll(Collection<T> elements)
+    public boolean addAll(Collection<? extends T> elements)
     {
-        elements.forEach(this::add);
+        AtomicBoolean changed = new AtomicBoolean(false);
+        elements.forEach(element ->
+        {
+            if (add(element))
+                changed.set(true);
+        });
+        return changed.get();
+    }
+
+    @Override
+    public boolean addAll(int index, Collection<? extends T> elements)
+    {
+        AtomicBoolean changed = new AtomicBoolean(false);
+
+        for (T element : elements)
+        {
+            add(index, element);
+            changed.set(true);
+            index++;
+        }
+        return changed.get();
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> elements)
+    {
+        AtomicBoolean changed = new AtomicBoolean(false);
+
+        for (Object element : elements)
+        {
+            if (remove(element))
+                changed.set(true);
+        }
+        return changed.get();
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> elements)
+    {
+        return removeIf(element -> !elements.contains(element));
+    }
+
+    @Override
+    public boolean removeIf(Predicate<? super T> filter)
+    {
+        Objects.requireNonNull(filter);
+
+        List<T> oldList = null;
+        if (!valueChangeListeners.isEmpty())
+        {
+            oldList = listSupplier.get();
+            oldList.addAll(value);
+        }
+
+        boolean removed = false;
+        Iterator<T> each = iterator();
+        while (each.hasNext())
+        {
+            T potentialRemove = each.next();
+            if (filter.test(potentialRemove))
+            {
+                each.remove();
+                removed = true;
+
+                if (!isMuted())
+                    fireListChangeListeners(potentialRemove, null);
+            }
+        }
+
+        if (removed)
+            invalidate(oldList);
+        return removed;
     }
 
     @Override
@@ -138,13 +211,7 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     }
 
     @Override
-    public boolean contains(T element)
-    {
-        return value.contains(element);
-    }
-
-    @Override
-    public void set(int index, T element)
+    public T set(int index, T element)
     {
         T oldValue = value.get(index);
         List<T> oldList = null;
@@ -157,6 +224,7 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
         value.set(index, element);
 
         invalidateElement(oldValue, element, oldList);
+        return oldValue;
     }
 
     @Override
@@ -199,12 +267,6 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     }
 
     @Override
-    public int indexOf(T element)
-    {
-        return value.indexOf(element);
-    }
-
-    @Override
     public void clear()
     {
         List<T> oldList = null;
@@ -235,18 +297,6 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     }
 
     @Override
-    public int size()
-    {
-        return getValue().size();
-    }
-
-    @Override
-    public Iterator<T> iterator()
-    {
-        return getValue().iterator();
-    }
-
-    @Override
     protected boolean hasListeners()
     {
         return super.hasListeners() || !listValueChangeListeners.isEmpty();
@@ -259,5 +309,81 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
             ListValueChangeListener<? super T> listener = listValueChangeListeners.get(i);
             listener.valueChanged(this, oldValue, newValue);
         }
+    }
+
+    ///////////////
+    // DELEGATES //
+    ///////////////
+
+    @Override
+    public int size()
+    {
+        return getValue().size();
+    }
+
+    @Override
+    public Iterator<T> iterator()
+    {
+        return getValue().iterator();
+    }
+
+    @Override
+    public int indexOf(Object element)
+    {
+        return value.indexOf(element);
+    }
+
+    @Override
+    public boolean contains(Object element)
+    {
+        return value.contains(element);
+    }
+
+    @Override
+    public T get(int index)
+    {
+        return value.get(index);
+    }
+
+    @Override
+    public Object[] toArray()
+    {
+        return value.toArray();
+    }
+
+    @Override
+    public <T1> T1[] toArray(T1[] a)
+    {
+        return value.toArray(a);
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c)
+    {
+        return value.containsAll(c);
+    }
+
+    @Override
+    public int lastIndexOf(Object o)
+    {
+        return value.lastIndexOf(o);
+    }
+
+    @Override
+    public ListIterator<T> listIterator()
+    {
+        return value.listIterator();
+    }
+
+    @Override
+    public ListIterator<T> listIterator(int index)
+    {
+        return value.listIterator(index);
+    }
+
+    @Override
+    public List<T> subList(int fromIndex, int toIndex)
+    {
+        return value.subList(fromIndex, toIndex);
     }
 }
