@@ -31,6 +31,11 @@ public interface ObservableValue<T> extends Observable
         return getValue() != null;
     }
 
+    default boolean isAbsent()
+    {
+        return getValue() == null;
+    }
+
     default void ifPresent(Consumer<T> function)
     {
         T value;
