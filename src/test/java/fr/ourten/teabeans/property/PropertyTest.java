@@ -4,8 +4,11 @@ import fr.ourten.teabeans.binding.WeakObservableListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.listener.recorder.ValueChangeRecorder;
 import fr.ourten.teabeans.listener.recorder.ValueInvalidationRecorder;
+import fr.ourten.teabeans.property.handle.PropertyHandle;
 import fr.ourten.teabeans.test.GCUtils;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -170,6 +173,72 @@ public class PropertyTest
         new ValueChangeRecorder<>(property);
 
         verify(secondProperty, atMostOnce()).addListener(any(ValueInvalidationListener.class));
+    }
+
+    @Test
+    void wrap_givenAccessors_thenShouldUpdateSource()
+    {
+        AtomicInteger source = new AtomicInteger(11);
+
+        Property<Integer> property = Property.fromWrap(source::get, source::set);
+
+        assertThat(property.getValue()).isEqualTo(11);
+
+        property.setValue(12);
+
+        assertThat(source.get()).isEqualTo(12);
+    }
+
+    @Test
+    void link_givenAccessors_thenShouldUpdateSourceAndProperty()
+    {
+        AtomicInteger source = new AtomicInteger(11);
+
+        PropertyHandle<Integer> handle = Property.fromLink(source::get, source::set);
+
+        assertThat(handle.getProperty().getValue()).isEqualTo(11);
+
+        handle.getProperty().setValue(12);
+
+        assertThat(source.get()).isEqualTo(12);
+
+        source.set(13);
+        handle.update();
+
+        assertThat(handle.getProperty().getValue()).isEqualTo(13);
+    }
+
+    @Test
+    void wrapMap_givenAccessors_thenShouldUpdateSource()
+    {
+        String[] source = new String[]{"11"};
+
+        Property<Integer> property = Property.fromWrapMap(() -> source[0], value -> source[0] = value, Integer::parseInt, String::valueOf);
+
+        assertThat(property.getValue()).isEqualTo(11);
+
+        property.setValue(12);
+
+        assertThat(source[0]).isEqualTo("12");
+    }
+
+    @Test
+    void linkMap_givenAccessors_thenShouldUpdateSourceAndProperty()
+    {
+        String[] source = new String[]{"11"};
+
+        PropertyHandle<Integer> handle = Property.fromLinkMap(() -> source[0], value -> source[0] = value, Integer::parseInt, String::valueOf);
+
+        assertThat(handle.getProperty().getValue()).isEqualTo(11);
+
+        handle.getProperty().setValue(12);
+
+        assertThat(source[0]).isEqualTo("12");
+
+        source[0] = "13";
+        handle.update();
+
+        assertThat(handle.getProperty().getValue()).isEqualTo(13);
     }
 
     @Test

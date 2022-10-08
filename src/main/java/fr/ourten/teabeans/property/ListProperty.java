@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 
 public class ListProperty<T> extends Property<List<T>> implements IListProperty<T>
 {
-    private Supplier<List<T>> listSupplier;
+    private final Supplier<List<T>> listSupplier;
 
     private List<T> immutableView;
 

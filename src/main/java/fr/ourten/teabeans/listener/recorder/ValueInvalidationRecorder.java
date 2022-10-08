@@ -9,7 +9,7 @@ public class ValueInvalidationRecorder implements ValueInvalidationListener, Rec
 
     public ValueInvalidationRecorder()
     {
-        
+
     }
 
     public ValueInvalidationRecorder(Observable... observables)

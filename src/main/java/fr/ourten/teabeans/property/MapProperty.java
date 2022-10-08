@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProperty<K, V>
 {
-    private Supplier<Map<K, V>> mapSupplier;
+    private final Supplier<Map<K, V>> mapSupplier;
 
     private Map<K, V> immutableView;
 

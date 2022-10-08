@@ -4,5 +4,5 @@ import fr.ourten.teabeans.value.Observable;
 
 public interface ValueInvalidationListener
 {
-    public void invalidated(Observable observable);
+    void invalidated(Observable observable);
 }

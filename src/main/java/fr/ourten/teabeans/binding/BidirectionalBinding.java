@@ -72,9 +72,8 @@ public class BidirectionalBinding<T> implements ValueChangeListener<T>
             Object propertyB2 = otherBinding.getProperty2();
             if (propertyB1 == null || propertyB2 == null)
                 return false;
-            if (propertyA1 == propertyB1 && propertyA2 == propertyB2
-                    || propertyA1 == propertyB2 && propertyA2 == propertyB1)
-                return true;
+            return propertyA1 == propertyB1 && propertyA2 == propertyB2
+                    || propertyA1 == propertyB2 && propertyA2 == propertyB1;
         }
         return false;
     }

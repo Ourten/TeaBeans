@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
 {
-    private Supplier<Set<T>> setSupplier;
+    private final Supplier<Set<T>> setSupplier;
 
     private Set<T> immutableView;
 
