@@ -19,6 +19,11 @@ public interface IProperty<T> extends WritableValue<T>
 
     void unbindBidirectional(IProperty<T> other);
 
+    /**
+     * Update value with a copy of the Property bound
+     */
+    void refreshFromBound();
+
     default T getOrThrow()
     {
         T value;

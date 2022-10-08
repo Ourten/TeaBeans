@@ -1,7 +1,7 @@
 package fr.ourten.teabeans.property;
 
-import fr.ourten.teabeans.binding.WeakObservableListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
+import fr.ourten.teabeans.listener.WeakPropertyListener;
 import fr.ourten.teabeans.listener.recorder.ValueChangeRecorder;
 import fr.ourten.teabeans.listener.recorder.ValueInvalidationRecorder;
 import fr.ourten.teabeans.property.handle.PropertyHandle;
@@ -176,17 +176,94 @@ public class PropertyTest
     }
 
     @Test
+    void bindProperty_givenPropertyToBind_thenShouldTriggerListenerOnBind()
+    {
+        Property<Integer> property = new Property<>(0);
+        Property<Integer> secondProperty = new Property<>(10);
+
+        ValueChangeRecorder<Integer> recorder = new ValueChangeRecorder<>(property);
+
+        property.bindProperty(secondProperty);
+
+        assertThat(recorder.getCount()).isEqualTo(1);
+        assertThat(recorder.getOldValues()).containsExactly(0);
+        assertThat(recorder.getNewValues()).containsExactly(10);
+    }
+
+    @Test
+    void bindProperty_givenPropertyToBindAndChangeListener_thenShouldTriggerListenerOnBoundChange()
+    {
+        Property<Integer> property = new Property<>(1);
+        Property<Integer> secondProperty = new Property<>(10);
+        property.bindProperty(secondProperty);
+
+        ValueChangeRecorder<Integer> recorder = new ValueChangeRecorder<>(property);
+
+        secondProperty.setValue(11);
+
+        assertThat(recorder.getCount()).isEqualTo(1);
+
+        // Old value is 0 since the property was not listened during bind it did not update its internal value
+        assertThat(recorder.getOldValues()).containsExactly(1);
+        assertThat(recorder.getNewValues()).containsExactly(11);
+    }
+
+    @Test
     void wrap_givenAccessors_thenShouldUpdateSource()
     {
         AtomicInteger source = new AtomicInteger(11);
 
-        Property<Integer> property = Property.fromWrap(source::get, source::set);
+        Property<Integer> property = Property.fromWrap(source.get(), source::set);
 
         assertThat(property.getValue()).isEqualTo(11);
 
         property.setValue(12);
 
         assertThat(source.get()).isEqualTo(12);
+    }
+
+    @Test
+    void wrapMap_givenAccessors_thenShouldUpdateSource()
+    {
+        String[] source = new String[]{"11"};
+
+        Property<Integer> property = Property.fromWrapMap(source[0], value -> source[0] = value, Integer::parseInt, String::valueOf);
+
+        assertThat(property.getValue()).isEqualTo(11);
+
+        property.setValue(12);
+
+        assertThat(source[0]).isEqualTo("12");
+    }
+
+    @Test
+    void observe_givenAccessors_thenShouldUpdateSource()
+    {
+        AtomicInteger source = new AtomicInteger(11);
+
+        PropertyHandle<Integer> handle = Property.fromObserve(source::get);
+
+        assertThat(handle.getProperty().getValue()).isEqualTo(11);
+
+        source.set(12);
+        handle.update();
+
+        assertThat(handle.getProperty().getValue()).isEqualTo(12);
+    }
+
+    @Test
+    void observeMap_givenAccessors_thenShouldUpdateSource()
+    {
+        String[] source = new String[]{"11"};
+
+        PropertyHandle<Integer> handle = Property.fromObserveMap(() -> source[0], Integer::parseInt);
+
+        assertThat(handle.getProperty().getValue()).isEqualTo(11);
+
+        source[0] = "12";
+        handle.update();
+
+        assertThat(handle.getProperty().getValue()).isEqualTo(12);
     }
 
     @Test
@@ -206,20 +283,6 @@ public class PropertyTest
         handle.update();
 
         assertThat(handle.getProperty().getValue()).isEqualTo(13);
-    }
-
-    @Test
-    void wrapMap_givenAccessors_thenShouldUpdateSource()
-    {
-        String[] source = new String[]{"11"};
-
-        Property<Integer> property = Property.fromWrapMap(() -> source[0], value -> source[0] = value, Integer::parseInt, String::valueOf);
-
-        assertThat(property.getValue()).isEqualTo(11);
-
-        property.setValue(12);
-
-        assertThat(source[0]).isEqualTo("12");
     }
 
     @Test
@@ -254,6 +317,6 @@ public class PropertyTest
         GCUtils.fullFinalization();
 
         p2.invalidate();
-        verify(p2).removeListener(any(WeakObservableListener.class));
+        verify(p2).removeListener(any(WeakPropertyListener.class));
     }
 }

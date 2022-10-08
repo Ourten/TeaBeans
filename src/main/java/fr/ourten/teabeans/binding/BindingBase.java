@@ -2,6 +2,7 @@ package fr.ourten.teabeans.binding;
 
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
+import fr.ourten.teabeans.listener.WeakObservableListener;
 import fr.ourten.teabeans.value.Observable;
 
 import java.util.ArrayList;

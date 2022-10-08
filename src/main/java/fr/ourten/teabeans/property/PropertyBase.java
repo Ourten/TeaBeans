@@ -1,9 +1,9 @@
 package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.binding.BidirectionalBinding;
-import fr.ourten.teabeans.binding.WeakObservableListener;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
+import fr.ourten.teabeans.listener.WeakPropertyListener;
 import fr.ourten.teabeans.property.handle.PropertyHandle;
 import fr.ourten.teabeans.value.ObservableValue;
 
@@ -144,35 +144,43 @@ public abstract class PropertyBase<T> implements IProperty<T>
     }
 
     @Override
+    public void refreshFromBound()
+    {
+        if (!this.isBound())
+            return;
+
+        this.setPropertyValue(observable.getValue());
+    }
+
+    @Override
     public void bindProperty(ObservableValue<? extends T> observable)
     {
         Objects.requireNonNull(observable, "Cannot bind to null");
-        if (!observable.equals(this.observable))
-        {
-            unbind();
-            this.observable = observable;
-            if (propertyInvalidator == null)
-                propertyInvalidator = new WeakObservableListener(this);
-            if (hasListeners())
-                startObserving();
+        if (observable.equals(this.observable))
+            return;
 
-            if (isMuted())
-                return;
+        unbind();
+        this.observable = observable;
+        if (propertyInvalidator == null)
+            propertyInvalidator = new WeakPropertyListener(this);
+        if (hasListeners())
+            startObserving();
 
-            afterBindProperty();
-        }
+        if (isMuted())
+            return;
+
+        afterBindProperty();
     }
 
     @Override
     public void unbind()
     {
-        if (observable != null)
-        {
-            setPropertyValue(observable.getValue());
+        if (observable == null)
+            return;
+        setPropertyValue(observable.getValue());
 
-            stopObserving();
-            observable = null;
-        }
+        stopObserving();
+        observable = null;
     }
 
     @Override

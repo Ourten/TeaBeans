@@ -2,9 +2,9 @@ package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.binding.BidirectionalBinding;
 import fr.ourten.teabeans.binding.Binding;
-import fr.ourten.teabeans.binding.WeakObservableListener;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
+import fr.ourten.teabeans.listener.WeakPropertyListener;
 import fr.ourten.teabeans.value.Observable;
 import fr.ourten.teabeans.value.ObservableValue;
 
@@ -75,6 +75,15 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
     }
 
     @Override
+    public void refreshFromBound()
+    {
+        if (!this.isBound())
+            return;
+
+        setPropertyValue(observable.getValue());
+    }
+
+    @Override
     public void bind(Observable... observables)
     {
         for (Observable observable : observables)
@@ -127,7 +136,7 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
             unbind();
             this.observable = observable;
             if (propertyInvalidator == null)
-                propertyInvalidator = new WeakObservableListener(this);
+                propertyInvalidator = new WeakPropertyListener(this);
             if (!valueChangeListeners.isEmpty() || !valueInvalidationListeners.isEmpty())
                 startObserving();
 

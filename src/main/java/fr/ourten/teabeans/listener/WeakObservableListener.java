@@ -1,7 +1,6 @@
-package fr.ourten.teabeans.binding;
+package fr.ourten.teabeans.listener;
 
 
-import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.value.Observable;
 import fr.ourten.teabeans.value.ObservableValue;
 
@@ -24,8 +23,11 @@ public class WeakObservableListener implements ValueInvalidationListener
     {
         ObservableValue<?> owner = ownerRef.get();
         if (owner == null)
+        {
             observable.removeListener(this);
-        else
-            owner.invalidate();
+            return;
+        }
+
+        owner.invalidate();
     }
 }
