@@ -30,14 +30,6 @@ public class Property<T> extends PropertyBase<T>
     }
 
     @Override
-    public void setValue(T value)
-    {
-        if (isBound())
-            throw new UnsupportedOperationException("Cannot set the value of a bound property");
-        setPropertyValue(value);
-    }
-
-    @Override
     protected void setPropertyValue(T value)
     {
         this.value = value;

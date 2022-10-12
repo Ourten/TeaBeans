@@ -8,6 +8,7 @@ import fr.ourten.teabeans.property.handle.PropertyHandle;
 import fr.ourten.teabeans.test.GCUtils;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -302,6 +303,52 @@ public class PropertyTest
         handle.update();
 
         assertThat(handle.getProperty().getValue()).isEqualTo(13);
+    }
+
+    @Test
+    void invalidate_givenRemovalOfListenerDuringPropagation_thenShouldNotThrow()
+    {
+        Property<String> property = new Property<>("lala");
+
+        AtomicBoolean listenerHit = new AtomicBoolean(false);
+
+        ValueInvalidationListener[] listener = new ValueInvalidationListener[1];
+        listener[0] = obs ->
+        {
+                listenerHit.set(true);
+            property.removeListener(listener[0]);
+        };
+        property.addListener(listener[0]);
+        ValueInvalidationRecorder recorder = new ValueInvalidationRecorder(property);
+
+        property.invalidate();
+
+        assertThat(listenerHit.get()).isTrue();
+        assertThat(recorder.getCount()).isEqualTo(1);
+    }
+
+    @Test
+    void invalidate_givenAdditionOfListenerDuringPropagation_thenShouldNotThrow()
+    {
+        Property<String> property = new Property<>("lala");
+
+        AtomicBoolean listenerHit = new AtomicBoolean(false);
+
+        ValueInvalidationListener[] listener = new ValueInvalidationListener[2];
+        listener[0] = obs ->
+        {
+            listenerHit.set(true);
+            property.addListener(listener[1]);
+        };
+        listener[1] = obs -> {};
+
+        property.addListener(listener[0]);
+        ValueInvalidationRecorder recorder = new ValueInvalidationRecorder(property);
+
+        property.invalidate();
+
+        assertThat(listenerHit.get()).isTrue();
+        assertThat(recorder.getCount()).isEqualTo(1);
     }
 
     @Test

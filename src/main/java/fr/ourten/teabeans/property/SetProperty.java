@@ -87,7 +87,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     public void add(T element)
     {
         Set<T> oldSet = null;
-        if (!valueChangeListeners.isEmpty())
+        if (listenersHolder.hasChangeListeners())
         {
             oldSet = setSupplier.get();
             oldSet.addAll(value);
@@ -109,7 +109,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     public boolean remove(T element)
     {
         Set<T> oldSet = null;
-        if (!valueChangeListeners.isEmpty())
+        if (listenersHolder.hasChangeListeners())
         {
             oldSet = setSupplier.get();
             oldSet.addAll(value);
@@ -132,7 +132,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     {
         T oldValue = value.contains(oldElement) ? oldElement : null;
         Set<T> oldSet = null;
-        if (!valueChangeListeners.isEmpty())
+        if (listenersHolder.hasChangeListeners())
         {
             oldSet = setSupplier.get();
             oldSet.addAll(value);
@@ -141,7 +141,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
         value.remove(oldElement);
         value.add(newElement);
 
-        invalidateElement(oldElement, newElement, oldSet);
+        invalidateElement(oldValue, newElement, oldSet);
     }
 
     public void invalidateElement(T oldElement, T newElement, Set<T> oldSet)
@@ -164,7 +164,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     {
         Set<T> oldSet = null;
 
-        if (!valueChangeListeners.isEmpty() || !listValueChangeListeners.isEmpty())
+        if (listenersHolder.hasChangeListeners() || !listValueChangeListeners.isEmpty())
         {
             oldSet = setSupplier.get();
             oldSet.addAll(value);

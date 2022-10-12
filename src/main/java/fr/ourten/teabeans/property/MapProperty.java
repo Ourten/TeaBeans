@@ -94,7 +94,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     public V put(K key, V value)
     {
         Map<K, V> oldMap = null;
-        if (!valueChangeListeners.isEmpty())
+        if (listenersHolder.hasChangeListeners())
         {
             oldMap = mapSupplier.get();
             oldMap.putAll(this.value);
@@ -148,7 +148,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
         V oldValue = value.get(key);
         Map<K, V> oldMap = null;
 
-        if (!valueChangeListeners.isEmpty())
+        if (listenersHolder.hasChangeListeners())
         {
             oldMap = mapSupplier.get();
             oldMap.putAll(value);
@@ -164,7 +164,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     {
         V oldValue = value.get(key);
         Map<K, V> oldMap = null;
-        if (!valueChangeListeners.isEmpty())
+        if (listenersHolder.hasChangeListeners())
         {
             oldMap = mapSupplier.get();
             oldMap.putAll(value);
@@ -200,7 +200,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     {
         Map<K, V> oldMap = null;
 
-        if (!valueChangeListeners.isEmpty() || !mapValueChangeListeners.isEmpty())
+        if (listenersHolder.hasChangeListeners() || !mapValueChangeListeners.isEmpty())
         {
             oldMap = mapSupplier.get();
             oldMap.putAll(value);

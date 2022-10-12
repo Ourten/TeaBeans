@@ -4,11 +4,10 @@ import fr.ourten.teabeans.binding.BidirectionalBinding;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.listener.WeakPropertyListener;
+import fr.ourten.teabeans.listener.holder.ListenersHolder;
 import fr.ourten.teabeans.property.handle.PropertyHandle;
 import fr.ourten.teabeans.value.ObservableValue;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -16,19 +15,7 @@ import java.util.function.Supplier;
 
 public abstract class PropertyBase<T> implements IProperty<T>
 {
-    /**
-     * The list of attached listeners that need to be notified when the value
-     * change.
-     */
-    protected final List<ValueChangeListener<? super T>> valueChangeListeners        = new ArrayList<>();
-    protected final List<ValueInvalidationListener>      valueInvalidationListeners  = new ArrayList<>();
-    protected final ArrayList<ValueInvalidationListener> valueChangeArglessListeners = new ArrayList<>();
-
-    private final List<ValueChangeListener<? super T>> valueChangeListenersToRemove        = new ArrayList<>(1);
-    private final List<ValueInvalidationListener>      valueInvalidationListenersToRemove  = new ArrayList<>(1);
-    private final List<ValueInvalidationListener>      valueChangeArglessListenersToRemove = new ArrayList<>(1);
-
-    private boolean isPropagatingEvents;
+    protected ListenersHolder<T> listenersHolder;
 
     /**
      * The listener used to bind this property to another.
@@ -47,81 +34,53 @@ public abstract class PropertyBase<T> implements IProperty<T>
     }
 
     @Override
+    public void setValue(T value)
+    {
+        if (isBound())
+            throw new UnsupportedOperationException("Cannot set the value of a bound property");
+        setPropertyValue(value);
+    }
+
+    @Override
     public void addChangeListener(ValueChangeListener<? super T> listener)
     {
-        if (!isObserving && observable != null)
-            startObserving();
-        if (!valueChangeListeners.contains(listener))
-            valueChangeListeners.add(listener);
+        startObserving();
+        listenersHolder = ListenersHolder.addChangeListener(listenersHolder, listener);
     }
 
     @Override
     public void removeChangeListener(ValueChangeListener<? super T> listener)
     {
-        if (isPropagatingEvents)
-        {
-            valueChangeListenersToRemove.add(listener);
-            return;
-        }
-
-        valueChangeListeners.remove(listener);
-        if (valueInvalidationListeners.isEmpty() &&
-                valueChangeListeners.isEmpty() &&
-                valueChangeArglessListeners.isEmpty() &&
-                observable != null)
-            stopObserving();
+        listenersHolder = ListenersHolder.removeChangeListener(listenersHolder, listener);
+        stopObserving();
     }
 
     @Override
     public void addListener(ValueInvalidationListener listener)
     {
-        if (!isObserving && observable != null)
-            startObserving();
-        if (!valueInvalidationListeners.contains(listener))
-            valueInvalidationListeners.add(listener);
+        startObserving();
+        listenersHolder = ListenersHolder.addListener(listenersHolder, listener);
     }
 
     @Override
     public void removeListener(ValueInvalidationListener listener)
     {
-        if (isPropagatingEvents)
-        {
-            valueInvalidationListenersToRemove.add(listener);
-            return;
-        }
-
-        valueInvalidationListeners.remove(listener);
-        if (valueInvalidationListeners.isEmpty() &&
-                valueChangeListeners.isEmpty() &&
-                valueChangeArglessListeners.isEmpty() &&
-                observable != null)
-            stopObserving();
+        listenersHolder = ListenersHolder.removeListener(listenersHolder, listener);
+        stopObserving();
     }
 
     @Override
     public void addChangeListener(ValueInvalidationListener listener)
     {
-        if (!isObserving && observable != null)
-            startObserving();
-        if (!valueChangeArglessListeners.contains(listener))
-            valueChangeArglessListeners.add(listener);
+        startObserving();
+        listenersHolder = ListenersHolder.addChangeListener(listenersHolder, listener);
     }
 
     @Override
     public void removeChangeListener(ValueInvalidationListener listener)
     {
-        if (isPropagatingEvents)
-        {
-            valueChangeArglessListenersToRemove.add(listener);
-            return;
-        }
-
-        valueChangeArglessListeners.remove(listener);
-        if (valueChangeArglessListeners.isEmpty() &&
-                valueChangeListeners.isEmpty() &&
-                valueChangeArglessListeners.isEmpty() &&
-                observable != null)
-            stopObserving();
+        listenersHolder = ListenersHolder.removeListener(listenersHolder, listener);
+        stopObserving();
     }
 
     @Override
@@ -222,48 +181,33 @@ public abstract class PropertyBase<T> implements IProperty<T>
 
     protected void fireChangeListeners(T oldValue, T newValue)
     {
-        isPropagatingEvents = true;
-        for (ValueChangeListener<? super T> listener : valueChangeListeners)
-            listener.valueChanged(this, oldValue, newValue);
-
-        isPropagatingEvents = false;
-        for (ValueChangeListener<? super T> listener : valueChangeListenersToRemove)
-            valueChangeListeners.remove(listener);
-        valueChangeListenersToRemove.clear();
+        ListenersHolder.fireChangeListeners(listenersHolder, this, oldValue, newValue);
     }
 
     protected void fireInvalidationListeners()
     {
-        isPropagatingEvents = true;
-        for (ValueInvalidationListener listener : valueInvalidationListeners)
-            listener.invalidated(this);
-
-        isPropagatingEvents = false;
-        for (ValueInvalidationListener listener : valueInvalidationListenersToRemove)
-            valueInvalidationListeners.remove(listener);
-        valueInvalidationListenersToRemove.clear();
+        ListenersHolder.fireInvalidationListeners(listenersHolder, this);
     }
 
     protected void fireChangeArglessListeners()
     {
-        isPropagatingEvents = true;
-        for (ValueInvalidationListener listener : valueChangeArglessListeners)
-            listener.invalidated(this);
-
-        isPropagatingEvents = false;
-        for (ValueInvalidationListener listener : valueChangeArglessListenersToRemove)
-            valueChangeArglessListeners.remove(listener);
-        valueChangeArglessListenersToRemove.clear();
+        ListenersHolder.fireChangeArglessListeners(listenersHolder, this);
     }
 
     protected void startObserving()
     {
+        if (isObserving || observable == null)
+            return;
+
         isObserving = true;
         observable.addListener(propertyInvalidator);
     }
 
     protected void stopObserving()
     {
+        if (listenersHolder != null || observable == null)
+            return;
+
         isObserving = false;
         observable.removeListener(propertyInvalidator);
     }
@@ -280,7 +224,7 @@ public abstract class PropertyBase<T> implements IProperty<T>
 
     protected boolean hasListeners()
     {
-        return !valueInvalidationListeners.isEmpty() || !valueChangeListeners.isEmpty();
+        return listenersHolder != null;
     }
 
     protected abstract void setPropertyValue(T value);
