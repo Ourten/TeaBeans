@@ -1,6 +1,7 @@
 package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.listener.holder.ListenersHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -87,7 +88,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     public void add(T element)
     {
         Set<T> oldSet = null;
-        if (listenersHolder.hasChangeListeners())
+        if (ListenersHolder.hasChangeListeners(listenersHolder))
         {
             oldSet = setSupplier.get();
             oldSet.addAll(value);
@@ -109,7 +110,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     public boolean remove(T element)
     {
         Set<T> oldSet = null;
-        if (listenersHolder.hasChangeListeners())
+        if (ListenersHolder.hasChangeListeners(listenersHolder))
         {
             oldSet = setSupplier.get();
             oldSet.addAll(value);
@@ -132,7 +133,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     {
         T oldValue = value.contains(oldElement) ? oldElement : null;
         Set<T> oldSet = null;
-        if (listenersHolder.hasChangeListeners())
+        if (ListenersHolder.hasChangeListeners(listenersHolder))
         {
             oldSet = setSupplier.get();
             oldSet.addAll(value);
@@ -164,7 +165,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     {
         Set<T> oldSet = null;
 
-        if (listenersHolder.hasChangeListeners() || !listValueChangeListeners.isEmpty())
+        if (ListenersHolder.hasChangeListeners(listenersHolder) || !listValueChangeListeners.isEmpty())
         {
             oldSet = setSupplier.get();
             oldSet.addAll(value);

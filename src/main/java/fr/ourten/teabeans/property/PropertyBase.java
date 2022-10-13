@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 
 public abstract class PropertyBase<T> implements IProperty<T>
 {
-    protected ListenersHolder<T> listenersHolder;
+    private ListenersHolder<T> listenersHolder;
 
     /**
      * The listener used to bind this property to another.
@@ -205,7 +205,7 @@ public abstract class PropertyBase<T> implements IProperty<T>
 
     protected void stopObserving()
     {
-        if (listenersHolder != null || observable == null)
+        if (hasListeners() || observable == null)
             return;
 
         isObserving = false;

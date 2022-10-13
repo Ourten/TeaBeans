@@ -1,6 +1,7 @@
 package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.MapValueChangeListener;
+import fr.ourten.teabeans.listener.holder.ListenersHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,7 +95,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     public V put(K key, V value)
     {
         Map<K, V> oldMap = null;
-        if (listenersHolder.hasChangeListeners())
+        if (ListenersHolder.hasChangeListeners(listenersHolder))
         {
             oldMap = mapSupplier.get();
             oldMap.putAll(this.value);
@@ -148,7 +149,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
         V oldValue = value.get(key);
         Map<K, V> oldMap = null;
 
-        if (listenersHolder.hasChangeListeners())
+        if (ListenersHolder.hasChangeListeners(listenersHolder))
         {
             oldMap = mapSupplier.get();
             oldMap.putAll(value);
@@ -164,7 +165,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     {
         V oldValue = value.get(key);
         Map<K, V> oldMap = null;
-        if (listenersHolder.hasChangeListeners())
+        if (ListenersHolder.hasChangeListeners(listenersHolder))
         {
             oldMap = mapSupplier.get();
             oldMap.putAll(value);
@@ -200,7 +201,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     {
         Map<K, V> oldMap = null;
 
-        if (listenersHolder.hasChangeListeners() || !mapValueChangeListeners.isEmpty())
+        if (ListenersHolder.hasChangeListeners(listenersHolder) || !mapValueChangeListeners.isEmpty())
         {
             oldMap = mapSupplier.get();
             oldMap.putAll(value);

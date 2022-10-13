@@ -9,10 +9,10 @@ import java.util.Objects;
 
 public class MonoListenerHolder<T> implements ListenersHolder<T>
 {
-    private ValueChangeListener<? super T> valueChangeListener;
+    protected ValueChangeListener<? super T> valueChangeListener;
 
-    private ValueInvalidationListener arglessValueChangeListener;
-    private ValueInvalidationListener invalidationListener;
+    protected ValueInvalidationListener arglessValueChangeListener;
+    protected ValueInvalidationListener invalidationListener;
 
     public MonoListenerHolder(ValueChangeListener<? super T> valueChangeListener,
                               ValueInvalidationListener arglessValueChangeListener,
