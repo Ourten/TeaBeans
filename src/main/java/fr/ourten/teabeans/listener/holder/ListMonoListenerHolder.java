@@ -8,12 +8,12 @@ import fr.ourten.teabeans.value.ObservableValue;
 import java.util.List;
 import java.util.Objects;
 
-public class ListMonoListenerHolder<T> extends MonoListenerHolder<T> implements ListListenersHolder<T>
+public class ListMonoListenerHolder<T> extends MonoListenerHolder<List<T>> implements ListListenersHolder<T>
 {
-    private ListValueChangeListener<? super List<? super T>> listValueChangeListener;
+    private ListValueChangeListener<? super T> listValueChangeListener;
 
-    public ListMonoListenerHolder(ListValueChangeListener<? super List<? super T>> listValueChangeListener,
-                                  ValueChangeListener<? super T> valueChangeListener,
+    public ListMonoListenerHolder(ListValueChangeListener<? super T> listValueChangeListener,
+                                  ValueChangeListener<? super List<T>> valueChangeListener,
                                   ValueInvalidationListener arglessValueChangeListener,
                                   ValueInvalidationListener invalidationListener)
     {
@@ -23,7 +23,7 @@ public class ListMonoListenerHolder<T> extends MonoListenerHolder<T> implements 
     }
 
     @Override
-    public ListListenersHolder<T> addListChangeListener(ListValueChangeListener<? super List<? super T>> listener)
+    public ListListenersHolder<T> addListChangeListener(ListValueChangeListener<? super T> listener)
     {
         if (listValueChangeListener != null && !Objects.equals(listValueChangeListener, listener))
             return new ListMultiListenersHolder<T>(listValueChangeListener, valueChangeListener, arglessValueChangeListener, invalidationListener)
@@ -33,8 +33,7 @@ public class ListMonoListenerHolder<T> extends MonoListenerHolder<T> implements 
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public ListListenersHolder<T> removeListChangeListener(ListValueChangeListener<? super List<? super T>> listener)
+    public ListListenersHolder<T> removeListChangeListener(ListValueChangeListener<? super T> listener)
     {
         if (Objects.equals(listener, listValueChangeListener))
             listValueChangeListener = null;
@@ -44,7 +43,7 @@ public class ListMonoListenerHolder<T> extends MonoListenerHolder<T> implements 
     }
 
     @Override
-    public ListListenersHolder<T> addChangeListener(ValueChangeListener<? super T> listener)
+    public ListListenersHolder<T> addChangeListener(ValueChangeListener<? super List<T>> listener)
     {
         if (valueChangeListener != null && !Objects.equals(valueChangeListener, listener))
             return new ListMultiListenersHolder<T>(listValueChangeListener, valueChangeListener, arglessValueChangeListener, invalidationListener)
@@ -54,8 +53,7 @@ public class ListMonoListenerHolder<T> extends MonoListenerHolder<T> implements 
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public ListListenersHolder<T> removeChangeListener(ValueChangeListener<? super T> listener)
+    public ListListenersHolder<T> removeChangeListener(ValueChangeListener<? super List<T>> listener)
     {
         if (Objects.equals(listener, valueChangeListener))
             valueChangeListener = null;
@@ -96,7 +94,6 @@ public class ListMonoListenerHolder<T> extends MonoListenerHolder<T> implements 
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public ListListenersHolder<T> removeListener(ValueInvalidationListener listener)
     {
         if (Objects.equals(listener, invalidationListener))
@@ -107,7 +104,7 @@ public class ListMonoListenerHolder<T> extends MonoListenerHolder<T> implements 
     }
 
     @Override
-    public void fireListChangeListeners(ObservableValue<? extends T> observable, T oldValue, T newValue)
+    public void fireListChangeListeners(ObservableValue<? extends List<T>> observable, T oldValue, T newValue)
     {
         if (listValueChangeListener != null)
             listValueChangeListener.valueChanged(observable, oldValue, newValue);

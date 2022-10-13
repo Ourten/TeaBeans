@@ -22,26 +22,18 @@ import java.util.function.Supplier;
 public class ListProperty<T> extends PropertyBase<List<T>> implements IListProperty<T>
 {
     private final Supplier<List<T>> listSupplier;
-    private ListListenersHolder<List<T>> listenersHolder;
 
+    private ListListenersHolder<T> listenersHolder;
 
     private List<T> immutableView;
 
     protected List<T> value;
     protected List<T> oldValue;
 
-    /**
-     * The list of attached listeners that need to be notified when the value
-     * change.
-     */
-    private final ArrayList<ListValueChangeListener<? super T>> listValueChangeListeners;
-
     public ListProperty(Supplier<List<T>> listSupplier, List<T> value)
     {
         this.value = value;
         oldValue = value;
-
-        listValueChangeListeners = new ArrayList<>();
 
         this.value = listSupplier.get();
         if (value != null)
@@ -91,19 +83,17 @@ public class ListProperty<T> extends PropertyBase<List<T>> implements IListPrope
     @Override
     public void addChangeListener(ListValueChangeListener<? super T> listener)
     {
-            startObserving();
-        if (!listValueChangeListeners.contains(listener))
-            listValueChangeListeners.add(listener);
+        startObserving();
+        listenersHolder = ListListenersHolder.addListChangeListener(listenersHolder, listener);
     }
 
     @Override
     public void removeChangeListener(ListValueChangeListener<? super T> listener)
     {
-        listValueChangeListeners.remove(listener);
-        if (listValueChangeListeners.isEmpty() && hasObservable())
-            stopObserving();
+        listenersHolder = ListListenersHolder.removeListChangeListener(listenersHolder, listener);
+        stopObserving();
     }
-    
+
     @Override
     public void addChangeListener(ValueChangeListener<? super List<T>> listener)
     {
@@ -360,7 +350,7 @@ public class ListProperty<T> extends PropertyBase<List<T>> implements IListPrope
     {
         List<T> oldList = null;
 
-        if (ListenersHolder.hasChangeListeners(listenersHolder) || !listValueChangeListeners.isEmpty())
+        if (ListenersHolder.hasChangeListeners(listenersHolder) || ListListenersHolder.hasListChangeListeners(listenersHolder))
         {
             oldList = listSupplier.get();
             oldList.addAll(value);
@@ -388,16 +378,30 @@ public class ListProperty<T> extends PropertyBase<List<T>> implements IListPrope
     @Override
     protected boolean hasListeners()
     {
-        return super.hasListeners() || !listValueChangeListeners.isEmpty();
+        return listenersHolder != null;
     }
 
     private void fireListChangeListeners(T oldValue, T newValue)
     {
-        for (int i = 0, listValueChangeListenersSize = listValueChangeListeners.size(); i < listValueChangeListenersSize; i++)
-        {
-            ListValueChangeListener<? super T> listener = listValueChangeListeners.get(i);
-            listener.valueChanged(this, oldValue, newValue);
-        }
+        ListListenersHolder.fireListChangeListeners(listenersHolder, this, oldValue, newValue);
+    }
+
+    @Override
+    protected void fireChangeListeners(List<T> oldValue, List<T> newValue)
+    {
+        ListListenersHolder.fireChangeListeners(listenersHolder, this, oldValue, newValue);
+    }
+
+    @Override
+    protected void fireInvalidationListeners()
+    {
+        ListListenersHolder.fireInvalidationListeners(listenersHolder, this);
+    }
+
+    @Override
+    protected void fireChangeArglessListeners()
+    {
+        ListListenersHolder.fireChangeArglessListeners(listenersHolder, this);
     }
 
     ///////////////

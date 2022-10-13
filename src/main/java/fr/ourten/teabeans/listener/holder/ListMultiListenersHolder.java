@@ -9,13 +9,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class ListMultiListenersHolder<T> extends MultiListenersHolder<List<T>> implements ListListenersHolder<List<T>, T>
+public class ListMultiListenersHolder<T> extends MultiListenersHolder<List<T>> implements ListListenersHolder<T>
 {
     private ListValueChangeListener<? super T>[] listValueChangeListeners;
 
     public ListMultiListenersHolder(
             ListValueChangeListener<? super T> listValueChangeListener,
-            ValueChangeListener<? super List<? super T>> valueChangeListener,
+            ValueChangeListener<? super List<T>> valueChangeListener,
             ValueInvalidationListener arglessValueChangeListener,
             ValueInvalidationListener invalidationListener)
     {
@@ -26,7 +26,7 @@ public class ListMultiListenersHolder<T> extends MultiListenersHolder<List<T>> i
     }
 
     @Override
-    public ListListenersHolder<? super List<? super T>> addListChangeListener(ListValueChangeListener<? super T> listener)
+    public ListListenersHolder<T> addListChangeListener(ListValueChangeListener<? super T> listener)
     {
         if (listValueChangeListeners == null)
         {
@@ -47,25 +47,11 @@ public class ListMultiListenersHolder<T> extends MultiListenersHolder<List<T>> i
     }
 
     @Override
-    public ListListenersHolder<? super List<? super T>> removeListChangeListener(ListValueChangeListener<? super T> listener)
+    public ListListenersHolder<T> removeListChangeListener(ListValueChangeListener<? super T> listener)
     {
-        var length = listValueChangeListeners.length;
-        var newListeners = listValueChangeListeners;
-
-        for (int i = 0; i < length; i++)
-        {
-            var valueChangeListener = listValueChangeListeners[i];
-
-            if (Objects.equals(valueChangeListener, listener))
-            {
-                newListeners = new ListValueChangeListener[length - 1];
-
-                if (i != 0)
-                    System.arraycopy(listValueChangeListeners, 0, newListeners, 0, i);
-                if (i != length - 1)
-                    System.arraycopy(listValueChangeListeners, i + 1, newListeners, i, length - i - 1);
-            }
-        }
+        ListValueChangeListener<? super T>[] newListeners = cloneListenerArray(listener,
+                listValueChangeListeners,
+                ListValueChangeListener.class);
 
         if (newListeners.length == 1 &&
                 (valueChangeListeners == null || valueChangeListeners.length == 1) &&
@@ -79,46 +65,17 @@ public class ListMultiListenersHolder<T> extends MultiListenersHolder<List<T>> i
     }
 
     @Override
-    public ListListenersHolder<? super List<? super T>> addChangeListener(ValueChangeListener<? super List<? super T>> listener)
+    public ListListenersHolder<T> addChangeListener(ValueChangeListener<? super List<T>> listener)
     {
-        if (valueChangeListeners == null)
-        {
-            valueChangeListeners = new ValueChangeListener[] { listener };
-            return this;
-        }
-
-        for (var valueChangeListener : valueChangeListeners)
-        {
-            if (Objects.equals(valueChangeListener, listener))
-                return this;
-        }
-
-        var length = valueChangeListeners.length;
-        valueChangeListeners = Arrays.copyOf(valueChangeListeners, length + 1);
-        valueChangeListeners[length] = listener;
-        return this;
+        return (ListListenersHolder<T>) super.addChangeListener(listener);
     }
 
     @Override
-    public ListListenersHolder<? super List<? super T>> removeChangeListener(ValueChangeListener<? super List<? super T>> listener)
+    public ListListenersHolder<T> removeChangeListener(ValueChangeListener<? super List<T>> listener)
     {
-        var length = valueChangeListeners.length;
-        var newListeners = valueChangeListeners;
-
-        for (int i = 0; i < length; i++)
-        {
-            var valueChangeListener = valueChangeListeners[i];
-
-            if (Objects.equals(valueChangeListener, listener))
-            {
-                newListeners = new ValueChangeListener[length - 1];
-
-                if (i != 0)
-                    System.arraycopy(valueChangeListeners, 0, newListeners, 0, i);
-                if (i != length - 1)
-                    System.arraycopy(valueChangeListeners, i + 1, newListeners, i, length - i - 1);
-            }
-        }
+        ValueChangeListener<? super List<T>>[] newListeners = cloneListenerArray(listener,
+                valueChangeListeners,
+                ValueChangeListener.class);
 
         if (newListeners.length == 1 &&
                 (listValueChangeListeners == null || listValueChangeListeners.length == 1) &&
@@ -132,48 +89,19 @@ public class ListMultiListenersHolder<T> extends MultiListenersHolder<List<T>> i
     }
 
     @Override
-    public ListListenersHolder<? super List<? super T>> addChangeListener(ValueInvalidationListener listener)
+    public ListListenersHolder<T> addChangeListener(ValueInvalidationListener listener)
     {
-        if (arglessValueChangeListeners == null)
-        {
-            arglessValueChangeListeners = new ValueInvalidationListener[] { listener };
-            return this;
-        }
-
-        for (var arglessValueChangeListener : arglessValueChangeListeners)
-        {
-            if (Objects.equals(arglessValueChangeListener, listener))
-                return this;
-        }
-
-        var length = arglessValueChangeListeners.length;
-        arglessValueChangeListeners = Arrays.copyOf(arglessValueChangeListeners, length + 1);
-        arglessValueChangeListeners[length] = listener;
-        return this;
+        return (ListListenersHolder<T>) super.addChangeListener(listener);
     }
 
     @Override
-    public ListListenersHolder<? super List<? super T>> removeChangeListener(ValueInvalidationListener listener)
+    public ListListenersHolder<T> removeChangeListener(ValueInvalidationListener listener)
     {
-        var length = arglessValueChangeListeners.length;
-        var newListeners = arglessValueChangeListeners;
+        var newListeners = cloneListenerArray(listener,
+                arglessValueChangeListeners,
+                ValueInvalidationListener.class);
 
-        for (int i = 0; i < length; i++)
-        {
-            var arglessValueChangeListener = arglessValueChangeListeners[i];
-
-            if (Objects.equals(arglessValueChangeListener, listener))
-            {
-                newListeners = new ValueInvalidationListener[length - 1];
-
-                if (i != 0)
-                    System.arraycopy(arglessValueChangeListeners, 0, newListeners, 0, i);
-                if (i != length - 1)
-                    System.arraycopy(arglessValueChangeListeners, i + 1, newListeners, i, length - i - 1);
-            }
-        }
-
-        if (newListeners.length == 1 &&
+        if (newListeners.length <= 1 &&
                 (listValueChangeListeners == null || listValueChangeListeners.length == 1) &&
                 (valueChangeListeners == null || valueChangeListeners.length == 1) &&
                 (invalidationListeners == null || invalidationListeners.length == 1)
@@ -185,48 +113,19 @@ public class ListMultiListenersHolder<T> extends MultiListenersHolder<List<T>> i
     }
 
     @Override
-    public ListListenersHolder<? super List<? super T>> addListener(ValueInvalidationListener listener)
+    public ListListenersHolder<T> addListener(ValueInvalidationListener listener)
     {
-        if (invalidationListeners == null)
-        {
-            invalidationListeners = new ValueInvalidationListener[] { listener };
-            return this;
-        }
-
-        for (var invalidationListener : invalidationListeners)
-        {
-            if (Objects.equals(invalidationListener, listener))
-                return this;
-        }
-
-        var length = invalidationListeners.length;
-        invalidationListeners = Arrays.copyOf(invalidationListeners, length + 1);
-        invalidationListeners[length] = listener;
-        return this;
+        return (ListListenersHolder<T>) super.addListener(listener);
     }
 
     @Override
-    public ListListenersHolder<? super List<? super T>> removeListener(ValueInvalidationListener listener)
+    public ListListenersHolder<T> removeListener(ValueInvalidationListener listener)
     {
-        var length = invalidationListeners.length;
-        var newListeners = invalidationListeners;
+        var newListeners = cloneListenerArray(listener,
+                invalidationListeners,
+                ValueInvalidationListener.class);
 
-        for (int i = 0; i < length; i++)
-        {
-            var arglessValueChangeListener = invalidationListeners[i];
-
-            if (Objects.equals(arglessValueChangeListener, listener))
-            {
-                newListeners = new ValueInvalidationListener[length - 1];
-
-                if (i != 0)
-                    System.arraycopy(invalidationListeners, 0, newListeners, 0, i);
-                if (i != length - 1)
-                    System.arraycopy(invalidationListeners, i + 1, newListeners, i, length - i - 1);
-            }
-        }
-
-        if (newListeners.length == 1 &&
+        if (newListeners.length <= 1 &&
                 (listValueChangeListeners == null || listValueChangeListeners.length == 1) &&
                 (valueChangeListeners == null || valueChangeListeners.length == 1) &&
                 (arglessValueChangeListeners == null || arglessValueChangeListeners.length == 1)
@@ -238,7 +137,7 @@ public class ListMultiListenersHolder<T> extends MultiListenersHolder<List<T>> i
     }
 
     @Override
-    public void fireListChangeListeners(ObservableValue<? extends T> observable, T oldValue, T newValue)
+    public void fireListChangeListeners(ObservableValue<? extends List<T>> observable, T oldValue, T newValue)
     {
         var listeners = listValueChangeListeners;
 

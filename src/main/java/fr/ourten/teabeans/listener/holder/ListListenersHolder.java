@@ -8,15 +8,15 @@ import fr.ourten.teabeans.value.ObservableValue;
 
 import java.util.List;
 
-public interface ListListenersHolder<T, E> extends ListenersHolder<T>
+public interface ListListenersHolder<T> extends ListenersHolder<List<T>>
 {
-    ListListenersHolder<T, E> addListChangeListener(ListValueChangeListener<? super E> listener);
+    ListListenersHolder<T> addListChangeListener(ListValueChangeListener<? super T> listener);
 
-    ListListenersHolder<T, E> removeListChangeListener(ListValueChangeListener<? super E> listener);
+    ListListenersHolder<T> removeListChangeListener(ListValueChangeListener<? super T> listener);
 
-    ListListenersHolder<T> addChangeListener(ValueChangeListener<? super T> listener);
+    ListListenersHolder<T> addChangeListener(ValueChangeListener<? super List<T>> listener);
 
-    ListListenersHolder<T> removeChangeListener(ValueChangeListener<? super T> listener);
+    ListListenersHolder<T> removeChangeListener(ValueChangeListener<? super List<T>> listener);
 
 
     ListListenersHolder<T> addChangeListener(ValueInvalidationListener listener);
@@ -28,18 +28,18 @@ public interface ListListenersHolder<T, E> extends ListenersHolder<T>
 
     ListListenersHolder<T> removeListener(ValueInvalidationListener listener);
 
-    void fireListChangeListeners(ObservableValue<? extends T> observable, T oldValue, T newValue);
+    void fireListChangeListeners(ObservableValue<? extends List<T>> observable, T oldValue, T newValue);
 
     boolean hasListChangeListeners();
 
-    static <T> ListListenersHolder<T> addListChangeListener(ListListenersHolder<T> holder, ListValueChangeListener<? super List<? super T>> listener)
+    static <T> ListListenersHolder<T> addListChangeListener(ListListenersHolder<T> holder, ListValueChangeListener<? super T> listener)
     {
         if (holder == null)
             return new ListMonoListenerHolder<>(listener, null, null, null);
         return holder.addListChangeListener(listener);
     }
 
-    static <T> ListListenersHolder<T> removeListChangeListener(ListListenersHolder<T> holder, ListValueChangeListener<? super List<? super T>> listener)
+    static <T> ListListenersHolder<T> removeListChangeListener(ListListenersHolder<T> holder, ListValueChangeListener<? super T> listener)
     {
         if (holder == null)
             return null;
@@ -47,14 +47,14 @@ public interface ListListenersHolder<T, E> extends ListenersHolder<T>
     }
 
 
-    static <T> ListListenersHolder<T> addChangeListener(ListListenersHolder<T> holder, ValueChangeListener<? super T> listener)
+    static <T> ListListenersHolder<T> addChangeListener(ListListenersHolder<T> holder, ValueChangeListener<? super List<T>> listener)
     {
         if (holder == null)
             return new ListMonoListenerHolder<>(null, listener, null, null);
         return holder.addChangeListener(listener);
     }
 
-    static <T> ListListenersHolder<T> removeChangeListener(ListListenersHolder<T> holder, ValueChangeListener<? super T> listener)
+    static <T> ListListenersHolder<T> removeChangeListener(ListListenersHolder<T> holder, ValueChangeListener<? super List<T>> listener)
     {
         if (holder == null)
             return null;
@@ -92,13 +92,13 @@ public interface ListListenersHolder<T, E> extends ListenersHolder<T>
     }
 
 
-    static <T> void fireChangeListeners(ListListenersHolder<T> holder, ObservableValue<? extends T> observable, T oldValue, T newValue)
+    static <T> void fireChangeListeners(ListListenersHolder<T> holder, ObservableValue<? extends List<T>> observable, List<T> oldValue, List<T> newValue)
     {
         if (holder != null)
             holder.fireChangeListeners(observable, oldValue, newValue);
     }
 
-    static <T> void fireListChangeListeners(ListListenersHolder<T> holder, ObservableValue<? extends T> observable, T oldValue, T newValue)
+    static <T> void fireListChangeListeners(ListListenersHolder<T> holder, ObservableValue<? extends List<T>> observable, T oldValue, T newValue)
     {
         if (holder != null)
             holder.fireListChangeListeners(observable, oldValue, newValue);

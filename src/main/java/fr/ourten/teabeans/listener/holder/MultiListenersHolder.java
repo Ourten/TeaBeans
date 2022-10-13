@@ -5,6 +5,7 @@ import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.value.Observable;
 import fr.ourten.teabeans.value.ObservableValue;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -51,25 +52,11 @@ public class MultiListenersHolder<T> implements ListenersHolder<T>
     @Override
     public ListenersHolder<T> removeChangeListener(ValueChangeListener<? super T> listener)
     {
-        var length = valueChangeListeners.length;
-        var newListeners = valueChangeListeners;
+        ValueChangeListener<? super T>[] newListeners = cloneListenerArray(listener,
+                valueChangeListeners,
+                ValueChangeListener.class);
 
-        for (int i = 0; i < length; i++)
-        {
-            var valueChangeListener = valueChangeListeners[i];
-
-            if (Objects.equals(valueChangeListener, listener))
-            {
-                newListeners = new ValueChangeListener[length - 1];
-
-                if (i != 0)
-                    System.arraycopy(valueChangeListeners, 0, newListeners, 0, i);
-                if (i != length - 1)
-                    System.arraycopy(valueChangeListeners, i + 1, newListeners, i, length - i - 1);
-            }
-        }
-
-        if (newListeners.length == 1 &&
+        if (newListeners.length <= 1 &&
                 (arglessValueChangeListeners == null || arglessValueChangeListeners.length == 1) &&
                 (invalidationListeners == null || invalidationListeners.length == 1)
         )
@@ -103,25 +90,11 @@ public class MultiListenersHolder<T> implements ListenersHolder<T>
     @Override
     public ListenersHolder<T> removeChangeListener(ValueInvalidationListener listener)
     {
-        var length = arglessValueChangeListeners.length;
-        var newListeners = arglessValueChangeListeners;
+        var newListeners = cloneListenerArray(listener,
+                arglessValueChangeListeners,
+                ValueInvalidationListener.class);
 
-        for (int i = 0; i < length; i++)
-        {
-            var arglessValueChangeListener = arglessValueChangeListeners[i];
-
-            if (Objects.equals(arglessValueChangeListener, listener))
-            {
-                newListeners = new ValueInvalidationListener[length - 1];
-
-                if (i != 0)
-                    System.arraycopy(arglessValueChangeListeners, 0, newListeners, 0, i);
-                if (i != length - 1)
-                    System.arraycopy(arglessValueChangeListeners, i + 1, newListeners, i, length - i - 1);
-            }
-        }
-
-        if (newListeners.length == 1 &&
+        if (newListeners.length <= 1 &&
                 (valueChangeListeners == null || valueChangeListeners.length == 1) &&
                 (invalidationListeners == null || invalidationListeners.length == 1)
         )
@@ -155,25 +128,11 @@ public class MultiListenersHolder<T> implements ListenersHolder<T>
     @Override
     public ListenersHolder<T> removeListener(ValueInvalidationListener listener)
     {
-        var length = invalidationListeners.length;
-        var newListeners = invalidationListeners;
+        var newListeners = cloneListenerArray(listener,
+                invalidationListeners,
+                ValueInvalidationListener.class);
 
-        for (int i = 0; i < length; i++)
-        {
-            var arglessValueChangeListener = invalidationListeners[i];
-
-            if (Objects.equals(arglessValueChangeListener, listener))
-            {
-                newListeners = new ValueInvalidationListener[length - 1];
-
-                if (i != 0)
-                    System.arraycopy(invalidationListeners, 0, newListeners, 0, i);
-                if (i != length - 1)
-                    System.arraycopy(invalidationListeners, i + 1, newListeners, i, length - i - 1);
-            }
-        }
-
-        if (newListeners.length == 1 &&
+        if (newListeners.length <= 1 &&
                 (valueChangeListeners == null || valueChangeListeners.length == 1) &&
                 (arglessValueChangeListeners == null || arglessValueChangeListeners.length == 1)
         )
@@ -235,5 +194,28 @@ public class MultiListenersHolder<T> implements ListenersHolder<T>
     public boolean hasChangeArglessListeners()
     {
         return arglessValueChangeListeners != null;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected  <E> E[] cloneListenerArray(E listener, E[] listeners, Class<E> typeClass)
+    {
+        var length = listeners.length;
+        var newListeners = listeners;
+
+        for (int i = 0; i < length; i++)
+        {
+            var valueChangeListener = listeners[i];
+
+            if (Objects.equals(valueChangeListener, listener))
+            {
+                newListeners = (E[]) Array.newInstance(typeClass, length - 1);
+
+                if (i != 0)
+                    System.arraycopy(listeners, 0, newListeners, 0, i);
+                if (i != length - 1)
+                    System.arraycopy(listeners, i + 1, newListeners, i, length - i - 1);
+            }
+        }
+        return newListeners;
     }
 }

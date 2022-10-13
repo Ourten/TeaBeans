@@ -1,9 +1,11 @@
 package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.MapValueChangeListener;
+import fr.ourten.teabeans.listener.ValueChangeListener;
+import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.listener.holder.ListenersHolder;
+import fr.ourten.teabeans.listener.holder.MapListenersHolder;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,16 +21,11 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
 
     private Map<K, V> immutableView;
 
-    /**
-     * The list of attached listeners that need to be notified when the value
-     * change.
-     */
-    private final ArrayList<MapValueChangeListener<K, ? super V>> mapValueChangeListeners;
+    private MapListenersHolder<K, V> listenersHolder;
 
     public MapProperty(Supplier<Map<K, V>> mapSupplier, Map<K, V> value)
     {
         super(value);
-        mapValueChangeListeners = new ArrayList<>();
 
         this.value = mapSupplier.get();
         if (value != null)
@@ -71,18 +68,57 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     @Override
     public void addChangeListener(MapValueChangeListener<K, ? super V> listener)
     {
-        if (!isObserving() && hasObservable())
-            startObserving();
-        if (!mapValueChangeListeners.contains(listener))
-            mapValueChangeListeners.add(listener);
+        startObserving();
+        listenersHolder = MapListenersHolder.addMapChangeListener(listenersHolder, listener);
     }
 
     @Override
     public void removeChangeListener(MapValueChangeListener<K, ? super V> listener)
     {
-        mapValueChangeListeners.remove(listener);
-        if (mapValueChangeListeners.isEmpty() && hasObservable())
-            stopObserving();
+        listenersHolder = MapListenersHolder.removeMapChangeListener(listenersHolder, listener);
+        stopObserving();
+    }
+
+    @Override
+    public void addChangeListener(ValueChangeListener<? super Map<K, V>> listener)
+    {
+        startObserving();
+        listenersHolder = MapListenersHolder.addChangeListener(listenersHolder, listener);
+    }
+
+    @Override
+    public void removeChangeListener(ValueChangeListener<? super Map<K, V>> listener)
+    {
+        listenersHolder = MapListenersHolder.removeChangeListener(listenersHolder, listener);
+        stopObserving();
+    }
+
+    @Override
+    public void addListener(ValueInvalidationListener listener)
+    {
+        startObserving();
+        listenersHolder = MapListenersHolder.addListener(listenersHolder, listener);
+    }
+
+    @Override
+    public void removeListener(ValueInvalidationListener listener)
+    {
+        listenersHolder = MapListenersHolder.removeListener(listenersHolder, listener);
+        stopObserving();
+    }
+
+    @Override
+    public void addChangeListener(ValueInvalidationListener listener)
+    {
+        startObserving();
+        listenersHolder = MapListenersHolder.addChangeListener(listenersHolder, listener);
+    }
+
+    @Override
+    public void removeChangeListener(ValueInvalidationListener listener)
+    {
+        listenersHolder = MapListenersHolder.removeListener(listenersHolder, listener);
+        stopObserving();
     }
 
     @Override
@@ -201,7 +237,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     {
         Map<K, V> oldMap = null;
 
-        if (ListenersHolder.hasChangeListeners(listenersHolder) || !mapValueChangeListeners.isEmpty())
+        if (ListenersHolder.hasChangeListeners(listenersHolder) || MapListenersHolder.hasMapChangeListeners(listenersHolder))
         {
             oldMap = mapSupplier.get();
             oldMap.putAll(value);
@@ -225,15 +261,29 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     @Override
     protected boolean hasListeners()
     {
-        return super.hasListeners() || !mapValueChangeListeners.isEmpty();
+        return listenersHolder != null;
     }
 
     private void fireMapChangeListeners(K key, V oldValue, V newValue)
     {
-        for (int i = 0, mapValueChangeListenersSize = mapValueChangeListeners.size(); i < mapValueChangeListenersSize; i++)
-        {
-            MapValueChangeListener<K, ? super V> listener = mapValueChangeListeners.get(i);
-            listener.valueChanged(this, key, oldValue, newValue);
-        }
+        MapListenersHolder.fireMapChangeListeners(listenersHolder, this, key, oldValue, newValue);
+    }
+
+    @Override
+    protected void fireChangeListeners(Map<K, V> oldValue, Map<K, V> newValue)
+    {
+        MapListenersHolder.fireChangeListeners(listenersHolder, this, oldValue, newValue);
+    }
+
+    @Override
+    protected void fireInvalidationListeners()
+    {
+        MapListenersHolder.fireInvalidationListeners(listenersHolder, this);
+    }
+
+    @Override
+    protected void fireChangeArglessListeners()
+    {
+        MapListenersHolder.fireChangeArglessListeners(listenersHolder, this);
     }
 }
