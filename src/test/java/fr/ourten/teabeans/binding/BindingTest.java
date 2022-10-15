@@ -2,6 +2,7 @@ package fr.ourten.teabeans.binding;
 
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
+import fr.ourten.teabeans.listener.recorder.ValueInvalidationRecorder;
 import fr.ourten.teabeans.property.Property;
 import fr.ourten.teabeans.value.Observable;
 import org.junit.jupiter.api.BeforeEach;
@@ -248,5 +249,23 @@ public class BindingTest
 
         assertThat(binding.getValue()).isNotNull();
         assertThat(count).isEqualTo(3);
+    }
+
+    @Test
+    void invalidate_givenRemovalOfListenerDuringPropagation_thenShouldNotThrow()
+    {
+        Binding<String> binding = new Expression<>(() -> "lala");
+
+        ValueInvalidationListener[] listener = new ValueInvalidationListener[1];
+        listener[0] = obs ->
+        {
+            binding.removeListener(listener[0]);
+        };
+        binding.addListener(listener[0]);
+        ValueInvalidationRecorder recorder = new ValueInvalidationRecorder(binding);
+
+        binding.invalidate();
+
+        assertThat(recorder.getCount()).isEqualTo(1);
     }
 }

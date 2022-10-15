@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
@@ -258,5 +259,53 @@ public class ListPropertyTest
         new ListValueChangeRecorder<>(property);
 
         verify(secondProperty, atMostOnce()).addListener(any(ValueInvalidationListener.class));
+    }
+
+    @Test
+    void invalidate_givenRemovalOfListenerDuringPropagation_thenShouldNotThrow()
+    {
+        var property = new ListProperty<String>();
+        property.add("lala");
+
+        var listenerHit = new AtomicBoolean(false);
+
+       var listener = new ValueInvalidationListener[1];
+        listener[0] = obs ->
+        {
+            listenerHit.set(true);
+            property.removeListener(listener[0]);
+        };
+        property.addListener(listener[0]);
+        ValueInvalidationRecorder recorder = new ValueInvalidationRecorder(property);
+
+        property.invalidate();
+
+        assertThat(listenerHit.get()).isTrue();
+        assertThat(recorder.getCount()).isEqualTo(1);
+    }
+
+    @Test
+    void invalidate_givenAdditionOfListenerDuringPropagation_thenShouldNotThrow()
+    {
+        var property = new ListProperty<String>();
+        property.add("lala");
+
+        var listenerHit = new AtomicBoolean(false);
+
+        var listener = new ValueInvalidationListener[2];
+        listener[0] = obs ->
+        {
+            listenerHit.set(true);
+            property.addListener(listener[1]);
+        };
+        listener[1] = obs -> {};
+
+        property.addListener(listener[0]);
+        ValueInvalidationRecorder recorder = new ValueInvalidationRecorder(property);
+
+        property.invalidate();
+
+        assertThat(listenerHit.get()).isTrue();
+        assertThat(recorder.getCount()).isEqualTo(1);
     }
 }

@@ -1,8 +1,11 @@
 package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.listener.ValueChangeListener;
+import fr.ourten.teabeans.listener.ValueInvalidationListener;
+import fr.ourten.teabeans.listener.holder.ListenersHolder;
+import fr.ourten.teabeans.listener.holder.SetListenersHolder;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -15,18 +18,13 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
 {
     private final Supplier<Set<T>> setSupplier;
 
-    private Set<T> immutableView;
+    private SetListenersHolder<T> listenersHolder;
 
-    /**
-     * The list of attached listeners that need to be notified when the value
-     * change.
-     */
-    private final ArrayList<ListValueChangeListener<? super T>> listValueChangeListeners;
+    private Set<T> immutableView;
 
     public SetProperty(Supplier<Set<T>> setSupplier, Set<T> value)
     {
         super(value);
-        listValueChangeListeners = new ArrayList<>();
 
         this.value = setSupplier.get();
         if (value != null)
@@ -69,25 +67,64 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     @Override
     public void addChangeListener(ListValueChangeListener<? super T> listener)
     {
-        if (!isObserving() && hasObservable())
-            startObserving();
-        if (!listValueChangeListeners.contains(listener))
-            listValueChangeListeners.add(listener);
+        startObserving();
+        listenersHolder = SetListenersHolder.addListChangeListener(listenersHolder, listener);
     }
 
     @Override
     public void removeChangeListener(ListValueChangeListener<? super T> listener)
     {
-        listValueChangeListeners.remove(listener);
-        if (listValueChangeListeners.isEmpty() && hasObservable())
-            stopObserving();
+        listenersHolder = SetListenersHolder.removeListChangeListener(listenersHolder, listener);
+        stopObserving();
+    }
+
+    @Override
+    public void addChangeListener(ValueChangeListener<? super Set<T>> listener)
+    {
+        startObserving();
+        listenersHolder = SetListenersHolder.addChangeListener(listenersHolder, listener);
+    }
+
+    @Override
+    public void removeChangeListener(ValueChangeListener<? super Set<T>> listener)
+    {
+        listenersHolder = SetListenersHolder.removeChangeListener(listenersHolder, listener);
+        stopObserving();
+    }
+
+    @Override
+    public void addListener(ValueInvalidationListener listener)
+    {
+        startObserving();
+        listenersHolder = SetListenersHolder.addListener(listenersHolder, listener);
+    }
+
+    @Override
+    public void removeListener(ValueInvalidationListener listener)
+    {
+        listenersHolder = SetListenersHolder.removeListener(listenersHolder, listener);
+        stopObserving();
+    }
+
+    @Override
+    public void addChangeListener(ValueInvalidationListener listener)
+    {
+        startObserving();
+        listenersHolder = SetListenersHolder.addChangeListener(listenersHolder, listener);
+    }
+
+    @Override
+    public void removeChangeListener(ValueInvalidationListener listener)
+    {
+        listenersHolder = SetListenersHolder.removeListener(listenersHolder, listener);
+        stopObserving();
     }
 
     @Override
     public void add(T element)
     {
         Set<T> oldSet = null;
-        if (!valueChangeListeners.isEmpty())
+        if (ListenersHolder.hasChangeListeners(listenersHolder))
         {
             oldSet = setSupplier.get();
             oldSet.addAll(value);
@@ -109,7 +146,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     public boolean remove(T element)
     {
         Set<T> oldSet = null;
-        if (!valueChangeListeners.isEmpty())
+        if (ListenersHolder.hasChangeListeners(listenersHolder))
         {
             oldSet = setSupplier.get();
             oldSet.addAll(value);
@@ -132,7 +169,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     {
         T oldValue = value.contains(oldElement) ? oldElement : null;
         Set<T> oldSet = null;
-        if (!valueChangeListeners.isEmpty())
+        if (ListenersHolder.hasChangeListeners(listenersHolder))
         {
             oldSet = setSupplier.get();
             oldSet.addAll(value);
@@ -141,7 +178,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
         value.remove(oldElement);
         value.add(newElement);
 
-        invalidateElement(oldElement, newElement, oldSet);
+        invalidateElement(oldValue, newElement, oldSet);
     }
 
     public void invalidateElement(T oldElement, T newElement, Set<T> oldSet)
@@ -164,7 +201,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     {
         Set<T> oldSet = null;
 
-        if (!valueChangeListeners.isEmpty() || !listValueChangeListeners.isEmpty())
+        if (ListenersHolder.hasChangeListeners(listenersHolder) || SetListenersHolder.hasListChangeListeners(listenersHolder))
         {
             oldSet = setSupplier.get();
             oldSet.addAll(value);
@@ -194,15 +231,29 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     @Override
     protected boolean hasListeners()
     {
-        return super.hasListeners() || !listValueChangeListeners.isEmpty();
+        return listenersHolder != null;
     }
 
     private void fireListChangeListeners(T oldValue, T newValue)
     {
-        for (int i = 0, listValueChangeListenersSize = listValueChangeListeners.size(); i < listValueChangeListenersSize; i++)
-        {
-            ListValueChangeListener<? super T> listener = listValueChangeListeners.get(i);
-            listener.valueChanged(this, oldValue, newValue);
-        }
+        SetListenersHolder.fireListChangeListeners(listenersHolder, this, oldValue, newValue);
+    }
+
+    @Override
+    protected void fireChangeListeners(Set<T> oldValue, Set<T> newValue)
+    {
+        SetListenersHolder.fireChangeListeners(listenersHolder, this, oldValue, newValue);
+    }
+
+    @Override
+    protected void fireInvalidationListeners()
+    {
+        SetListenersHolder.fireInvalidationListeners(listenersHolder, this);
+    }
+
+    @Override
+    protected void fireChangeArglessListeners()
+    {
+        SetListenersHolder.fireChangeArglessListeners(listenersHolder, this);
     }
 }

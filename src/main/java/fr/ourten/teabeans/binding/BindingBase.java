@@ -3,6 +3,7 @@ package fr.ourten.teabeans.binding;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.listener.WeakObservableListener;
+import fr.ourten.teabeans.listener.holder.ListenersHolder;
 import fr.ourten.teabeans.value.Observable;
 
 import java.util.ArrayList;
@@ -11,11 +12,11 @@ import java.util.Objects;
 
 public abstract class BindingBase<T> implements IBinding<T>
 {
-    private final   ArrayList<Observable>                     dependencies                = new ArrayList<>();
-    protected final ArrayList<ValueChangeListener<? super T>> valueChangeListeners        = new ArrayList<>();
-    protected final ArrayList<ValueInvalidationListener>      valueInvalidationListeners  = new ArrayList<>();
-    protected final ArrayList<ValueInvalidationListener>      valueChangeArglessListeners = new ArrayList<>();
-    private         ValueInvalidationListener                 bindingInvalidator;
+    private final ArrayList<Observable> dependencies = new ArrayList<>();
+
+    protected ListenersHolder<T> listenersHolder;
+
+    private ValueInvalidationListener bindingInvalidator;
 
     private boolean isValid;
 
@@ -24,37 +25,37 @@ public abstract class BindingBase<T> implements IBinding<T>
     @Override
     public void addChangeListener(ValueChangeListener<? super T> listener)
     {
-        valueChangeListeners.add(listener);
+        listenersHolder = ListenersHolder.addChangeListener(listenersHolder, listener);
     }
 
     @Override
     public void removeChangeListener(ValueChangeListener<? super T> listener)
     {
-        valueChangeListeners.remove(listener);
+        listenersHolder = ListenersHolder.removeChangeListener(listenersHolder, listener);
     }
 
     @Override
     public void addListener(ValueInvalidationListener listener)
     {
-        valueInvalidationListeners.add(listener);
+        listenersHolder = ListenersHolder.addListener(listenersHolder, listener);
     }
 
     @Override
     public void removeListener(ValueInvalidationListener listener)
     {
-        valueInvalidationListeners.remove(listener);
+        listenersHolder = ListenersHolder.removeListener(listenersHolder, listener);
     }
 
     @Override
     public void addChangeListener(ValueInvalidationListener listener)
     {
-        valueChangeArglessListeners.add(listener);
+        listenersHolder = ListenersHolder.addChangeListener(listenersHolder, listener);
     }
 
     @Override
     public void removeChangeListener(ValueInvalidationListener listener)
     {
-        valueChangeArglessListeners.remove(listener);
+        listenersHolder = ListenersHolder.removeChangeListener(listenersHolder, listener);
     }
 
     @Override
@@ -140,28 +141,16 @@ public abstract class BindingBase<T> implements IBinding<T>
 
     protected void fireChangeListeners(T oldValue, T newValue)
     {
-        for (int i = 0, valueChangeListenersSize = valueChangeListeners.size(); i < valueChangeListenersSize; i++)
-        {
-            ValueChangeListener<? super T> listener = valueChangeListeners.get(i);
-            listener.valueChanged(this, oldValue, newValue);
-        }
+        ListenersHolder.fireChangeListeners(listenersHolder, this, oldValue, newValue);
     }
 
     protected void fireInvalidationListeners()
     {
-        for (int i = 0, valueInvalidationListenersSize = valueInvalidationListeners.size(); i < valueInvalidationListenersSize; i++)
-        {
-            ValueInvalidationListener listener = valueInvalidationListeners.get(i);
-            listener.invalidated(this);
-        }
+        ListenersHolder.fireInvalidationListeners(listenersHolder, this);
     }
 
     protected void fireChangeArglessListeners()
     {
-        for (int i = 0, valueChangeArglessListenersSize = valueChangeArglessListeners.size(); i < valueChangeArglessListenersSize; i++)
-        {
-            ValueInvalidationListener listener = valueChangeArglessListeners.get(i);
-            listener.invalidated(this);
-        }
+        ListenersHolder.fireChangeArglessListeners(listenersHolder, this);
     }
 }

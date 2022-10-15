@@ -5,6 +5,7 @@ import fr.ourten.teabeans.binding.Binding;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.listener.WeakPropertyListener;
+import fr.ourten.teabeans.listener.holder.ListenersHolder;
 import fr.ourten.teabeans.value.Observable;
 import fr.ourten.teabeans.value.ObservableValue;
 
@@ -137,7 +138,7 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
             this.observable = observable;
             if (propertyInvalidator == null)
                 propertyInvalidator = new WeakPropertyListener(this);
-            if (!valueChangeListeners.isEmpty() || !valueInvalidationListeners.isEmpty())
+            if (listenersHolder != null)
                 startObserving();
 
             if (isMuted())
@@ -205,58 +206,43 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
     @Override
     public void addChangeListener(ValueChangeListener<? super V> listener)
     {
-        if (!isObserving && observable != null)
-            startObserving();
-        valueChangeListeners.add(listener);
+        startObserving();
+        listenersHolder = ListenersHolder.addChangeListener(listenersHolder, listener);
     }
 
     @Override
     public void removeChangeListener(ValueChangeListener<? super V> listener)
     {
-        valueChangeListeners.remove(listener);
-        if (valueInvalidationListeners.isEmpty() &&
-                valueChangeListeners.isEmpty() &&
-                valueChangeArglessListeners.isEmpty() &&
-                observable != null)
-            stopObserving();
+        listenersHolder = ListenersHolder.removeChangeListener(listenersHolder, listener);
+        stopObserving();
     }
 
     @Override
     public void addListener(ValueInvalidationListener listener)
     {
-        if (!isObserving && observable != null)
-            startObserving();
-        valueInvalidationListeners.add(listener);
+        startObserving();
+        listenersHolder = ListenersHolder.addListener(listenersHolder, listener);
     }
 
     @Override
     public void removeListener(ValueInvalidationListener listener)
     {
-        valueInvalidationListeners.remove(listener);
-        if (valueInvalidationListeners.isEmpty() &&
-                valueChangeListeners.isEmpty() &&
-                valueChangeArglessListeners.isEmpty() &&
-                observable != null)
-            stopObserving();
+        listenersHolder = ListenersHolder.removeListener(listenersHolder, listener);
+        stopObserving();
     }
 
     @Override
     public void addChangeListener(ValueInvalidationListener listener)
     {
-        if (!isObserving && observable != null)
-            startObserving();
-        valueChangeArglessListeners.add(listener);
+        startObserving();
+        listenersHolder = ListenersHolder.addChangeListener(listenersHolder, listener);
     }
 
     @Override
     public void removeChangeListener(ValueInvalidationListener listener)
     {
-        valueChangeArglessListeners.remove(listener);
-        if (valueInvalidationListeners.isEmpty() &&
-                valueChangeListeners.isEmpty() &&
-                valueChangeArglessListeners.isEmpty() &&
-                observable != null)
-            stopObserving();
+        listenersHolder = ListenersHolder.removeChangeListener(listenersHolder, listener);
+        stopObserving();
     }
 
     protected void setPropertyValue(V value)
@@ -270,12 +256,18 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
 
     private void startObserving()
     {
+        if (isObserving || observable == null)
+            return;
+
         isObserving = true;
         observable.addListener(propertyInvalidator);
     }
 
     private void stopObserving()
     {
+        if (listenersHolder != null || observable == null)
+            return;
+
         isObserving = false;
         observable.removeListener(propertyInvalidator);
     }

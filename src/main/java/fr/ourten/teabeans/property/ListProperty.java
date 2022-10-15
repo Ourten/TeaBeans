@@ -1,6 +1,10 @@
 package fr.ourten.teabeans.property;
 
 import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.listener.ValueChangeListener;
+import fr.ourten.teabeans.listener.ValueInvalidationListener;
+import fr.ourten.teabeans.listener.holder.ListListenersHolder;
+import fr.ourten.teabeans.listener.holder.ListenersHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,22 +19,21 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class ListProperty<T> extends Property<List<T>> implements IListProperty<T>
+public class ListProperty<T> extends PropertyBase<List<T>> implements IListProperty<T>
 {
     private final Supplier<List<T>> listSupplier;
 
+    private ListListenersHolder<T> listenersHolder;
+
     private List<T> immutableView;
 
-    /**
-     * The list of attached listeners that need to be notified when the value
-     * change.
-     */
-    private final ArrayList<ListValueChangeListener<? super T>> listValueChangeListeners;
+    protected List<T> value;
+    protected List<T> oldValue;
 
     public ListProperty(Supplier<List<T>> listSupplier, List<T> value)
     {
-        super(value);
-        listValueChangeListeners = new ArrayList<>();
+        this.value = value;
+        oldValue = value;
 
         this.value = listSupplier.get();
         if (value != null)
@@ -49,20 +52,27 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     }
 
     @Override
+    public List<T> getValue()
+    {
+        if (observable != null)
+            return observable.getValue();
+
+        if (immutableView == null)
+            immutableView = Collections.unmodifiableList(value);
+        return immutableView;
+    }
+
+    @Override
     protected void setPropertyValue(List<T> value)
     {
         if (immutableView != null && !Objects.equals(value, this.value))
             immutableView = Collections.unmodifiableList(value);
 
-        super.setPropertyValue(value);
-    }
+        this.value = value;
+        invalidate();
 
-    @Override
-    public List<T> getValue()
-    {
-        if (immutableView == null)
-            immutableView = Collections.unmodifiableList(value);
-        return immutableView;
+        if (isPristine())
+            setPristine(false);
     }
 
     public List<T> getModifiableValue()
@@ -73,24 +83,93 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     @Override
     public void addChangeListener(ListValueChangeListener<? super T> listener)
     {
-        if (!isObserving() && hasObservable())
-            startObserving();
-        if (!listValueChangeListeners.contains(listener))
-            listValueChangeListeners.add(listener);
+        startObserving();
+        listenersHolder = ListListenersHolder.addListChangeListener(listenersHolder, listener);
     }
 
     @Override
     public void removeChangeListener(ListValueChangeListener<? super T> listener)
     {
-        listValueChangeListeners.remove(listener);
-        if (listValueChangeListeners.isEmpty() && hasObservable())
-            stopObserving();
+        listenersHolder = ListListenersHolder.removeListChangeListener(listenersHolder, listener);
+        stopObserving();
+    }
+
+    @Override
+    public void addChangeListener(ValueChangeListener<? super List<T>> listener)
+    {
+        startObserving();
+        listenersHolder = ListListenersHolder.addChangeListener(listenersHolder, listener);
+    }
+
+    @Override
+    public void removeChangeListener(ValueChangeListener<? super List<T>> listener)
+    {
+        listenersHolder = ListListenersHolder.removeChangeListener(listenersHolder, listener);
+        stopObserving();
+    }
+
+    @Override
+    public void addListener(ValueInvalidationListener listener)
+    {
+        startObserving();
+        listenersHolder = ListListenersHolder.addListener(listenersHolder, listener);
+    }
+
+    @Override
+    public void removeListener(ValueInvalidationListener listener)
+    {
+        listenersHolder = ListListenersHolder.removeListener(listenersHolder, listener);
+        stopObserving();
+    }
+
+    @Override
+    public void addChangeListener(ValueInvalidationListener listener)
+    {
+        startObserving();
+        listenersHolder = ListListenersHolder.addChangeListener(listenersHolder, listener);
+    }
+
+    @Override
+    public void removeChangeListener(ValueInvalidationListener listener)
+    {
+        listenersHolder = ListListenersHolder.removeListener(listenersHolder, listener);
+        stopObserving();
+    }
+
+    @Override
+    public void invalidate()
+    {
+        if (isMuted())
+            return;
+
+        if (!Objects.equals(value, oldValue))
+        {
+            fireChangeArglessListeners();
+            fireChangeListeners(oldValue, value);
+        }
+        fireInvalidationListeners();
+
+        oldValue = value;
+    }
+
+    @Override
+    protected void afterBindProperty()
+    {
+        if (value == null || !value.equals(observable.getValue()))
+        {
+            if (isPristine())
+                setPristine(false);
+
+            fireChangeArglessListeners();
+            fireChangeListeners(value, observable.getValue());
+        }
+        fireInvalidationListeners();
     }
 
     private boolean add(T element, Function<T, Boolean> action)
     {
         List<T> oldList = null;
-        if (!valueChangeListeners.isEmpty())
+        if (ListenersHolder.hasChangeListeners(listenersHolder))
         {
             oldList = listSupplier.get();
             oldList.addAll(value);
@@ -121,7 +200,7 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     @Override
     public boolean addAll(Collection<? extends T> elements)
     {
-        AtomicBoolean changed = new AtomicBoolean(false);
+        var changed = new AtomicBoolean(false);
         elements.forEach(element ->
         {
             if (add(element))
@@ -133,7 +212,7 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     @Override
     public boolean addAll(int index, Collection<? extends T> elements)
     {
-        AtomicBoolean changed = new AtomicBoolean(false);
+        var changed = new AtomicBoolean(false);
 
         for (T element : elements)
         {
@@ -147,7 +226,7 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     @Override
     public boolean removeAll(Collection<?> elements)
     {
-        AtomicBoolean changed = new AtomicBoolean(false);
+        var changed = new AtomicBoolean(false);
 
         for (Object element : elements)
         {
@@ -169,7 +248,7 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
         Objects.requireNonNull(filter);
 
         List<T> oldList = null;
-        if (!valueChangeListeners.isEmpty())
+        if (ListenersHolder.hasChangeListeners(listenersHolder))
         {
             oldList = listSupplier.get();
             oldList.addAll(value);
@@ -199,7 +278,7 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     public T remove(int index)
     {
         List<T> oldList = null;
-        if (!valueChangeListeners.isEmpty())
+        if (ListenersHolder.hasChangeListeners(listenersHolder))
         {
             oldList = listSupplier.get();
             oldList.addAll(value);
@@ -215,7 +294,7 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     {
         T oldValue = value.get(index);
         List<T> oldList = null;
-        if (!valueChangeListeners.isEmpty())
+        if (ListenersHolder.hasChangeListeners(listenersHolder))
         {
             oldList = listSupplier.get();
             oldList.addAll(value);
@@ -232,7 +311,7 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     {
         T oldValue = value.contains(oldElement) ? oldElement : null;
         List<T> oldList = null;
-        if (!valueChangeListeners.isEmpty())
+        if (ListenersHolder.hasChangeListeners(listenersHolder))
         {
             oldList = listSupplier.get();
             oldList.addAll(value);
@@ -271,7 +350,7 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     {
         List<T> oldList = null;
 
-        if (!valueChangeListeners.isEmpty() || !listValueChangeListeners.isEmpty())
+        if (ListenersHolder.hasChangeListeners(listenersHolder) || ListListenersHolder.hasListChangeListeners(listenersHolder))
         {
             oldList = listSupplier.get();
             oldList.addAll(value);
@@ -299,16 +378,30 @@ public class ListProperty<T> extends Property<List<T>> implements IListProperty<
     @Override
     protected boolean hasListeners()
     {
-        return super.hasListeners() || !listValueChangeListeners.isEmpty();
+        return listenersHolder != null;
     }
 
     private void fireListChangeListeners(T oldValue, T newValue)
     {
-        for (int i = 0, listValueChangeListenersSize = listValueChangeListeners.size(); i < listValueChangeListenersSize; i++)
-        {
-            ListValueChangeListener<? super T> listener = listValueChangeListeners.get(i);
-            listener.valueChanged(this, oldValue, newValue);
-        }
+        ListListenersHolder.fireListChangeListeners(listenersHolder, this, oldValue, newValue);
+    }
+
+    @Override
+    protected void fireChangeListeners(List<T> oldValue, List<T> newValue)
+    {
+        ListListenersHolder.fireChangeListeners(listenersHolder, this, oldValue, newValue);
+    }
+
+    @Override
+    protected void fireInvalidationListeners()
+    {
+        ListListenersHolder.fireInvalidationListeners(listenersHolder, this);
+    }
+
+    @Override
+    protected void fireChangeArglessListeners()
+    {
+        ListListenersHolder.fireChangeArglessListeners(listenersHolder, this);
     }
 
     ///////////////
