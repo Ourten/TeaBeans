@@ -52,6 +52,9 @@ public class MultiListenersHolder<T> implements ListenersHolder<T>
     @Override
     public ListenersHolder<T> removeChangeListener(ValueChangeListener<? super T> listener)
     {
+        if (valueChangeListeners == null)
+            return this;
+
         ValueChangeListener<? super T>[] newListeners = cloneListenerArray(listener,
                 valueChangeListeners,
                 ValueChangeListener.class);
@@ -90,6 +93,9 @@ public class MultiListenersHolder<T> implements ListenersHolder<T>
     @Override
     public ListenersHolder<T> removeChangeListener(ValueInvalidationListener listener)
     {
+        if (arglessValueChangeListeners == null)
+            return this;
+
         var newListeners = cloneListenerArray(listener,
                 arglessValueChangeListeners,
                 ValueInvalidationListener.class);
@@ -128,6 +134,9 @@ public class MultiListenersHolder<T> implements ListenersHolder<T>
     @Override
     public ListenersHolder<T> removeListener(ValueInvalidationListener listener)
     {
+        if (invalidationListeners == null)
+            return this;
+
         var newListeners = cloneListenerArray(listener,
                 invalidationListeners,
                 ValueInvalidationListener.class);
@@ -197,7 +206,7 @@ public class MultiListenersHolder<T> implements ListenersHolder<T>
     }
 
     @SuppressWarnings("unchecked")
-    protected  <E> E[] cloneListenerArray(E listener, E[] listeners, Class<E> typeClass)
+    protected <E> E[] cloneListenerArray(E listener, E[] listeners, Class<E> typeClass)
     {
         var length = listeners.length;
         var newListeners = listeners;

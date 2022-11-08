@@ -49,6 +49,9 @@ public class SetMultiListenersHolder<T> extends MultiListenersHolder<Set<T>> imp
     @Override
     public SetListenersHolder<T> removeListChangeListener(ListValueChangeListener<? super T> listener)
     {
+        if (listValueChangeListeners == null)
+            return this;
+
         ListValueChangeListener<? super T>[] newListeners = cloneListenerArray(listener,
                 listValueChangeListeners,
                 ListValueChangeListener.class);
@@ -73,6 +76,9 @@ public class SetMultiListenersHolder<T> extends MultiListenersHolder<Set<T>> imp
     @Override
     public SetListenersHolder<T> removeChangeListener(ValueChangeListener<? super Set<T>> listener)
     {
+        if (valueChangeListeners == null)
+            return this;
+
         ValueChangeListener<? super Set<T>>[] newListeners = cloneListenerArray(listener,
                 valueChangeListeners,
                 ValueChangeListener.class);
@@ -97,6 +103,9 @@ public class SetMultiListenersHolder<T> extends MultiListenersHolder<Set<T>> imp
     @Override
     public SetListenersHolder<T> removeChangeListener(ValueInvalidationListener listener)
     {
+        if (arglessValueChangeListeners == null)
+            return this;
+
         var newListeners = cloneListenerArray(listener,
                 arglessValueChangeListeners,
                 ValueInvalidationListener.class);
@@ -121,6 +130,9 @@ public class SetMultiListenersHolder<T> extends MultiListenersHolder<Set<T>> imp
     @Override
     public SetListenersHolder<T> removeListener(ValueInvalidationListener listener)
     {
+        if (invalidationListeners == null)
+            return this;
+
         var newListeners = cloneListenerArray(listener,
                 invalidationListeners,
                 ValueInvalidationListener.class);

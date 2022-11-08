@@ -6,8 +6,8 @@ import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.value.ObservableValue;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Map;
+import java.util.Objects;
 
 public class MapMultiListenersHolder<K, V> extends MultiListenersHolder<Map<K, V>> implements MapListenersHolder<K, V>
 {
@@ -49,6 +49,9 @@ public class MapMultiListenersHolder<K, V> extends MultiListenersHolder<Map<K, V
     @Override
     public MapListenersHolder<K, V> removeMapChangeListener(MapValueChangeListener<? super K, ? super V> listener)
     {
+        if (mapValueChangeListeners == null)
+            return this;
+
         MapValueChangeListener<? super K, ? super V>[] newListeners = cloneListenerArray(listener,
                 mapValueChangeListeners,
                 MapValueChangeListener.class);
@@ -73,6 +76,9 @@ public class MapMultiListenersHolder<K, V> extends MultiListenersHolder<Map<K, V
     @Override
     public MapListenersHolder<K, V> removeChangeListener(ValueChangeListener<? super Map<K, V>> listener)
     {
+        if (valueChangeListeners == null)
+            return this;
+
         ValueChangeListener<? super Map<K, V>>[] newListeners = cloneListenerArray(listener,
                 valueChangeListeners,
                 ValueChangeListener.class);
@@ -97,6 +103,9 @@ public class MapMultiListenersHolder<K, V> extends MultiListenersHolder<Map<K, V
     @Override
     public MapListenersHolder<K, V> removeChangeListener(ValueInvalidationListener listener)
     {
+        if (arglessValueChangeListeners == null)
+            return this;
+
         var newListeners = cloneListenerArray(listener,
                 arglessValueChangeListeners,
                 ValueInvalidationListener.class);
@@ -121,6 +130,9 @@ public class MapMultiListenersHolder<K, V> extends MultiListenersHolder<Map<K, V
     @Override
     public MapListenersHolder<K, V> removeListener(ValueInvalidationListener listener)
     {
+        if (invalidationListeners == null)
+            return this;
+
         var newListeners = cloneListenerArray(listener,
                 invalidationListeners,
                 ValueInvalidationListener.class);
