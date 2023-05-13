@@ -1,6 +1,6 @@
 package fr.ourten.teabeans.listener.holder;
 
-import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.listener.SetValueChangeListener;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.value.ObservableValue;
@@ -11,50 +11,50 @@ import java.util.Set;
 
 public class SetMultiListenersHolder<T> extends MultiListenersHolder<Set<T>> implements SetListenersHolder<T>
 {
-    private ListValueChangeListener<? super T>[] listValueChangeListeners;
+    private SetValueChangeListener<? super T>[] setValueChangeListeners;
 
     public SetMultiListenersHolder(
-            ListValueChangeListener<? super T> listValueChangeListener,
+            SetValueChangeListener<? super T> setValueChangeListener,
             ValueChangeListener<? super Set<T>> valueChangeListener,
             ValueInvalidationListener arglessValueChangeListener,
             ValueInvalidationListener invalidationListener)
     {
         super(valueChangeListener, arglessValueChangeListener, invalidationListener);
 
-        if (listValueChangeListener != null)
-            this.listValueChangeListeners = new ListValueChangeListener[] { listValueChangeListener };
+        if (setValueChangeListener != null)
+            this.setValueChangeListeners = new SetValueChangeListener[] { setValueChangeListener };
     }
 
     @Override
-    public SetListenersHolder<T> addListChangeListener(ListValueChangeListener<? super T> listener)
+    public SetListenersHolder<T> addSetChangeListener(SetValueChangeListener<? super T> listener)
     {
-        if (listValueChangeListeners == null)
+        if (setValueChangeListeners == null)
         {
-            listValueChangeListeners = new ListValueChangeListener[] { listener };
+            setValueChangeListeners = new SetValueChangeListener[] { listener };
             return this;
         }
 
-        for (var listValueChangeListener : listValueChangeListeners)
+        for (var setValueChangeListener : setValueChangeListeners)
         {
-            if (Objects.equals(listValueChangeListener, listener))
+            if (Objects.equals(setValueChangeListener, listener))
                 return this;
         }
 
-        var length = listValueChangeListeners.length;
-        listValueChangeListeners = Arrays.copyOf(listValueChangeListeners, length + 1);
-        listValueChangeListeners[length] = listener;
+        var length = setValueChangeListeners.length;
+        setValueChangeListeners = Arrays.copyOf(setValueChangeListeners, length + 1);
+        setValueChangeListeners[length] = listener;
         return this;
     }
 
     @Override
-    public SetListenersHolder<T> removeListChangeListener(ListValueChangeListener<? super T> listener)
+    public SetListenersHolder<T> removeSetChangeListener(SetValueChangeListener<? super T> listener)
     {
-        if (listValueChangeListeners == null)
+        if (setValueChangeListeners == null)
             return this;
 
-        ListValueChangeListener<? super T>[] newListeners = cloneListenerArray(listener,
-                listValueChangeListeners,
-                ListValueChangeListener.class);
+        SetValueChangeListener<? super T>[] newListeners = cloneListenerArray(listener,
+                setValueChangeListeners,
+                SetValueChangeListener.class);
 
         if (newListeners.length == 1 &&
                 (valueChangeListeners == null || valueChangeListeners.length == 1) &&
@@ -63,7 +63,7 @@ public class SetMultiListenersHolder<T> extends MultiListenersHolder<Set<T>> imp
         )
             return new SetMonoListenerHolder<>(newListeners[0], valueChangeListeners == null ? null : valueChangeListeners[0], arglessValueChangeListeners == null ? null : arglessValueChangeListeners[0], invalidationListeners == null ? null : invalidationListeners[0]);
 
-        listValueChangeListeners = newListeners;
+        setValueChangeListeners = newListeners;
         return this;
     }
 
@@ -84,11 +84,11 @@ public class SetMultiListenersHolder<T> extends MultiListenersHolder<Set<T>> imp
                 ValueChangeListener.class);
 
         if (newListeners.length == 1 &&
-                (listValueChangeListeners == null || listValueChangeListeners.length == 1) &&
+                (setValueChangeListeners == null || setValueChangeListeners.length == 1) &&
                 (arglessValueChangeListeners == null || arglessValueChangeListeners.length == 1) &&
                 (invalidationListeners == null || invalidationListeners.length == 1)
         )
-            return new SetMonoListenerHolder<>(listValueChangeListeners == null ? null : listValueChangeListeners[0], newListeners[0], arglessValueChangeListeners == null ? null : arglessValueChangeListeners[0], invalidationListeners == null ? null : invalidationListeners[0]);
+            return new SetMonoListenerHolder<>(setValueChangeListeners == null ? null : setValueChangeListeners[0], newListeners[0], arglessValueChangeListeners == null ? null : arglessValueChangeListeners[0], invalidationListeners == null ? null : invalidationListeners[0]);
 
         valueChangeListeners = newListeners;
         return this;
@@ -111,11 +111,11 @@ public class SetMultiListenersHolder<T> extends MultiListenersHolder<Set<T>> imp
                 ValueInvalidationListener.class);
 
         if (newListeners.length <= 1 &&
-                (listValueChangeListeners == null || listValueChangeListeners.length == 1) &&
+                (setValueChangeListeners == null || setValueChangeListeners.length == 1) &&
                 (valueChangeListeners == null || valueChangeListeners.length == 1) &&
                 (invalidationListeners == null || invalidationListeners.length == 1)
         )
-            return new SetMonoListenerHolder<>(listValueChangeListeners == null ? null : listValueChangeListeners[0], valueChangeListeners == null ? null : valueChangeListeners[0], newListeners[0], invalidationListeners == null ? null : invalidationListeners[0]);
+            return new SetMonoListenerHolder<>(setValueChangeListeners == null ? null : setValueChangeListeners[0], valueChangeListeners == null ? null : valueChangeListeners[0], newListeners[0], invalidationListeners == null ? null : invalidationListeners[0]);
 
         arglessValueChangeListeners = newListeners;
         return this;
@@ -138,11 +138,11 @@ public class SetMultiListenersHolder<T> extends MultiListenersHolder<Set<T>> imp
                 ValueInvalidationListener.class);
 
         if (newListeners.length <= 1 &&
-                (listValueChangeListeners == null || listValueChangeListeners.length == 1) &&
+                (setValueChangeListeners == null || setValueChangeListeners.length == 1) &&
                 (valueChangeListeners == null || valueChangeListeners.length == 1) &&
                 (arglessValueChangeListeners == null || arglessValueChangeListeners.length == 1)
         )
-            return new SetMonoListenerHolder<>(listValueChangeListeners == null ? null : listValueChangeListeners[0], valueChangeListeners == null ? null : valueChangeListeners[0], arglessValueChangeListeners == null ? null : arglessValueChangeListeners[0], newListeners[0]);
+            return new SetMonoListenerHolder<>(setValueChangeListeners == null ? null : setValueChangeListeners[0], valueChangeListeners == null ? null : valueChangeListeners[0], arglessValueChangeListeners == null ? null : arglessValueChangeListeners[0], newListeners[0]);
 
         invalidationListeners = newListeners;
         return this;
@@ -151,7 +151,7 @@ public class SetMultiListenersHolder<T> extends MultiListenersHolder<Set<T>> imp
     @Override
     public void fireListChangeListeners(ObservableValue<? extends Set<T>> observable, T oldValue, T newValue)
     {
-        var listeners = listValueChangeListeners;
+        var listeners = setValueChangeListeners;
 
         if (listeners == null)
             return;
@@ -163,6 +163,6 @@ public class SetMultiListenersHolder<T> extends MultiListenersHolder<Set<T>> imp
     @Override
     public boolean hasListChangeListeners()
     {
-        return listValueChangeListeners != null;
+        return setValueChangeListeners != null;
     }
 }

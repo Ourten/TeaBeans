@@ -1,6 +1,6 @@
 package fr.ourten.teabeans.property;
 
-import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.listener.SetValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.listener.recorder.SetValueChangeRecorder;
 import fr.ourten.teabeans.listener.recorder.ValueInvalidationRecorder;
@@ -109,18 +109,18 @@ public class SetPropertyTest
     @Test
     public void testSetPropertyListChangeListener()
     {
-        ListValueChangeListener<Integer> removeListener = (observable, oldValue, newValue) ->
+        SetValueChangeListener<Integer> removeListener = (observable, oldValue, newValue) ->
         {
             assertThat(oldValue).isNotNull();
             assertThat(newValue).isNull();
             assertThat(oldValue).isEqualTo(0);
         };
 
-        property.addChangeListener(removeListener);
+        property.addSetChangeListener(removeListener);
         property.remove(0);
-        property.removeChangeListener(removeListener);
+        property.removeSetChangeListener(removeListener);
 
-        ListValueChangeListener<Integer> addListener = (observable, oldValue, newValue) ->
+        SetValueChangeListener<Integer> addListener = (observable, oldValue, newValue) ->
         {
             assertThat(oldValue).isNull();
             assertThat(newValue).isNotNull();
@@ -128,23 +128,23 @@ public class SetPropertyTest
             count++;
         };
 
-        property.addChangeListener(addListener);
+        property.addSetChangeListener(addListener);
         property.add(18);
         property.addAll(Arrays.asList(20, 22, 24));
         assertThat(count).isEqualTo(4);
-        property.removeChangeListener(addListener);
+        property.removeSetChangeListener(addListener);
 
         count = 0;
         property.clear();
         property.addAll(Arrays.asList(18, 20, 22, 24, 26));
-        ListValueChangeListener<Integer> clearListener = (observable, oldValue, newValue) ->
+        SetValueChangeListener<Integer> clearListener = (observable, oldValue, newValue) ->
         {
             assertThat(oldValue).isNotNull();
             assertThat(newValue).isNull();
             assertThat(oldValue).isIn(18, 20, 22, 24, 26);
             count++;
         };
-        property.addChangeListener(clearListener);
+        property.addSetChangeListener(clearListener);
 
         property.clear();
         assertThat(count).isEqualTo(5);

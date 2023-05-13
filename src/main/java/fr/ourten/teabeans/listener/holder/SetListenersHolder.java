@@ -1,6 +1,6 @@
 package fr.ourten.teabeans.listener.holder;
 
-import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.listener.SetValueChangeListener;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.value.Observable;
@@ -10,9 +10,9 @@ import java.util.Set;
 
 public interface SetListenersHolder<T> extends ListenersHolder<Set<T>>
 {
-    SetListenersHolder<T> addListChangeListener(ListValueChangeListener<? super T> listener);
+    SetListenersHolder<T> addSetChangeListener(SetValueChangeListener<? super T> listener);
 
-    SetListenersHolder<T> removeListChangeListener(ListValueChangeListener<? super T> listener);
+    SetListenersHolder<T> removeSetChangeListener(SetValueChangeListener<? super T> listener);
 
     SetListenersHolder<T> addChangeListener(ValueChangeListener<? super Set<T>> listener);
 
@@ -32,18 +32,18 @@ public interface SetListenersHolder<T> extends ListenersHolder<Set<T>>
 
     boolean hasListChangeListeners();
 
-    static <T> SetListenersHolder<T> addListChangeListener(SetListenersHolder<T> holder, ListValueChangeListener<? super T> listener)
+    static <T> SetListenersHolder<T> addSetChangeListener(SetListenersHolder<T> holder, SetValueChangeListener<? super T> listener)
     {
         if (holder == null)
             return new SetMonoListenerHolder<>(listener, null, null, null);
-        return holder.addListChangeListener(listener);
+        return holder.addSetChangeListener(listener);
     }
 
-    static <T> SetListenersHolder<T> removeListChangeListener(SetListenersHolder<T> holder, ListValueChangeListener<? super T> listener)
+    static <T> SetListenersHolder<T> removeSetChangeListener(SetListenersHolder<T> holder, SetValueChangeListener<? super T> listener)
     {
         if (holder == null)
             return null;
-        return holder.removeListChangeListener(listener);
+        return holder.removeSetChangeListener(listener);
     }
 
 

@@ -1,6 +1,6 @@
 package fr.ourten.teabeans.property;
 
-import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.listener.SetValueChangeListener;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.listener.holder.ListenersHolder;
@@ -65,16 +65,16 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     }
 
     @Override
-    public void addChangeListener(ListValueChangeListener<? super T> listener)
+    public void addSetChangeListener(SetValueChangeListener<? super T> listener)
     {
         startObserving();
-        listenersHolder = SetListenersHolder.addListChangeListener(listenersHolder, listener);
+        listenersHolder = SetListenersHolder.addSetChangeListener(listenersHolder, listener);
     }
 
     @Override
-    public void removeChangeListener(ListValueChangeListener<? super T> listener)
+    public void removeSetChangeListener(SetValueChangeListener<? super T> listener)
     {
-        listenersHolder = SetListenersHolder.removeListChangeListener(listenersHolder, listener);
+        listenersHolder = SetListenersHolder.removeSetChangeListener(listenersHolder, listener);
         stopObserving();
     }
 

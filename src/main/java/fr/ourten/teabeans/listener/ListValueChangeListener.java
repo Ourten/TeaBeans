@@ -1,7 +1,5 @@
 package fr.ourten.teabeans.listener;
 
-import fr.ourten.teabeans.value.ObservableValue;
-
 @FunctionalInterface
 public interface ListValueChangeListener<T>
 {
@@ -9,11 +7,7 @@ public interface ListValueChangeListener<T>
      * Fired when an element of an observed list change. It will be fired at
      * element deletion, element adding and element change.
      *
-     * @param observable is the observed list.
-     * @param oldValue   is the previous value if the event is fired from a change or a
-     *                   remove, else it will be null.
-     * @param newValue   is the new value added or changed. If the event is fired from
-     *                   a remove it will be null.
+     * @param change
      */
-    void valueChanged(ObservableValue<?> observable, T oldValue, T newValue);
+    void valueChanged(IListChange<? extends T> change);
 }

@@ -1,10 +1,10 @@
 package fr.ourten.teabeans.listener.recorder;
 
-import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.listener.SetValueChangeListener;
 import fr.ourten.teabeans.property.ISetProperty;
 import fr.ourten.teabeans.value.ObservableValue;
 
-public class SetValueChangeRecorder<T> extends ObservableValueRecorder<T> implements ListValueChangeListener<T>
+public class SetValueChangeRecorder<T> extends ObservableValueRecorder<T> implements SetValueChangeListener<T>
 {
     public SetValueChangeRecorder()
     {
@@ -15,7 +15,7 @@ public class SetValueChangeRecorder<T> extends ObservableValueRecorder<T> implem
     public SetValueChangeRecorder(ISetProperty<T>... setProperties)
     {
         for (ISetProperty<T> setProperty : setProperties)
-            setProperty.addChangeListener(this);
+            setProperty.addSetChangeListener(this);
     }
 
     @Override

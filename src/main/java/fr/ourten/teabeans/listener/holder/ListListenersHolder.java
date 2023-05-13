@@ -1,5 +1,6 @@
 package fr.ourten.teabeans.listener.holder;
 
+import fr.ourten.teabeans.listener.IListChange;
 import fr.ourten.teabeans.listener.ListValueChangeListener;
 import fr.ourten.teabeans.listener.ValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
@@ -28,7 +29,7 @@ public interface ListListenersHolder<T> extends ListenersHolder<List<T>>
 
     ListListenersHolder<T> removeListener(ValueInvalidationListener listener);
 
-    void fireListChangeListeners(ObservableValue<? extends List<T>> observable, T oldValue, T newValue);
+    void fireListChangeListeners(IListChange<? extends T> change);
 
     boolean hasListChangeListeners();
 
@@ -98,10 +99,10 @@ public interface ListListenersHolder<T> extends ListenersHolder<List<T>>
             holder.fireChangeListeners(observable, oldValue, newValue);
     }
 
-    static <T> void fireListChangeListeners(ListListenersHolder<T> holder, ObservableValue<? extends List<T>> observable, T oldValue, T newValue)
+    static <T> void fireListChangeListeners(ListListenersHolder<T> holder, IListChange<T> change)
     {
         if (holder != null)
-            holder.fireListChangeListeners(observable, oldValue, newValue);
+            holder.fireListChangeListeners(change);
     }
 
     static <T> void fireInvalidationListeners(ListListenersHolder<T> holder, Observable observable)

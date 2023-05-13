@@ -1,15 +1,15 @@
 package fr.ourten.teabeans.property;
 
-import fr.ourten.teabeans.listener.ListValueChangeListener;
+import fr.ourten.teabeans.listener.SetValueChangeListener;
 
 import java.util.Collection;
 import java.util.Set;
 
 public interface ISetProperty<T> extends IProperty<Set<T>>, Iterable<T>
 {
-    void addChangeListener(ListValueChangeListener<? super T> listener);
+    void addSetChangeListener(SetValueChangeListener<? super T> listener);
 
-    void removeChangeListener(ListValueChangeListener<? super T> listener);
+    void removeSetChangeListener(SetValueChangeListener<? super T> listener);
 
     void add(T element);
 

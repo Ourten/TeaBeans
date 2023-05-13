@@ -3,7 +3,6 @@ package fr.ourten.teabeans.property;
 import fr.ourten.teabeans.listener.ListValueChangeListener;
 import fr.ourten.teabeans.listener.ValueInvalidationListener;
 import fr.ourten.teabeans.listener.recorder.ListValueChangeRecorder;
-import fr.ourten.teabeans.listener.recorder.ValueChangeRecorder;
 import fr.ourten.teabeans.listener.recorder.ValueInvalidationRecorder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -120,54 +119,54 @@ public class ListPropertyTest
     public void testListPropertyListChangeListener()
     {
 
-        ListValueChangeListener<Integer> removeListener = (observable, oldValue, newValue) ->
+        ListValueChangeListener<Integer> removeListener = (change) ->
         {
-            assertThat(oldValue).isNotNull();
-            assertThat(newValue).isNull();
-            assertThat(oldValue).isEqualTo(0);
+            assertThat(change.oldValue()).isNotNull();
+            assertThat(change.newValue()).isNull();
+            assertThat(change.oldValue()).isEqualTo(0);
         };
 
-        property.addChangeListener(removeListener);
+        property.addListChangeListener(removeListener);
         property.remove(0);
-        property.removeChangeListener(removeListener);
+        property.removeListChangeListener(removeListener);
 
-        ListValueChangeListener<Integer> changeListener = (observable, oldValue, newValue) ->
+        ListValueChangeListener<Integer> changeListener = (change) ->
         {
-            assertThat(oldValue).isNotNull();
-            assertThat(newValue).isNotNull();
-            assertThat(oldValue).isNotEqualTo(newValue);
-            assertThat(oldValue).isEqualTo(2);
-            assertThat(newValue).isEqualTo(5);
+            assertThat(change.oldValue()).isNotNull();
+            assertThat(change.newValue()).isNotNull();
+            assertThat(change.oldValue()).isNotEqualTo(change.newValue());
+            assertThat(change.oldValue()).isEqualTo(2);
+            assertThat(change.newValue()).isEqualTo(5);
         };
-        property.addChangeListener(changeListener);
+        property.addListChangeListener(changeListener);
         property.set(0, 5);
-        property.removeChangeListener(changeListener);
+        property.removeListChangeListener(changeListener);
 
-        ListValueChangeListener<Integer> addListener = (observable, oldValue, newValue) ->
+        ListValueChangeListener<Integer> addListener = (change) ->
         {
-            assertThat(oldValue).isNull();
-            assertThat(newValue).isNotNull();
-            assertThat(newValue).isEqualTo(18);
+            assertThat(change.oldValue()).isNull();
+            assertThat(change.newValue()).isNotNull();
+            assertThat(change.newValue()).isEqualTo(18);
             count++;
         };
-        property.addChangeListener(addListener);
+        property.addListChangeListener(addListener);
         property.add(18);
         property.add(2, 18);
         property.addAll(Arrays.asList(18, 18, 18));
         assertThat(count).isEqualTo(5);
-        property.removeChangeListener(addListener);
+        property.removeListChangeListener(addListener);
 
         count = 0;
         property.clear();
         property.addAll(Arrays.asList(18, 18, 18, 18, 18));
-        ListValueChangeListener<Integer> clearListener = (observable, oldValue, newValue) ->
+        ListValueChangeListener<Integer> clearListener = (change) ->
         {
-            assertThat(oldValue).isNotNull();
-            assertThat(newValue).isNull();
-            assertThat(oldValue).isEqualTo(18);
+            assertThat(change.oldValue()).isNotNull();
+            assertThat(change.newValue()).isNull();
+            assertThat(change.oldValue()).isEqualTo(18);
             count++;
         };
-        property.addChangeListener(clearListener);
+        property.addListChangeListener(clearListener);
 
         property.clear();
         assertThat(count).isEqualTo(5);
@@ -184,36 +183,6 @@ public class ListPropertyTest
 
         property.sort(Collections.reverseOrder());
         assertThat(property.getValue().toArray()).containsExactly(new Integer[]{10, 6, 5, 4, 1});
-    }
-
-    @Test
-    public void replace_givenExistingElement_thenShouldReplaceAndTriggerChanges()
-    {
-        ListProperty<Integer> property = new ListProperty<>(IntStream.range(0, 10).boxed().collect(toList()));
-
-        property.replace(3, 10);
-
-        assertThat(property.contains(9)).isTrue();
-        assertThat(property.contains(3)).isFalse();
-
-        ValueInvalidationRecorder invalidationRecorder = new ValueInvalidationRecorder(property);
-        ValueChangeRecorder<List<Integer>> valueChangeRecorder = new ValueChangeRecorder<>(property);
-        ListValueChangeRecorder<Integer> listValueChangeRecorder = new ListValueChangeRecorder<>(property);
-
-        property.replace(2, 11);
-
-        assertThat(invalidationRecorder.getCount()).isEqualTo(1);
-        assertThat(valueChangeRecorder.getCount()).isEqualTo(1);
-        assertThat(listValueChangeRecorder.getCount()).isEqualTo(1);
-
-        assertThat(valueChangeRecorder.getOldValues()).hasSize(1);
-        assertThat(valueChangeRecorder.getOldValues().get(0)).containsExactly(0, 1, 2, 10, 4, 5, 6, 7, 8, 9);
-
-        assertThat(valueChangeRecorder.getNewValues()).hasSize(1);
-        assertThat(valueChangeRecorder.getNewValues().get(0)).containsExactly(0, 1, 11, 10, 4, 5, 6, 7, 8, 9);
-
-        assertThat(listValueChangeRecorder.getOldValues()).containsExactly(2);
-        assertThat(listValueChangeRecorder.getNewValues()).containsExactly(11);
     }
 
     @Test
