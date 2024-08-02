@@ -52,15 +52,20 @@ public class DoubleProperty extends PropertyBase<Number> implements DoubleValue
     @Override
     public void setValue(Number value)
     {
-        if (isBound())
-            throw new UnsupportedOperationException("Cannot set the value of a bound property");
-        set((double) value);
+        if (value != null)
+            set(value.doubleValue());
+        else
+            set(0);
     }
 
     @Override
     protected void setPropertyValue(Number value)
     {
-        this.value = (double) value;
+        if (value != null)
+            this.value = value.doubleValue();
+        else
+            this.value = 0;
+
         invalidate();
 
         if (isPristine())

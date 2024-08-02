@@ -52,15 +52,19 @@ public class FloatProperty extends PropertyBase<Number> implements FloatValue
     @Override
     public void setValue(Number value)
     {
-        if (isBound())
-            throw new UnsupportedOperationException("Cannot set the value of a bound property");
-        set((float) value);
+        if (value != null)
+            set(value.floatValue());
+        else
+            set(0);
     }
 
     @Override
     protected void setPropertyValue(Number value)
     {
-        this.value = (float) value;
+        if (value != null)
+            this.value = value.floatValue();
+        else
+            this.value = 0;
         invalidate();
 
         if (isPristine())

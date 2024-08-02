@@ -1,5 +1,7 @@
 package fr.ourten.teabeans.value.specific;
 
+import fr.ourten.teabeans.binding.Binding;
+import fr.ourten.teabeans.binding.Expression;
 import fr.ourten.teabeans.binding.specific.DoubleExpression;
 import fr.ourten.teabeans.binding.specific.FloatBinding;
 import fr.ourten.teabeans.binding.specific.FloatExpression;
@@ -11,87 +13,107 @@ public interface FloatValue extends ObservableValue<Number>
 {
     float get();
 
-    default ObservableValue<Number> add(int term)
+    default FloatValue add(int term)
     {
-        return FloatExpression.getExpression(() -> get() + term);
+        return FloatExpression.getExpression(() -> get() + term, this);
     }
 
-    default ObservableValue<Number> add(long term)
+    default FloatValue add(long term)
     {
-        return FloatExpression.getExpression(() -> get() + term);
+        return FloatExpression.getExpression(() -> get() + term, this);
     }
 
-    default ObservableValue<Number> add(float term)
+    default FloatValue add(float term)
     {
-        return FloatExpression.getExpression(() -> get() + term);
+        return FloatExpression.getExpression(() -> get() + term, this);
     }
 
-    default ObservableValue<Number> add(double term)
+    default DoubleValue add(double term)
     {
-        return DoubleExpression.getExpression(() -> get() + term);
+        return DoubleExpression.getExpression(() -> get() + term, this);
     }
 
-    default ObservableValue<Number> subtract(int term)
+    default FloatValue subtract(int term)
     {
-        return FloatExpression.getExpression(() -> get() - term);
+        return FloatExpression.getExpression(() -> get() - term, this);
     }
 
-    default ObservableValue<Number> subtract(long term)
+    default FloatValue subtract(long term)
     {
-        return FloatExpression.getExpression(() -> get() - term);
+        return FloatExpression.getExpression(() -> get() - term, this);
     }
 
-    default ObservableValue<Number> subtract(float term)
+    default FloatValue subtract(float term)
     {
-        return FloatExpression.getExpression(() -> get() - term);
+        return FloatExpression.getExpression(() -> get() - term, this);
     }
 
-    default ObservableValue<Number> subtract(double term)
+    default DoubleValue subtract(double term)
     {
-        return DoubleExpression.getExpression(() -> get() - term);
+        return DoubleExpression.getExpression(() -> get() - term, this);
     }
 
-    default ObservableValue<Number> multiply(int term)
+    default FloatValue multiply(int term)
     {
-        return FloatExpression.getExpression(() -> get() * term);
+        return FloatExpression.getExpression(() -> get() * term, this);
     }
 
-    default ObservableValue<Number> multiply(long term)
+    default FloatValue multiply(long term)
     {
-        return FloatExpression.getExpression(() -> get() * term);
+        return FloatExpression.getExpression(() -> get() * term, this);
     }
 
-    default ObservableValue<Number> multiply(float term)
+    default FloatValue multiply(float term)
     {
-        return FloatExpression.getExpression(() -> get() * term);
+        return FloatExpression.getExpression(() -> get() * term, this);
     }
 
-    default ObservableValue<Number> multiply(double term)
+    default DoubleValue multiply(double term)
     {
-        return DoubleExpression.getExpression(() -> get() * term);
+        return DoubleExpression.getExpression(() -> get() * term, this);
     }
 
-    default ObservableValue<Number> divide(int term)
+    default FloatValue divide(int term)
     {
-        return FloatExpression.getExpression(() -> get() / term);
+        return FloatExpression.getExpression(() -> get() / term, this);
     }
 
-    default ObservableValue<Number> divide(long term)
+    default FloatValue divide(long term)
     {
-        return FloatExpression.getExpression(() -> get() / term);
+        return FloatExpression.getExpression(() -> get() / term, this);
     }
 
-    default ObservableValue<Number> divide(float term)
+    default FloatValue divide(float term)
     {
-        return FloatExpression.getExpression(() -> get() / term);
+        return FloatExpression.getExpression(() -> get() / term, this);
     }
 
-    default ObservableValue<Number> divide(double term)
+    default DoubleValue divide(double term)
     {
-        return DoubleExpression.getExpression(() -> get() / term);
+        return DoubleExpression.getExpression(() -> get() / term, this);
     }
 
-    default ObservableValue<Number> add(ObservableValue<? extends Number> term)
+    default FloatValue add(FloatValue term)
+    {
+        return FloatExpression.getExpression(() -> get() + term.get(), term, this);
+    }
+
+    default FloatValue add(IntValue term)
+    {
+        return FloatExpression.getExpression(() -> get() + term.get(), term, this);
+    }
+
+    default FloatValue add(LongValue term)
+    {
+        return FloatExpression.getExpression(() -> get() + term.get(), term, this);
+    }
+
+    default DoubleValue add(DoubleValue term)
+    {
+        return DoubleExpression.getExpression(() -> get() + term.get(), term, this);
+    }
+
+    default ObservableValue<Number> add(ObservableValue<Number> term)
     {
         if (term instanceof FloatValue)
             return FloatExpression.getExpression(() -> get() + ((FloatValue) term).get(), term, this);
@@ -114,7 +136,27 @@ public interface FloatValue extends ObservableValue<Number>
         });
     }
 
-    default ObservableValue<Number> subtract(ObservableValue<? extends Number> term)
+    default FloatValue subtract(FloatValue term)
+    {
+        return FloatExpression.getExpression(() -> get() - term.get(), term, this);
+    }
+
+    default FloatValue subtract(IntValue term)
+    {
+        return FloatExpression.getExpression(() -> get() - term.get(), term, this);
+    }
+
+    default FloatValue subtract(LongValue term)
+    {
+        return FloatExpression.getExpression(() -> get() - term.get(), term, this);
+    }
+
+    default DoubleValue subtract(DoubleValue term)
+    {
+        return DoubleExpression.getExpression(() -> get() - term.get(), term, this);
+    }
+
+    default ObservableValue<Number> subtract(ObservableValue<Number> term)
     {
         if (term instanceof FloatValue)
             return FloatExpression.getExpression(() -> get() - ((FloatValue) term).get(), term, this);
@@ -137,7 +179,27 @@ public interface FloatValue extends ObservableValue<Number>
         });
     }
 
-    default ObservableValue<Number> multiply(ObservableValue<? extends Number> factor)
+    default FloatValue multiply(FloatValue term)
+    {
+        return FloatExpression.getExpression(() -> get() * term.get(), term, this);
+    }
+
+    default FloatValue multiply(IntValue term)
+    {
+        return FloatExpression.getExpression(() -> get() * term.get(), term, this);
+    }
+
+    default FloatValue multiply(LongValue term)
+    {
+        return FloatExpression.getExpression(() -> get() * term.get(), term, this);
+    }
+
+    default DoubleValue multiply(DoubleValue term)
+    {
+        return DoubleExpression.getExpression(() -> get() * term.get(), term, this);
+    }
+
+    default ObservableValue<Number> multiply(ObservableValue<Number> factor)
     {
         if (factor instanceof FloatValue)
             return FloatExpression.getExpression(() -> get() * ((FloatValue) factor).get(), factor, this);
@@ -160,7 +222,27 @@ public interface FloatValue extends ObservableValue<Number>
         });
     }
 
-    default ObservableValue<Number> divide(ObservableValue<? extends Number> divisor)
+    default FloatValue divide(FloatValue term)
+    {
+        return FloatExpression.getExpression(() -> get() / term.get(), term, this);
+    }
+
+    default FloatValue divide(IntValue term)
+    {
+        return FloatExpression.getExpression(() -> get() / term.get(), term, this);
+    }
+
+    default FloatValue divide(LongValue term)
+    {
+        return FloatExpression.getExpression(() -> get() / term.get(), term, this);
+    }
+
+    default DoubleValue divide(DoubleValue term)
+    {
+        return DoubleExpression.getExpression(() -> get() / term.get(), term, this);
+    }
+
+    default ObservableValue<Number> divide(ObservableValue<Number> divisor)
     {
         if (divisor instanceof FloatValue)
             return FloatExpression.getExpression(() -> get() / ((FloatValue) divisor).get(), divisor, this);
@@ -183,7 +265,27 @@ public interface FloatValue extends ObservableValue<Number>
         });
     }
 
-    default ObservableValue<Number> max(ObservableValue<? extends Number> toCompare)
+    default FloatValue max(FloatValue term)
+    {
+        return FloatExpression.getExpression(() -> Math.max(get(), term.get()), term, this);
+    }
+
+    default FloatValue max(IntValue term)
+    {
+        return FloatExpression.getExpression(() -> Math.max(get(), term.get()), term, this);
+    }
+
+    default FloatValue max(LongValue term)
+    {
+        return FloatExpression.getExpression(() -> Math.max(get(), term.get()), term, this);
+    }
+
+    default DoubleValue max(DoubleValue term)
+    {
+        return DoubleExpression.getExpression(() -> Math.max(get(), term.get()), term, this);
+    }
+
+    default ObservableValue<Number> max(ObservableValue<Number> toCompare)
     {
         if (toCompare instanceof FloatValue)
             return FloatExpression.getExpression(() -> Math.max(get(), ((FloatValue) toCompare).get()), toCompare, this);
@@ -206,7 +308,27 @@ public interface FloatValue extends ObservableValue<Number>
         });
     }
 
-    default ObservableValue<Number> min(ObservableValue<? extends Number> toCompare)
+    default FloatValue min(FloatValue term)
+    {
+        return FloatExpression.getExpression(() -> Math.min(get(), term.get()), term, this);
+    }
+
+    default FloatValue min(IntValue term)
+    {
+        return FloatExpression.getExpression(() -> Math.min(get(), term.get()), term, this);
+    }
+
+    default FloatValue min(LongValue term)
+    {
+        return FloatExpression.getExpression(() -> Math.min(get(), term.get()), term, this);
+    }
+
+    default DoubleValue min(DoubleValue term)
+    {
+        return DoubleExpression.getExpression(() -> Math.min(get(), term.get()), term, this);
+    }
+
+    default ObservableValue<Number> min(ObservableValue<Number> toCompare)
     {
         if (toCompare instanceof FloatValue)
             return FloatExpression.getExpression(() -> Math.min(get(), ((FloatValue) toCompare).get()), toCompare, this);
@@ -252,5 +374,10 @@ public interface FloatValue extends ObservableValue<Number>
     default IntBinding round()
     {
         return IntExpression.getExpression(() -> Math.round(get()), this);
+    }
+    
+    default Binding<String> asString()
+    {
+        return Expression.getExpression(() -> String.valueOf(get()), this);
     }
 }

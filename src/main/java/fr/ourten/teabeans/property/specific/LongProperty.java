@@ -52,15 +52,19 @@ public class LongProperty extends PropertyBase<Number> implements LongValue
     @Override
     public void setValue(Number value)
     {
-        if (isBound())
-            throw new UnsupportedOperationException("Cannot set the value of a bound property");
-        set((long) value);
+        if (value != null)
+            set(value.longValue());
+        else
+            set(0);
     }
 
     @Override
     protected void setPropertyValue(Number value)
     {
-        this.value = (long) value;
+        if (value != null)
+            this.value = value.longValue();
+        else
+            this.value = 0;
         invalidate();
 
         if (isPristine())

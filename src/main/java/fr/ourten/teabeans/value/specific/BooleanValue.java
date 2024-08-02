@@ -1,5 +1,7 @@
 package fr.ourten.teabeans.value.specific;
 
+import fr.ourten.teabeans.binding.Binding;
+import fr.ourten.teabeans.binding.Expression;
 import fr.ourten.teabeans.binding.specific.BooleanBinding;
 import fr.ourten.teabeans.binding.specific.BooleanExpression;
 import fr.ourten.teabeans.value.ObservableValue;
@@ -35,5 +37,10 @@ public interface BooleanValue extends ObservableValue<Boolean>
             return BooleanExpression.getExpression(() -> get() ^ ((BooleanValue) term).get(), this, term);
 
         return BooleanExpression.getExpression(() -> get() ^ term.getValue(), this, term);
+    }
+
+    default Binding<String> asString()
+    {
+        return Expression.getExpression(() -> String.valueOf(get()), this);
     }
 }

@@ -52,15 +52,19 @@ public class IntProperty extends PropertyBase<Number> implements IntValue
     @Override
     public void setValue(Number value)
     {
-        if (isBound())
-            throw new UnsupportedOperationException("Cannot set the value of a bound property");
-        set((int) value);
+        if (value != null)
+            set(value.intValue());
+        else
+            set(0);
     }
 
     @Override
     protected void setPropertyValue(Number value)
     {
-        this.value = (int) value;
+        if (value != null)
+            this.value = value.intValue();
+        else
+            this.value = 0;
         invalidate();
 
         if (isPristine())

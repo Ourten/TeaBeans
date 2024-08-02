@@ -1,81 +1,53 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            url 'https://maven.ferenyr.info/artifactory/plugins-release'
-            credentials {
-                username = "${artifactory_user}"
-                password = "${artifactory_password}"
-            }
-        }
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.29.1"
-    }
-}
-
-plugins {
-    id "org.sonarqube" version "3.4.0.2513"
-}
-
-apply plugin: 'java'
-
-// IDE
-apply plugin: 'eclipse'
-apply plugin: 'idea'
+apply plugin: "java"
 
 repositories {
-    mavenCentral()
     maven {
-        url = 'https://maven.ferenyr.info/artifactory/libs-release'
+        name = "Gitea"
+        url = uri("https://git.ferenyr.fr/api/packages/VoidxelIndustries/maven")
+
+        credentials(HttpHeaderCredentials) {
+            name = "Authorization"
+            value = "token ${gitea_token}"
+        }
+
+        authentication {
+            header(HttpHeaderAuthentication)
+        }
     }
+
+    mavenCentral()
 }
 
-compileJava.options.encoding = 'UTF-8'
+compileJava.options.encoding = "UTF-8"
 sourceCompatibility = 17
 targetCompatibility = 17
 
-// Maven Artefacts Info
 group = "fr.ourten"
 archivesBaseName = "teabeans"
 version = "${project.teabeans_version}"
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
-    testImplementation 'org.assertj:assertj-core:3.23.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+    testImplementation("org.assertj:assertj-core:3.25.3")
 
-    testImplementation 'org.mockito:mockito-core:4.8.0'
-    testImplementation 'org.mockito:mockito-junit-jupiter:4.8.0'
+    testImplementation "org.mockito:mockito-core:4.8.0"
+    testImplementation "org.mockito:mockito-junit-jupiter:4.8.0"
 
-    testImplementation('org.awaitility:awaitility:4.2.0')
+    testImplementation("org.awaitility:awaitility:4.2.0")
+}
+
+test {
+    useJUnitPlatform()
 }
 
 // Publications
 
-apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.artifactory'
+apply plugin: "maven-publish"
 
-artifactory {
-    contextUrl = "${artifactory_contextUrl}"
-    publish {
-        repository {
-            repoKey = 'ourten'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-        }
-        defaults {
-            publications('mavenJava')
-        }
-    }
-}
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    archiveClassifier = "sources"
     from sourceSets.main.allSource
 }
 
@@ -88,38 +60,24 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
             artifact(sourcesJar) {
-                classifier = 'sources'
+                classifier = "sources"
             }
-            artifact source: sourcesJar, classifier: 'sources', extension: 'jar'
+        }
+    }
+
+    repositories {
+        maven {
+            name = "Gitea"
+            url = uri("https://git.ferenyr.fr/api/packages/VoidxelIndustries/maven")
+
+            credentials(HttpHeaderCredentials) {
+                name = "Authorization"
+                value = "token ${gitea_token}"
+            }
+
+            authentication {
+                header(HttpHeaderAuthentication)
+            }
         }
     }
 }
-
-apply plugin: 'org.sonarqube'
-
-sonarqube {
-    properties {
-        property "sonar.host.url", project.hasProperty('sonarqube_url') ? project.sonarqube_url : System.getenv('SONARQUBE_URL')
-        property "sonar.login", project.hasProperty('sonarqube_login') ? project.sonarqube_login : System.getenv('SONARQUBE_LOGIN')
-        property "sonar.projectKey", "Teabeans"
-        property "sonar.projectName", "Teabeans"
-        property "sonar.groovy.binaries", "${project.buildDir.name}${File.separator}classes"
-    }
-}
-
-test {
-    useJUnitPlatform()
-}
-
-apply plugin: "jacoco"
-
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        html.enabled true
-    }
-}
-
-test.finalizedBy jacocoTestReport
-project.tasks["sonarqube"].dependsOn jacocoTestReport
-
