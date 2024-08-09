@@ -20,7 +20,7 @@ public abstract class PropertyBase<T> implements IProperty<T>
     /**
      * The listener used to bind this property to another.
      */
-    private   ValueInvalidationListener    propertyInvalidator;
+    private ValueInvalidationListener propertyInvalidator;
     protected ObservableValue<? extends T> observable;
 
     private boolean isObserving = false;
@@ -118,7 +118,12 @@ public abstract class PropertyBase<T> implements IProperty<T>
         if (observable.equals(this.observable))
             return;
 
-        unbind();
+        if (isBound() && hasListeners())
+        {
+            observable.removeListener(propertyInvalidator);
+            observable.addListener(propertyInvalidator);
+        }
+
         this.observable = observable;
         if (propertyInvalidator == null)
             propertyInvalidator = new WeakPropertyListener(this);

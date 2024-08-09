@@ -134,11 +134,17 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
         if (!observable.equals(this.observable))
         {
             actAsProperty();
-            unbind();
+
+            if (isBound() && hasListeners())
+            {
+                observable.removeListener(propertyInvalidator);
+                observable.addListener(propertyInvalidator);
+            }
+
             this.observable = observable;
             if (propertyInvalidator == null)
                 propertyInvalidator = new WeakPropertyListener(this);
-            if (listenersHolder != null)
+            if (hasListeners())
                 startObserving();
 
             if (isMuted())
@@ -265,11 +271,16 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
 
     private void stopObserving()
     {
-        if (listenersHolder != null || observable == null)
+        if (hasListeners() || observable == null)
             return;
 
         isObserving = false;
         observable.removeListener(propertyInvalidator);
+    }
+
+    private boolean hasListeners()
+    {
+        return this.listenersHolder != null;
     }
 
     //////////////////
