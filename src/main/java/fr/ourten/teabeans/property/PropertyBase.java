@@ -52,7 +52,7 @@ public abstract class PropertyBase<T> implements IProperty<T>
     public void removeChangeListener(ValueChangeListener<? super T> listener)
     {
         listenersHolder = ListenersHolder.removeChangeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override
@@ -66,7 +66,7 @@ public abstract class PropertyBase<T> implements IProperty<T>
     public void removeListener(ValueInvalidationListener listener)
     {
         listenersHolder = ListenersHolder.removeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override
@@ -80,7 +80,7 @@ public abstract class PropertyBase<T> implements IProperty<T>
     public void removeChangeListener(ValueInvalidationListener listener)
     {
         listenersHolder = ListenersHolder.removeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override
@@ -120,7 +120,7 @@ public abstract class PropertyBase<T> implements IProperty<T>
 
         if (isBound() && hasListeners())
         {
-            observable.removeListener(propertyInvalidator);
+            this.observable.removeListener(propertyInvalidator);
             observable.addListener(propertyInvalidator);
         }
 
@@ -208,11 +208,16 @@ public abstract class PropertyBase<T> implements IProperty<T>
         observable.addListener(propertyInvalidator);
     }
 
-    protected void stopObserving()
+    protected void stopObservingIfNeeded()
     {
         if (hasListeners() || observable == null)
             return;
 
+        stopObserving();
+    }
+
+    protected void stopObserving()
+    {
         isObserving = false;
         observable.removeListener(propertyInvalidator);
     }

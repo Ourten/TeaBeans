@@ -137,7 +137,7 @@ public class ReduceProperty<T, V> extends Binding<V> implements IProperty<V>
 
             if (isBound() && hasListeners())
             {
-                observable.removeListener(propertyInvalidator);
+                this.observable.removeListener(propertyInvalidator);
                 observable.addListener(propertyInvalidator);
             }
 

@@ -93,7 +93,7 @@ public class ListProperty<T> extends PropertyBase<List<T>> implements IListPrope
     public void removeListChangeListener(ListValueChangeListener<? super T> listener)
     {
         listenersHolder = ListListenersHolder.removeListChangeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ListProperty<T> extends PropertyBase<List<T>> implements IListPrope
     public void removeChangeListener(ValueChangeListener<? super List<T>> listener)
     {
         listenersHolder = ListListenersHolder.removeChangeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override
@@ -121,7 +121,7 @@ public class ListProperty<T> extends PropertyBase<List<T>> implements IListPrope
     public void removeListener(ValueInvalidationListener listener)
     {
         listenersHolder = ListListenersHolder.removeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override
@@ -135,7 +135,7 @@ public class ListProperty<T> extends PropertyBase<List<T>> implements IListPrope
     public void removeChangeListener(ValueInvalidationListener listener)
     {
         listenersHolder = ListListenersHolder.removeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override

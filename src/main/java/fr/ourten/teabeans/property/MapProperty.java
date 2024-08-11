@@ -76,7 +76,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     public void removeChangeListener(MapValueChangeListener<K, ? super V> listener)
     {
         listenersHolder = MapListenersHolder.removeMapChangeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override
@@ -90,7 +90,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     public void removeChangeListener(ValueChangeListener<? super Map<K, V>> listener)
     {
         listenersHolder = MapListenersHolder.removeChangeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override
@@ -104,7 +104,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     public void removeListener(ValueInvalidationListener listener)
     {
         listenersHolder = MapListenersHolder.removeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override
@@ -118,7 +118,7 @@ public class MapProperty<K, V> extends Property<Map<K, V>> implements IMapProper
     public void removeChangeListener(ValueInvalidationListener listener)
     {
         listenersHolder = MapListenersHolder.removeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override

@@ -75,7 +75,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     public void removeSetChangeListener(SetValueChangeListener<? super T> listener)
     {
         listenersHolder = SetListenersHolder.removeSetChangeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override
@@ -89,7 +89,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     public void removeChangeListener(ValueChangeListener<? super Set<T>> listener)
     {
         listenersHolder = SetListenersHolder.removeChangeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override
@@ -103,7 +103,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     public void removeListener(ValueInvalidationListener listener)
     {
         listenersHolder = SetListenersHolder.removeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override
@@ -117,7 +117,7 @@ public class SetProperty<T> extends Property<Set<T>> implements ISetProperty<T>
     public void removeChangeListener(ValueInvalidationListener listener)
     {
         listenersHolder = SetListenersHolder.removeListener(listenersHolder, listener);
-        stopObserving();
+        stopObservingIfNeeded();
     }
 
     @Override
