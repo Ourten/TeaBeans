@@ -96,6 +96,26 @@ public class DoubleProperty extends PropertyBase<Number> implements DoubleValue
         invalidate();
     }
 
+    public void increment()
+    {
+        increment(1);
+    }
+
+    public void increment(double amount)
+    {
+        set(get() + amount);
+    }
+
+    public void decrement()
+    {
+        decrement(1);
+    }
+
+    public void decrement(double amount)
+    {
+        set(get() - amount);
+    }
+
     @Override
     public double get()
     {

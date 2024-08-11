@@ -95,6 +95,26 @@ public class IntProperty extends PropertyBase<Number> implements IntValue
         invalidate();
     }
 
+    public void increment()
+    {
+        increment(1);
+    }
+
+    public void increment(int amount)
+    {
+        set(get() + amount);
+    }
+
+    public void decrement()
+    {
+        decrement(1);
+    }
+
+    public void decrement(int amount)
+    {
+        set(get() - amount);
+    }
+
     @Override
     public int get()
     {

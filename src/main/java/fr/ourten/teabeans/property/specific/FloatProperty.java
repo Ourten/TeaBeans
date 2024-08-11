@@ -95,6 +95,26 @@ public class FloatProperty extends PropertyBase<Number> implements FloatValue
         invalidate();
     }
 
+    public void increment()
+    {
+        increment(1);
+    }
+
+    public void increment(float amount)
+    {
+        set(get() + amount);
+    }
+
+    public void decrement()
+    {
+        decrement(1);
+    }
+
+    public void decrement(float amount)
+    {
+        set(get() - amount);
+    }
+
     @Override
     public float get()
     {

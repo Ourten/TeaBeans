@@ -95,6 +95,26 @@ public class LongProperty extends PropertyBase<Number> implements LongValue
         invalidate();
     }
 
+    public void increment()
+    {
+        increment(1);
+    }
+
+    public void increment(long amount)
+    {
+        set(get() + amount);
+    }
+
+    public void decrement()
+    {
+        decrement(1);
+    }
+
+    public void decrement(long amount)
+    {
+        set(get() - amount);
+    }
+
     @Override
     public long get()
     {
